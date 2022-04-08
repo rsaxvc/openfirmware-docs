@@ -1,0 +1,2336 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+  <title></title>
+</head>
+  <body>
+               
+<h2 align="center">Open Firmware Quick Reference</h2>
+ <a href="#Table%20of%20Contents">
+<h3>Table of Contents</h3>
+</a>  <a name="Syntax">
+<h3><font color="#006600">Syntax</font></h3>
+</a>    <font color="#660000"> </font>
+<ul>
+ <li><font color="#660000">Command names can include punctuation characters,
+so all commands must be separated by spaces. </font></li>
+  <li><font color="#660000">Commands are executed left-to-right after a carriage-return
+is typed. </font></li>
+  <li><font color="#660000">Hex numbers are pushed onto a stack. </font></li>
+</ul>
+ 
+<p>  <font color="#660000">A stack diagram such as (n1 n2 -- n3) or (adr
+len --) or (--) shows a command's stack effect.  Items before the -- must
+be present on the stack before the command executes; the command uses them
+and removes them from the stack.  Items after the -- are results that the
+commands leaves on the stack for use by subsequent commands. </font></p>
+<p> <font color="#660000">If no stack diagram is shown, the command does
+not take any arguments from or leave any results on the stack. </font></p>
+<p> <font color="#660000"><b>showstack</b> turns on stack display mode. </font>
+ </p>
+<p> </p>
+  <a name="Booting">
+<h3><font color="#006600">Booting</font></h3>
+</a>                 
+<table border="1">
+         <tbody>
+            <tr>
+              <td nowrap="true">boot <i>[device-specifier] [arguments]</i></td>
+ 	     <td> 	     Load and execute a program (usually an operating system).
+ If <i>device-specifier</i> 	     or <i>arguments</i> are omitted, the values
+of <b>boot-device</b> 	     and <b>boot-file</b> are used. </td>
+            </tr>
+            <tr>
+              <td nowrap="true">load <i>[device-specifier] [arguments]</i></td>
+ 	     <td>Load a program and leave it in memory for inspection 	     or
+debugging.</td>
+            </tr>
+         <tr>
+              <td><i>[device-specifier]</i> </td>
+         <td>The name (full path name or alias) of a device. Examples:<br>
+       /pci/scsi@7/disk@4:\boot\vmlinux.gz<br>
+         cdrom (CD-ROM drive specified by <b>cdrom</b> devalias) <br>
+         disk (hard disk specified by <b>disk</b> devalias) <br>
+         net (network specified by <b>net</b> devalias) <br>
+            </td>
+    </tr>
+         <tr>
+              <td><i>  [arguments]</i> </td>
+         <td>The remainder of the line is passed verbatim to the booted program.</td>
+            </tr>
+                                 
+  </tbody>        
+</table>
+               
+<p> </p>
+               <a name="Device Specifiers">
+<h3><font color="#006600">Device Specifiers</font></h3>
+</a> A device specifier is a text string that identifies a node in the device
+tree. It may include optional arguments to use when opening that node. 
+<p> The general form of a full pathname is:<br>
+ &nbsp;&nbsp;&nbsp;/ <i>component</i> / <i>component</i> / ... </p>
+<p> The general form of a component is:<br>
+ &nbsp;&nbsp;&nbsp; <i>name</i> @ <i>address</i> : <i>arguments</i> </p>
+<ul>
+ <li><i>name</i> matches a device node's "name" property. </li>
+  <li><i>address</i> is the physical address, within the address space of
+the node's parent, that matches the text representation of a device node's
+"reg" property. </li>
+  <li><i>arguments</i> are optional arguments that are passed to the node's
+package when it is opened.  <i>arguments</i> cannot contain space, slash
+(/), or at-sign (@) characters. </li>
+</ul>
+ Example:<br>
+ &nbsp;&nbsp;&nbsp;/pci/scsi@7/disk@3:2,\boot\vmlinux.gz 
+<p> This device specifier selects the PCI bus, then a SCSI host adapter at
+PCI device number 7, then a disk at SCSI target number 3.  The argument that
+is passed to that disk driver selects partition number 2, then a file named
+vmlinux.gz in a subdirectory named "/boot".  Note the use of backslash (\)
+instead of slash (/) in the argument string, because of the restriction against
+using (/) in an argument. </p>
+<p> If intermediate node names are omitted in a pathname, Open Firmware will
+do its best to locate the node anyway.  Thus, in many cases, an abbreviated
+form of the above path would work, e.g.: &nbsp;&nbsp;&nbsp;/disk@3:2,\boot\vmlinux.gz 
+</p>
+<p> If there is no leading slash (/) and the first component is a device
+alias, the alias is replaced by its expansion, repetitively if necessary. 
+ </p>
+<p></p>
+  <a name="Device Aliases">
+<h3><font color="#006600">Device Aliases</font></h3>
+</a> <i>Device aliases are shorthand forms of full pathnames.</i>      
+<table border="1">
+ <tbody>
+         <tr>
+              <td>devalias </td>
+              <td>Display all current device aliases. </td>
+            </tr>
+         <tr>
+              <td>devalias <i>alias</i> </td>
+              <td>Display the device path name corresponding to alias.</td>
+            </tr>
+         <tr>
+              <td>devalias <i>alias device-path</i> </td>
+              <td>Define an alias representing the device path. <br>
+         If an alias with the same name already exists, the new value supersedes
+    the old. </td>
+            </tr>
+         <tr>
+              <td>nvalias <i>alias device-path</i></td>
+              <td>Define a persistent alias (stored in NVRAM)</td>
+            </tr>
+         <tr>
+              <td>nvunalias <i>alias</i></td>
+              <td>Delete a persistent alias from NVRAM</td>
+            </tr>
+                                 
+  </tbody>        
+</table>
+               
+<p> </p>
+               <a name="Editor Keys (for Command Lines and NVRAMRC)">
+<h3><font color="#006600">Editor Keys (for Command Lines and NVRAMRC)</font></h3>
+</a>    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <i>ESC-  =  Press and release Escape key first;   ^  =  Press and hold
+Control   key</i>    
+<table border="1">
+       
+</table>
+    <br>
+       
+<table width="100%" cellspacing="2" cellpadding="2" border="1">
+      <tbody>
+        <tr>
+          <th valign="bottom">&nbsp;<br>
+          </th>
+          <th valign="middle">Prev. Line<br>
+          </th>
+          <th valign="middle">Beg. Line<br>
+          </th>
+          <th valign="middle" align="center">Prev. Word<br>
+          </th>
+          <th valign="middle" align="center">Prev. Char<br>
+          </th>
+          <th valign="middle" align="center">Next Char<br>
+          </th>
+          <th valign="middle" align="center">Next Word<br>
+          </th>
+          <th valign="middle">End Line<br>
+          </th>
+          <th valign="middle">Next  Line<br>
+          </th>
+        </tr>
+        <tr>
+          <th valign="middle">Move<br>
+          </th>
+          <td valign="middle" align="center">^P<br>
+          <i>up-arrow</i></td>
+          <td valign="middle" align="center">^A<br>
+          </td>
+          <td valign="middle" align="center">ESC-B<br>
+          </td>
+          <td valign="middle" align="center">^B<br>
+          <i>left-arrow</i><br>
+          </td>
+          <td valign="middle" align="center">^F<br>
+          <i>right-arrow</i><br>
+          </td>
+          <td valign="middle" align="center">ESC-F<br>
+          </td>
+          <td valign="middle" align="center">^E<br>
+          </td>
+          <td valign="middle" align="center">^N<br>
+          <i>down-arrow</i><br>
+          </td>
+        </tr>
+        <tr>
+          <th valign="middle">Delete<br>
+          </th>
+          <td valign="middle"><br>
+          </td>
+          <td valign="middle" align="center">^U<br>
+          </td>
+          <td valign="middle">                            
+      <div align="center">^W<br>
+          </div>
+                               
+      <div align="center">ESC-H<br>
+          </div>
+          </td>
+          <td valign="middle" align="center"><i>Delete</i><br>
+         <i> Backspace</i></td>
+          <td valign="middle" align="center">^D<br>
+          </td>
+          <td valign="middle" align="center">ESC-D<br>
+          </td>
+          <td valign="middle" align="center">^K<br>
+          </td>
+          <td valign="middle"><br>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="9" valign="middle"><br>
+          </td>
+                 </tr>
+        <tr>
+          <th valign="middle" align="center">Re-type line<br>
+          </th>
+          <th valign="middle" align="center">Show all lines<br>
+          </th>
+          <th valign="middle" align="center">Paste after ^K<br>
+          </th>
+          <th valign="middle" align="center">Complete command	<br>
+          </th>
+          <th valign="middle" align="center">Show all matches<br>
+          </th>
+          <th valign="middle">Exit Editor<br>
+          </th>
+          <th valign="middle">Split Line<br>
+          </th>
+          <th valign="middle">Single Step<br>
+          </th>
+          <th valign="middle"><br>
+          </th>
+        </tr>
+        <tr>
+          <td valign="middle" align="center">^R<br>
+          </td>
+          <td valign="middle" align="center">^L<br>
+          </td>
+          <td valign="middle" align="center">^Y<br>
+          </td>
+          <td valign="middle" align="center">TAB<br>
+          </td>
+          <td valign="middle" align="center">^/<br>
+                       
+      <div> ^?<br>
+         </div>
+    ^}<br>
+          </td>
+          <td valign="middle" align="center">^C<br>
+          </td>
+          <td valign="middle" align="center">^O<br>
+          </td>
+          <td valign="middle" align="center">^T<br>
+          </td>
+          <td valign="middle"><br>
+          </td>
+        </tr>
+           
+  </tbody>    
+</table>
+  
+<p></p>
+  <a name="Configuration Variable Commands">
+<h3><font color="#006600">Configuration Variable Commands</font></h3>
+</a>                 <i>Configuration variables are stored in non-volatile
+memory so their values persist across power-cycles.</i>         
+<table border="1">
+ <tbody>
+            <tr>
+              <td>printenv<i> [variable]</i> </td>
+              <td>If <i>variable</i> is given, show its current value. 	
+    Otherwise show all configuration variables and their current and default 
+	     values.  Numbers are usually shown in decimal.</td>
+            </tr>
+         <tr>
+              <td nowrap="true">setenv <i>variable value </i></td>
+              <td>Set <i>variable</i> to the given decimal or text value.
+Changes  	     are permanent, but sometimes they only take effect after a
+reset. 	     Some systems let you create new user-defined configuration variables. 
+	     </td>
+            </tr>
+         <tr>
+              <td>set-default <i>variable </i></td>
+              <td>Set <i>variable</i> to its default value.</td>
+            </tr>
+         <tr>
+              <td>set-defaults</td>
+              <td>Set all configuration variables to their default values.</td>
+            </tr>
+        <tr>
+          <td valign="top">unsetenv <i>variable</i><br>
+          </td>
+          <td valign="top">Delete a user-defined configuration variable.<br>
+          </td>
+        </tr>
+                                 
+  </tbody>        
+</table>
+               
+<p> </p>
+               <a name="Common Configuration Variables">
+<h3><font color="#006600">Common Configuration Variables</font></h3>
+</a>                 <i>Additional configuration variables may be available
+on some systems. Use <b>printenv</b> to see them all.</i>         
+<table border="1">
+ <tbody>
+            <tr>
+          <th valign="top">Name<br>
+          </th>
+          <th valign="top">Default Value<br>
+          </th>
+          <th valign="top">Meaning<br>
+          </th>
+        </tr>
+        <tr>
+              <td>auto-boot?</td>
+              <td>true</td>
+              <td>If true, boot automatically after power-on or reset.</td>
+            </tr>
+         <tr>
+              <td>boot-device</td>
+              <td>disk </td>
+              <td>Device from which to boot.</td>
+            </tr>
+         <tr>
+              <td>boot-file</td>
+              <td nowrap="true"><i>empty string</i></td>
+              <td>File to boot (an empty string lets secondary booter choose
+  default).</td>
+            </tr>
+         <tr>
+              <td>diag-device</td>
+              <td>net</td>
+              <td>Diagnostic boot source device. </td>
+            </tr>
+         <tr>
+              <td>diag-file</td>
+              <td><i>empty string</i></td>
+              <td>File from which to boot in diagnostic mode.</td>
+            </tr>
+         <tr>
+              <td>diag-switch?</td>
+              <td>false</td>
+              <td>If true, run in diagnostic mode.</td>
+            </tr>
+         <tr>
+              <td>fcode-debug?</td>
+              <td>false</td>
+              <td>If true, include name fields for plug-in device FCodes.</td>
+            </tr>
+         <tr>
+              <td>input-device</td>
+              <td>keyboard</td>
+              <td>Power-on input device (usually keyboard or com1 ).</td>
+            </tr>
+         <tr>
+              <td>local-mac-address?</td>
+              <td>false</td>
+              <td>If true, network drivers use their own MAC address, not 
+system’s.</td>
+            </tr>
+         <tr>
+              <td>mfg-switch?</td>
+              <td>false</td>
+              <td>If true, repeat system self-tests until interrupted.</td>
+            </tr>
+         <tr>
+              <td>nvramrc</td>
+              <td><i>empty string</i></td>
+              <td>Contents of NVRAMRC script.</td>
+            </tr>
+         <tr>
+              <td>oem-banner</td>
+              <td><i>empty string</i></td>
+              <td>Custom OEM banner (enabled by oem-banner? true).</td>
+            </tr>
+         <tr>
+              <td>oem-banner?</td>
+              <td>false</td>
+              <td>If true, use custom OEM banner.</td>
+            </tr>
+         <tr>
+              <td>output-device</td>
+              <td>screen</td>
+              <td>Power-on output device (usually screen, ttya, or ttyb).</td>
+            </tr>
+         <tr>
+              <td>pci-probe-list</td>
+              <td><i>system-specific, e.g.</i> 0,1,2,3</td>
+              <td>Which PCI slots are probed and in what order.</td>
+            </tr>
+         <tr>
+              <td>screen-#columns</td>
+              <td>80</td>
+              <td>Number of on-screen columns (characters/line).</td>
+            </tr>
+         <tr>
+              <td>screen-#rows</td>
+              <td><i>system-specific, e.g.</i> 30</td>
+              <td>Number of on-screen rows (lines). </td>
+            </tr>
+         <tr>
+              <td>scsi-initiator-id</td>
+              <td>7</td>
+              <td>SCSI bus address of host adapter, range 0-7.</td>
+            </tr>
+         <tr>
+              <td>security-#badlogins</td>
+              <td><i>no default</i></td>
+              <td>Number of incorrect security password attempts.</td>
+            </tr>
+         <tr>
+              <td>security-mode</td>
+              <td>none</td>
+              <td>Firmware security level (none, command, or full).</td>
+            </tr>
+         <tr>
+              <td>security-password</td>
+              <td><i>no default</i></td>
+              <td>Firmware security password (never displayed). Do not set
+ this   directly.</td>
+            </tr>
+         <tr>
+              <td>selftest-#megs</td>
+              <td>1</td>
+              <td>Megabytes of RAM to test. Ignored if diag-switch? is true.</td>
+            </tr>
+         <tr>
+              <td>use-nvramrc?</td>
+              <td>false</td>
+              <td>If true, execute commands in NVRAMRC during system start-up.</td>
+            </tr>
+         <tr>
+              <td>watchdog-reboot? </td>
+              <td>false</td>
+              <td>If true, reboot after watchdog reset.</td>
+            </tr>
+                                 
+  </tbody>        
+</table>
+               
+<p> </p>
+               <a name="NVRAMRC Script Editor">
+<h3><font color="#006600">NVRAMRC Script Editor</font></h3>
+</a>                 
+<table border="1">
+         <tbody>
+         <tr>
+              <td>nvedit </td>
+              <td>Enter the NVRAMRC editor. If data remains in the temporary
+  buffer   from a previous nvedit session, resume editing those previous
+contents.   If  not, read the contents of NVRAMRC into the temporary buffer
+and begin   editing  it.</td>
+            </tr>
+         <tr>
+              <td nowrap="true">nvalias<i> alias device-path</i> </td>
+              <td>Store the command "devalias alias device-path" in NVRAMRC.
+  (The   alias persists until the nvunalias or set-defaults commands are
+executed.)           </td>
+            </tr>
+         <tr>
+              <td>nvunalias <i>alias</i> </td>
+              <td>Delete the corresponding alias from NVRAMRC.</td>
+            </tr>
+         <tr>
+              <td>nvrun </td>
+              <td>Execute the contents of the temporary buffer.</td>
+            </tr>
+                                 
+  </tbody>        
+</table>
+ <br>
+              Example: 
+<blockquote>            
+  <pre>ok <b>nvedit</b> <br>  <i>(use editor commands)</i> <br><b>^C</b>    <i>(control-C to finish)</i><br>Store script to NVRAM [y/n]? <b>y</b><br>Enable script [y/n]? <b>y</b><br>ok <br><br></pre>
+      </blockquote>
+             <a name="Device Tree Browsing">
+  <h3><font color="#006600">Device Tree Browsing</font></h3>
+  </a>                 
+  <table border="1">
+         <tbody>
+            <tr>
+              <td>.properties </td>
+              <td>Display the names and values of the current node’s properties.</td>
+            </tr>
+         <tr>
+              <td>dev <i>device-path</i> </td>
+              <td>Select the indicated device node, making it the current 
+node.</td>
+            </tr>
+         <tr>
+              <td>dev <i>node-name</i> </td>
+              <td>Search for a node with the given name in the subtree below
+  the   current node, and select the first such node found.</td>
+            </tr>
+         <tr>
+              <td>dev .. </td>
+              <td>Select the device node that is the parent of the current
+ node.</td>
+            </tr>
+         <tr>
+              <td>dev / </td>
+              <td>Select the root machine node.</td>
+            </tr>
+         <tr>
+              <td>device-end <br>
+        dend</td>
+              <td>De-select the current device node, leaving no node selected.</td>
+            </tr>
+         <tr>
+              <td>ls </td>
+              <td>Display the names of the current node’s children.</td>
+            </tr>
+         <tr>
+              <td>pwd</td>
+              <td>Display the device path name that names the current node.</td>
+            </tr>
+         <tr>
+              <td nowrap="true">show-devs <i>[device-path]</i> </td>
+              <td>Display all the devices known to the system directly beneath
+   a  given level in the device hierarchy. (Without a device-path, it shows
+  the  entire device tree.) </td>
+            </tr>
+         <tr>
+              <td>words</td>
+              <td>Display the names of the current node’s methods.</td>
+            </tr>
+         <tr>
+              <td nowrap="true">sift-devs <i>ccc</i> </td>
+              <td>( -- )</td>
+              <td>Search all device nodes and show all method names 	   
+ that contain the sequence of characters <i>ccc</i>.</td>
+            </tr>
+   
+    </tbody>        
+  </table>
+               
+  <p> </p>
+               <a name="Help">
+  <h3><font color="#006600">Help</font></h3>
+  </a>                 
+  <table border="1">
+         <tbody>
+            <tr>
+              <td>help</td>
+              <td>List main help categories.</td>
+            </tr>
+         <tr>
+              <td>help <i>category</i> </td>
+              <td>Show help for all commands in the category. Use only the
+first word of the category description.</td>
+            </tr>
+         <tr>
+              <td>help <i>command</i> </td>
+              <td>Show help for individual command (where available).</td>
+            </tr>
+   
+    </tbody> 
+  </table>
+  
+  <p></p>
+  <a name="Diagnostics">
+  <h3><font color="#006600">Diagnostics</font></h3>
+  </a>                  
+  <table border="1">
+         <tbody>
+            <tr>
+              <td>probe-scsi</td>
+              <td>Identify devices attached to the built-in SCSI bus.</td>
+            </tr>
+         <tr>
+              <td nowrap="true">probe-scsi-all <i>[device-path]</i></td>
+              <td>Perform probe-scsi on all SCSI buses installed in the system
+   below  the specified node. (If device-path is absent, the root node is
+used.)</td>
+            </tr>
+         <tr>
+              <td>test <i>device-specifier</i></td>
+              <td>Execute the specified device’s self-test method. For example:<br>
+         test floppy - test the floppy drive, if installed <br>
+         test /memory - test number of megabytes specified in selftest-#megs; 
+  or  test all of memory if diag-switch? is true<br>
+         test net - test the network connection</td>
+            </tr>
+         <tr>
+              <td>test-all <i>[device-specifier]</i></td>
+              <td>Test all devices (that have a built-in self-test method)
+ below    the specified node. (If device-specifier is absent, the root node
+ is used.)</td>
+            </tr>
+         <tr>
+              <td>watch-clock</td>
+              <td>Test the clock function.</td>
+            </tr>
+         <tr>
+              <td>watch-net</td>
+              <td>Monitor the network connection passively. Displays a period 
+  for  each packet received.</td>
+            </tr>
+                                 
+    </tbody>        
+  </table>
+               
+  <p> </p>
+               <a name="System Information">
+  <h3><font color="#006600">System Information</font></h3>
+  </a>                  
+  <table border="1">
+         <tbody>
+            <tr>
+              <td>banner</td>
+              <td>Display the power-on banner.</td>
+            </tr>
+         <tr>
+              <td>.version</td>
+              <td>Display the version and date of the boot PROM.</td>
+            </tr>
+                                 
+    </tbody>        
+  </table>
+               
+  <p> </p>
+               <a name="Emergency Keys">
+  <h3><font color="#006600">Emergency Keys</font></h3>
+  </a>                  
+  <table border="1">
+         <tbody>
+            <tr>
+              <td><i>serial line break</i></td>
+              <td>Interrupt what the firmware is doing. The method for sending
+   a  line break differs between different terminal emulator programs. For
+ minicom   it is ALT-F or CTRL-A F. Most Windows terminal emulators have
+a  menu selection   for sending a line break.</td>
+            </tr>
+         <tr>
+              <td>i</td>
+              <td>(Lower case ‘i’, typed on the serial console very early 
+in  the  startup  sequence). Interrupt the early startup sequence, for debugging
+  purposes.</td>
+            </tr>
+         <tr align="center">
+              <td colspan="2"><font color="#3366ff">Implementation-dependent
+  PC keyboard chords.<br>
+     These chords only work when the PC keyboard is directly connected to 
+the   Open Firmware system.</font></td>
+            </tr>
+         <tr>
+              <td>Ctrl-Break</td>
+              <td>(For a directly-connected PC-style keyboard) Interrupt
+what   the  firmware is doing.</td>
+            </tr>
+         <tr>
+              <td>Fn</td>
+              <td>(Function keys on a PC-style keyboard). Various function
+ keys   perform emergency functions such as resetting the NVRAM to its default 
+ values   and interrupting the early startup sequence. The specific assignments 
+ vary   from implementation to implementation.</td>
+            </tr>
+                                 
+    </tbody>        
+  </table>
+               
+  <p> </p>
+               <a name="File Loading">
+  <h3><font color="#006600">File Loading</font></h3>
+  </a>                 
+  <table border="1">
+         <tbody>
+         <tr>
+              <td>byte-load</td>
+              <td nowrap="true">( adr span -- )</td>
+              <td>Interpret a loaded FCode binary file. span is usually 1.</td>
+            </tr>
+         <tr>
+              <td>dl</td>
+              <td>( -- )</td>
+              <td>Load a Forth file over a serial line with TIP and interpret.
+   Type:<br>
+         ~C cat filename <br>
+         ^-D </td>
+              <td><br>
+              </td>
+            </tr>
+         <tr>
+              <td>dlbin</td>
+              <td>( -- )</td>
+              <td>Load a binary file over a serial line with TIP. Type: 
+~C  cat   filename       </td>
+            </tr>
+         <tr>
+              <td>dload <i>filename</i> </td>
+              <td>( adr -- )</td>
+              <td>Load specified file over Ethernet at given address.</td>
+            </tr>
+         <tr>
+              <td>go</td>
+              <td>( -- )</td>
+              <td>Begin executing a previously-loaded binary program, or
+resume    executing an interrupted program. (Called automatically by <b>boot</b>
+.)</td>
+            </tr>
+         <tr>
+              <td>init-program</td>
+              <td>( -- )</td>
+              <td>Prepare a loaded program for execution.  (Called automatically
+by <b>load<b> and <b>boot</b>.)</b></b></td>
+            </tr>
+         <tr>
+              <td>load-base </td>
+              <td>( -- adr )</td>
+              <td>Address where <b>load</b> first places the data it reads
+from a device.  The program image may be moved elsewhere as <b>init-program</b>
+ prepares it for execution.</td>
+            </tr>
+                                 
+    </tbody>        
+  </table>
+               
+  <p> </p>
+               <a name="Generic Registers">
+  <h3><font color="#006600">Generic Registers</font></h3>
+  </a>                   <i> These generic register commands, and the processor-specific
+ ones in  later sections, access the register values in the saved-program-state 
+ area,  not the instantaneous current values of the hardware registers. Changes
+   to the saved values take effect when the interrupted program is restarted.</i><br>
+         
+  <table border="1">
+    <tbody>
+                 <tr>
+              <td>.fregisters </td>
+              <td>( -- )</td>
+              <td>Display the saved values of the floating point registers.</td>
+            </tr>
+         <tr>
+              <td>.registers </td>
+              <td>( -- )</td>
+              <td>Display the saved values of the general registers and selected 
+	     special registers.</td>
+            </tr>
+         <tr>
+              <td>ctrace</td>
+              <td>( -- )</td>
+              <td>Display the return stack showing C subroutines.</td>
+            </tr>
+         <tr>
+              <td>set-pc</td>
+              <td>( value -- )</td>
+              <td>Set %pc to the given value, and set %npc to (value+4).</td>
+            </tr>
+         <tr>
+              <td>to <i>regname</i></td>
+              <td>( value -- )</td>
+              <td>Change the saved value of a register. Use in  the  form:
+ <br>
+          <i>     value</i> to <i>regname</i>.</td>
+            </tr>
+                                 
+    </tbody>        
+  </table>
+               
+  <p> </p>
+               <a name="x86 Registers">
+  <h3><font color="#006600">x86 Registers</font></h3>
+  </a>                 <i>Register values are saved when a program is interrupted
+by a breakpoint. Changes to those saved values take effect when the program
+is resumed.</i>         
+  <table border="1">
+ <tbody>
+         <tr>
+              <td>to <i>regname</i></td>
+              <td nowrap="true">( value -- )</td>
+              <td>Change the saved value of a register. Use in  the  form:
+ <br>
+          <i>     value</i> to <i>regname</i>.</td>
+            </tr>
+         <tr>
+              <td>%eip %pc</td>
+              <td nowrap="true">( -- value )</td>
+              <td>Return the saved value of the program counter register.</td>
+            </tr>
+         <tr>
+              <td>%eax %ecx %edx %ebx %esp %ebp %esi %edi</td>
+              <td nowrap="true">( -- value )</td>
+              <td>Return the saved value of a general register.</td>
+            </tr>
+         <tr>
+              <td>%es %cs %ss %ds %fs %gs</td>
+              <td nowrap="true">( -- value )</td>
+              <td>Return the saved value of a segment register.</td>
+            </tr>
+         <tr>
+              <td>%cr3 %eflags %tlink %esp0 %esp1 %esp2 %ss0 %ss1 %ss2 %ldt %tio</td>
+              <td nowrap="true">( -- value )</td>
+              <td>Return the saved value of a special register.</td>
+            </tr>
+         <tr>
+              <td>idtr@ gdtr@ tr@ ldtr@ cr0@ cr2@ cr3@ cr4@ dr0@ dr1@
+	      dr2@ dr3@ dr6@ dr7@ tr6@ tr7@ ds@ cs@ ss@ es@ fs@ gs@</td>
+              <td nowrap="true">( -- value )</td>
+              <td>Return the current (not saved) value of a special register.</td>
+            </tr>
+              <tr><td>idtr! gdtr! tr! ldtr! cr0! cr2! cr3! cr4! dr0! dr1!
+	      dr2! dr3! dr6! dr7! tr6! tr7!</td>
+              <td nowrap="true">( value -- )</td>
+              <td>Set the current (not saved) value of a special register.</td>
+            </tr>
+
+    </tbody>        
+  </table>
+               
+  <p> </p>
+               <a name="MIPS Registers">
+  <h3><font color="#006600">MIPS Registers</font></h3>
+  </a>                 <i>Register values are saved when a program is interrupted
+by a breakpoint. Changes to those saved values take effect when the program
+is resumed.</i>         
+  <table border="1">
+ <tbody>
+         <tr>
+              <td>to <i>regname</i></td>
+              <td nowrap="true">( value -- )</td>
+              <td>Change the saved value of a register. Use in  the  form:
+ <br>
+          <i>     value</i> to <i>regname</i>.</td>
+            </tr>
+            <tr>
+              <td>$0-$31 $at $a0-$a3 $v0-$v1 $t0-$t9 $s0-$s8 $k0-$k1 
+$gp $sp $ra</td>
+              <td nowrap="true">( -- value )</td>
+              <td>Return the saved value of the given integer register.</td>
+            </tr>
+            <tr>
+              <td>$f0-$f31 $fcsr $feir</td>
+              <td nowrap="true">( -- value )</td>
+              <td>Return the saved value of the given floating point register.</td>
+            </tr>
+         <tr>
+              <td>$sr $cause $badvaddr $badpaddr $sigset $hi $lo etc.</td>
+              <td nowrap="true">( -- value )</td>
+              <td>Return the saved value of the given special register.</td>
+            </tr>
+         <tr>
+              <td>index@ random@ entrylo0@ entrylo1@ context@ pagemask@ 
+	     wired@ badvaddr@ count@ entryhi@ compare@ sr@ cause@ epc@ 	
+    prid@ config@ lladdr@ watchlo@ watchhi@ xcontext@ perr@ 	    
+cacherr@ taglo@ errorepc@ </td>
+              <td nowrap="true">( -- value )</td>
+              <td>Return the current (not the saved) value of a CP0 register.</td>
+            </tr>
+         <tr>
+              <td>index! entrylo0! entrylo1! context! pagemask! 	  
+  wired! count! entryhi! compare! sr! cause! epc! 	     config! lladdr!
+watchlo! watchhi! xcontext! perr! 	     taglo! errorepc! </td>
+              <td>( value -- )</td>
+              <td>Set the current (not the saved) value of a CP0 register.</td>
+            </tr>
+                                 
+    </tbody>        
+  </table>
+               
+  <p> </p>
+               <a name="SPARC Registers">
+  <h3><font color="#006600">SPARC Registers</font></h3>
+  </a>                 <i>Register values are saved when a program is interrupted
+by a breakpoint. Changes to those saved values take effect when the program
+is resumed.</i>         
+  <table border="1">
+ <tbody>
+            <tr>
+              <td>%f0 through %f31</td>
+              <td>( -- value )</td>
+              <td>Return the saved value of the given floating point register.</td>
+            </tr>
+         <tr>
+              <td>%fsr</td>
+              <td>( -- value )</td>
+              <td>Return the saved value of the given floating point register.</td>
+            </tr>
+         <tr>
+              <td>%g0 through %g7</td>
+              <td>( -- value )</td>
+              <td>Return the saved value of the given register.</td>
+            </tr>
+         <tr>
+              <td>%i0 through %i7</td>
+              <td>( -- value )</td>
+              <td>Return the saved value of the given register.</td>
+            </tr>
+         <tr>
+              <td>%L0 through %L7</td>
+              <td>( -- value )</td>
+              <td>Return the saved value of the given register.</td>
+            </tr>
+         <tr>
+              <td>%o0 through %o7</td>
+              <td>( -- value )</td>
+              <td>Return the saved value of the given register.</td>
+            </tr>
+         <tr>
+              <td>%pc %npc %psr</td>
+              <td>( -- value )</td>
+              <td>Return the saved value of the given register.</td>
+            </tr>
+         <tr>
+              <td>%y %wim %tbr</td>
+              <td>( -- value )</td>
+              <td>Return the saved value of the given register.</td>
+            </tr>
+         <tr>
+              <td>.locals</td>
+              <td>( -- )</td>
+              <td>Display the saved values of the i, L and o registers.</td>
+            </tr>
+         <tr>
+              <td>.psr</td>
+              <td>( -- )</td>
+              <td>Formatted display of the %psr data.</td>
+            </tr>
+         <tr>
+              <td>.window</td>
+              <td>( window# -- )</td>
+              <td>Display the desired window.</td>
+            </tr>
+         <tr>
+              <td>w</td>
+              <td>( window# -- )</td>
+              <td>Set the current window for displaying %ix %Lx or %ox.</td>
+            </tr>
+                                 
+    </tbody>        
+  </table>
+               
+  <p> </p>
+               <a name="Breakpoints">
+  <h3><font color="#006600">Breakpoints</font></h3>
+  </a>                 
+  <table border="1">
+         <tbody>
+            <tr>
+              <td>+bp</td>
+              <td nowrap="true">( adr -- )</td>
+              <td>Add a breakpoint at the given address.</td>
+            </tr>
+         <tr>
+              <td>-bp</td>
+              <td>( adr -- )</td>
+              <td>Remove the breakpoint at the given address.</td>
+            </tr>
+         <tr>
+              <td>--bp</td>
+              <td>( -- ) </td>
+              <td>Remove the most-recently-set breakpoint.</td>
+            </tr>
+         <tr>
+              <td>.bp</td>
+              <td>( -- )</td>
+              <td>Display all currently set breakpoints.</td>
+            </tr>
+         <tr>
+              <td>.breakpoint</td>
+              <td>( -- )</td>
+              <td>Perform a specified action when a breakpoint occurs<br>
+         (Example, [’] .registers is .breakpoint). </td>
+            </tr>
+         <tr>
+              <td>.instruction </td>
+              <td>( -- )</td>
+              <td>Display the address, opcode for the last-encountered breakpoint.
+          </td>
+            </tr>
+         <tr>
+              <td>.step</td>
+              <td>( -- )</td>
+              <td>Perform a specified action when a single step occurs (see 
+ .breakpoint).</td>
+            </tr>
+         <tr>
+              <td>bpoff</td>
+              <td>( -- )</td>
+              <td>Remove all breakpoints.</td>
+            </tr>
+         <tr>
+              <td>finish-loop</td>
+              <td>( -- )</td>
+              <td>Execute until the end of this loop.</td>
+            </tr>
+         <tr>
+              <td>go</td>
+              <td>( -- )</td>
+              <td>Continue from a breakpoint. This can be used to go to an
+ arbitrary    address by setting up the processor’s program counter before
+ issuing go.</td>
+            </tr>
+         <tr>
+              <td>gos</td>
+              <td>( n -- )</td>
+              <td>Execute go n times.</td>
+            </tr>
+         <tr>
+              <td>hop</td>
+              <td>( -- )</td>
+              <td>(Like the step command.) Treats a subroutine call as a
+single    instruction.</td>
+            </tr>
+         <tr>
+              <td>hops</td>
+              <td>( n -- )</td>
+              <td>Execute hop n times.</td>
+            </tr>
+         <tr>
+              <td>return</td>
+              <td>( -- )</td>
+              <td>Execute until the end of this subroutine.</td>
+            </tr>
+         <tr>
+              <td>returnL</td>
+              <td>( -- ) </td>
+              <td>Execute until the end of this leaf subroutine.</td>
+            </tr>
+         <tr>
+              <td>skip</td>
+              <td>( -- )</td>
+              <td>Skip (do not execute) the current instruction.</td>
+            </tr>
+         <tr>
+              <td>step</td>
+              <td>( -- )</td>
+              <td>Single-step one instruction.</td>
+            </tr>
+         <tr>
+              <td>steps</td>
+              <td>( n -- )</td>
+              <td>Execute step n times.</td>
+            </tr>
+         <tr>
+              <td>till</td>
+              <td>( adr -- )</td>
+              <td>Execute until the given address is encountered. Equivalent
+  to  +bp go.</td>
+            </tr>
+                                 
+    </tbody>        
+  </table>
+                 <a name="Disassembler">
+  <h3><font color="#006600">Disassembler</font></h3>
+  </a>                 
+  <table border="1">
+         <tbody>
+            <tr>
+              <td>+dis</td>
+              <td>( -- )</td>
+              <td>Continue disassembling where the last disassembly left
+off.</td>
+            </tr>
+         <tr>
+              <td>dis</td>
+              <td>( adr -- )</td>
+              <td>Begin disassembling at the given address.</td>
+            </tr>
+                                 
+    </tbody>        
+  </table>
+                 <a name="Miscellaneous Operations">
+  <h3><font color="#006600">Miscellaneous Operations</font></h3>
+  </a>                 
+  <table border="1">
+         <tbody>
+         <tr>
+              <td>get-msecs</td>
+              <td nowrap="true">( -- ms )</td>
+              <td>Return the approximate current time in milliseconds.</td>
+            </tr>
+         <tr>
+              <td>ms</td>
+              <td>( n -- )</td>
+              <td>Delay for n milliseconds. Resolution is 1 millisecond.</td>
+            </tr>
+         <tr>
+              <td>bye<br>
+reset-all</td>
+              <td>( -- )</td>
+              <td>Reset the entire system (similar to a power cycle).</td>
+            </tr>
+         <tr>
+              <td>map?</td>
+              <td>( virt -- )</td>
+              <td>Display memory map information for the virtual address
+(for 	     systems that use virtual addressing&gt;.</td>
+            </tr>
+         <tr>
+              <td>sync </td>
+              <td>( -- ) </td>
+              <td>Call the operating system to write any pending information
+  to  the hard disk.</td>
+            </tr>
+                                 
+    </tbody>        
+  </table>
+               
+  <p> </p>
+               <a name="Numeric Usage">  
+  <h3><font color="#006600">Numeric Usage</font></h3>
+  </a>                         
+  <ul>
+         <li> Numeric I/O defaults to hexadecimal.  </li>
+          <li> Switch to base 10&nbsp; with <b>decimal</b>, switch to base
+ 16  with <b>hex</b>.    </li>
+          <li> Use <b>10 .d</b> to see which base is currently active. </li>
+                       
+  </ul>
+         A numeric stack is used for all numeric parameters. Typing any integer 
+   puts that value on top of the stack. (Previous values are “pushed” down.) 
+   The right-hand item in a set always indicates the topmost stack item. 
+               
+  <ul>
+         <li> The command <b>.</b> (period) removes and displays the top
+stack   value.  </li>
+          <li> The command <b>.s</b> (period s) non-destructively shows the 
+ entire stack contents.    </li>
+                       
+  </ul>
+                     
+  <table border="1">
+         <tbody>
+            <tr>
+            <th valign="top">Data Type<br>
+            </th>
+            <th valign="top">Meaning<br>
+            </th>
+          </tr>
+          <tr>
+              <td>| </td>
+              <td>Alternate stack results.<br>
+         Example: ( input -- adr len false  |  result true ).</td>
+            </tr>
+         <tr>
+              <td>?</td>
+              <td>Unknown stack items (changed from ???).</td>
+            </tr>
+         <tr>
+              <td>???</td>
+              <td>Unknown stack items.</td>
+            </tr>
+         <tr>
+              <td>xt</td>
+              <td>Execution token.</td>
+            </tr>
+         <tr>
+              <td>adr</td>
+              <td>Memory address (generally a virtual address).</td>
+            </tr>
+         <tr>
+              <td>adr16</td>
+              <td>Memory address, must be 16-bit aligned.</td>
+            </tr>
+         <tr>
+              <td>adr32</td>
+              <td>Memory address, must be 32-bit aligned.</td>
+            </tr>
+         <tr>
+              <td>adr64</td>
+              <td>Memory address, must be 64-bit aligned.</td>
+            </tr>
+         <tr>
+              <td>byte bxxx </td>
+              <td>8-bit value (smallest byte in a 32-bit word).</td>
+            </tr>
+         <tr>
+              <td>char</td>
+              <td>7-bit value (smallest byte), high bit unspecified.</td>
+            </tr>
+         <tr>
+              <td>cnt/len/size</td>
+              <td>Count or length, typically in bytes. </td>
+            </tr>
+         <tr>
+              <td>flag xxx?</td>
+              <td>0 = false; any other value = true (usually -1).</td>
+            </tr>
+         <tr>
+              <td>long Lxxx </td>
+              <td>32-bit value.</td>
+            </tr>
+         <tr>
+              <td>n n1 n2 n3</td>
+              <td>Normal signed values (32-bit).</td>
+            </tr>
+         <tr>
+              <td>+n u</td>
+              <td>Unsigned, positive values (32-bit).</td>
+            </tr>
+         <tr>
+              <td>n[64] or<br>
+        (n.low n.hi)<br>
+    or x </td>
+              <td>Extended-precision (64-bit) numbers (2 stack items).</td>
+            </tr>
+         <tr>
+              <td>phys</td>
+              <td>Physical address (actual hardware address).</td>
+            </tr>
+         <tr>
+              <td>pstr</td>
+              <td>Packed string (adr len means unpacked string).</td>
+            </tr>
+         <tr>
+              <td>virt </td>
+              <td>Virtual address (address used by software).</td>
+            </tr>
+         <tr>
+              <td>word wxxx</td>
+              <td>16-bit value (smallest two bytes in a 32-bit word).</td>
+            </tr>
+                                         
+    </tbody>                
+  </table>
+                       
+  <p> </p>
+                     <a name="Changing the Number Base">  
+  <h3><font color="#006600">Changing the Number Base</font></h3>
+  </a>                         
+  <table border="1">
+         <tbody>
+            <tr>
+              <td>decimal</td>
+              <td>( -- )</td>
+              <td>Set the number base to 10.</td>
+            </tr>
+         <tr>
+              <td>d# <i>number</i></td>
+              <td>( -- n )</td>
+              <td>Interpret the next number in decimal; base is unchanged.</td>
+            </tr>
+         <tr>
+              <td>hex</td>
+              <td>( -- )</td>
+              <td>Set the number base to 16.</td>
+            </tr>
+         <tr>
+              <td>h# <i>number</i></td>
+              <td>( -- n )</td>
+              <td>Interpret the next number in hex; base is unchanged.</td>
+            </tr>
+         <tr>
+              <td>.d</td>
+              <td>( n -- )</td>
+              <td>Display n in decimal without changing base.</td>
+            </tr>
+         <tr>
+              <td>.h</td>
+              <td>( n -- )</td>
+              <td>Display n in hex without changing base.</td>
+            </tr>
+                                         
+    </tbody>                
+  </table>
+                       
+  <p> </p>
+                     <a name="Basic Number Display">  
+  <h3><font color="#006600">Basic Number Display</font></h3>
+  </a>                         
+  <table border="1">
+         <tbody>
+            <tr>
+              <td>.</td>
+              <td>( n -- )</td>
+              <td>Display a number in the current base.</td>
+            </tr>
+         <tr>
+              <td>u.</td>
+              <td>( n -- )</td>
+              <td>Display a number in the current base, unsigned.</td>
+            </tr>
+         <tr>
+              <td>ud.</td>
+              <td>( x -- )</td>
+              <td>Display a 64-bit number in the current base, unsigned</td>
+            </tr>
+         <tr>
+            <td valign="top">.x<br>
+            </td>
+            <td valign="top">( n -- )<br>
+            </td>
+            <td valign="top">Display a number in hex.<br>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">.d<br>
+            </td>
+            <td valign="top">( n -- )<br>
+            </td>
+            <td valign="top">Display a number in decimal.<br>
+            </td>
+          </tr>
+          <tr>
+              <td>.s</td>
+              <td>( -- )</td>
+              <td>Display contents of data stack.</td>
+            </tr>
+         <tr>
+              <td>showstack</td>
+              <td>( -- )</td>
+              <td>Execute .s automatically before each ok prompt.</td>
+            </tr>
+                                         
+    </tbody>                
+  </table>
+                       
+  <p> </p>
+                     <a name="Forth Debugging">  
+  <h3><font color="#006600">Forth Debugging</font></h3>
+  </a>   
+  <table border="1">
+         <tbody>
+         <tr>
+              <td>ftrace</td>
+              <td>( -- )</td>
+              <td>Show the Forth calling sequence saved at the last exception.</td>
+            </tr>
+         <tr>
+              <td>debug <i>name</i></td>
+              <td>( -- )</td>
+              <td>Run the debugger the next time <i>name</i> is called.</td>
+            </tr>
+         <tr>
+              <td>(debug</td>
+              <td>( xt -- )</td>
+              <td>Run the debugger the next time the word indicated by xt
+is called.</td>
+            </tr>
+         <tr>
+              <td>debugging <i>name</i></td>
+              <td>( -- )</td>
+              <td>Execute <i>name</i> now under the debugger.</td>
+            </tr>
+         <tr>
+              <td nowrap="true">see <i>name</i> </td>
+              <td>( -- )</td>
+              <td>Decompile the named command.</td>
+            </tr>
+         <tr>
+              <td>(see)</td>
+              <td>( xt -- )</td>
+              <td>Decompile the word indicated by <i>xt</i></td>
+            </tr>
+         <tr>
+              <td nowrap="true">sifting <i>ccc</i> </td>
+              <td>( -- )</td>
+              <td>Display all word names that contain the sequence  	   
+ of characters <i>ccc</i>.</td>
+            </tr>
+         <tr>
+              <td>words </td>
+              <td>( -- ) </td>
+              <td>Display all visible words in the dictionary.</td>
+            </tr>
+         <tr>
+              <td>.calls </td>
+              <td>( xt -- )</td>
+              <td>Display a list of all words that call the word whose execution
+    token is xt. </td>
+            </tr>
+      
+    </tbody>                
+  </table>
+                         
+  <p> </p>
+                     <a name="Forth Debugger Keys">  
+  <h3><font color="#006600">Forth Debugger Keys</font></h3>
+  </a>   
+  <i>These keystrokes control the Forth debugger when it is active (see
+  <b>debug</b> above). As you step through a Forth definition, the debugger
+  displays the word that is about to execute and the current stack contents.
+  </i><table border="1">
+  
+         <tbody>
+	 <tr><th>Key</th><th>Action</th></tr>
+   <tr><td>&lt;space&gt;</td> <td>Execute displayed word</td></tr>
+   <tr><td>D</td> <td>Down: Step down into displayed word</td></tr>
+   <tr><td>U</td> <td>Up: Finish current definition and step in its caller</td></tr>
+   <tr><td>C</td> <td>Continue: trace current definition without stopping</td></tr>
+   <tr><td>F</td> <td>Forth: enter a subordinate Forth interpreter</td></tr>
+   <tr><td>G</td> <td>Go: resume normal execution (stop debugging)</td></tr>
+   <tr><td>H</td> <td>Help: display this message</td></tr>
+   <tr><td>?</td> <td>Display short list of debug commands</td></tr>
+   <tr><td>R</td> <td>RSTrace: Show contents of Forth return stack</td></tr>
+   <tr><td>S</td> <td>See: Decompile definition being debugged</td></tr>
+   <tr><td>$</td> <td>Display top of stack as adr,len text string</td></tr>
+   <tr><td>Q</td> <td>Quit: abandon execution of the debugged word</td></tr>
+   <tr><td>(</td> <td>Restrict debugger to the part of the definition after
+   and including the word to be executed next.<br>
+       This is useful for debugging words with loops in then.
+</td></tr>
+   <tr><td>&lt;</td> <td>Restrict debugger to the part of the definition
+   after the word to be executed next.</td></tr>
+   <tr><td>)</td> <td>Restrict to debugger to the part of the definition
+   before the word to be executed next.</td></tr>
+   <tr><td>*</td> <td>Undo (, &gt;, or )</td></tr>
+ 
+    </tbody>
+  </table>
+
+  <p> </p>
+
+                     <a name="Stack Manipulation">  
+  <h3><font color="#006600">Stack Manipulation</font></h3>
+  </a>                         
+  <table border="1">
+         <tbody>
+            <tr>
+              <td>-rot</td>
+              <td>( n1 n2 n3 -- n3 n1 n2 )</td>
+              <td>Rotate three stack items so top item goes under.</td>
+            </tr>
+         <tr>
+              <td>&gt;r</td>
+              <td>( n -- )</td>
+              <td>Move a stack item to the return stack. (Use with caution.)</td>
+            </tr>
+         <tr>
+              <td>?dup</td>
+              <td>( n -- n n | 0 )</td>
+              <td>Duplicate the top stack item if non-zero.</td>
+            </tr>
+         <tr>
+              <td>2drop</td>
+              <td>( n1 n2 -- )</td>
+              <td>Remove two items from the stack.</td>
+            </tr>
+         <tr>
+              <td>2dup</td>
+              <td>( n1 n2 -- n1 n2 n1 n2 )</td>
+              <td>Duplicate two stack items.</td>
+            </tr>
+         <tr>
+              <td>2over</td>
+              <td>( n1 n2 n3 n4 -- n1 n2 n3 n4 n1 n2 )</td>
+              <td>Copy second two stack items.</td>
+            </tr>
+         <tr>
+              <td>2swap</td>
+              <td>( n1 n2 n3 n4 -- n3 n4 n1 n2 )</td>
+              <td>Exchange two pairs of stack items.</td>
+            </tr>
+         <tr>
+              <td>clear</td>
+              <td>( ??? -- )</td>
+              <td>Empty the stack.</td>
+            </tr>
+         <tr>
+              <td>depth</td>
+              <td>( ??? -- ??? +n )</td>
+              <td>Return the number of items on the stack.</td>
+            </tr>
+         <tr>
+              <td>drop</td>
+              <td>( n -- )</td>
+              <td>Remove the top item from the stack.</td>
+            </tr>
+         <tr>
+              <td>dup</td>
+              <td>( n -- n n ) </td>
+              <td>Duplicate the top stack item.</td>
+            </tr>
+         <tr>
+              <td>nip</td>
+              <td>( n1 n2 -- n2 )</td>
+              <td>Discard the second stack item.</td>
+            </tr>
+         <tr>
+              <td>over</td>
+              <td>( n1 n2 -- n1 n2 n1 )</td>
+              <td>Copy the second stack item to the top of the stack.</td>
+            </tr>
+         <tr>
+              <td>pick </td>
+              <td>( ??? +n -- ??? n2 )</td>
+              <td>Copy +n-th stack item (1 pick = over).</td>
+            </tr>
+         <tr>
+              <td>r&gt;</td>
+              <td>( -- n )</td>
+              <td>Move a return stack item to the stack. (Use with caution.)
+          </td>
+            </tr>
+         <tr>
+              <td>r@</td>
+              <td>( -- n )</td>
+              <td>Copy the top of the return stack to the stack. </td>
+            </tr>
+         <tr>
+              <td>roll</td>
+              <td>( ??? +n -- ? )</td>
+              <td>Rotate +n stack items (2 roll = rot).</td>
+            </tr>
+         <tr>
+              <td>rot</td>
+              <td>( n1 n2 n3 -- n2 n3 n1 )</td>
+              <td>Rotate three stack items so third item comes to the top.</td>
+            </tr>
+         <tr>
+              <td>swap</td>
+              <td>( n1 n2 -- n2 n1 )</td>
+              <td>Exchange the top two stack items.</td>
+            </tr>
+         <tr>
+              <td>tuck</td>
+              <td>( n1 n2 -- n2 n1 n2 )</td>
+              <td>Copy the top stack item below the second item.</td>
+            </tr>
+                                         
+    </tbody>                
+  </table>
+                       
+  <p> </p>
+                     <a name="Arithmetic Functions">  
+  <h3><font color="#006600">Arithmetic Functions</font></h3>
+  </a>                         
+  <table border="1">
+         <tbody>
+            <tr>
+              <td>*</td>
+              <td>( n1 n2 -- n3 )</td>
+              <td>Multiply n1 * n2.</td>
+            </tr>
+         <tr>
+              <td>+</td>
+              <td>( n1 n2 -- n3 )</td>
+              <td>Add n1 + n2.</td>
+            </tr>
+         <tr>
+              <td>-</td>
+              <td>( n1 n2 -- n3 )</td>
+              <td>Subtract n1 - n2</td>
+            </tr>
+         <tr>
+              <td>/</td>
+              <td>( n1 n2 -- quot )</td>
+              <td>Divide n1 / n2; remainder is discarded.</td>
+            </tr>
+         <tr>
+              <td>&lt;&lt;<br>
+    lshift<br>
+            </td>
+              <td>( n1 +n -- n2 )</td>
+              <td>Left-shift n1 by +n bits.</td>
+            </tr>
+         <tr>
+              <td>&gt;&gt;<br>
+    rshift </td>
+              <td>( n1 +n -- n2 )</td>
+              <td>Right-shift n1 by +n bits.</td>
+            </tr>
+         <tr>
+              <td>&gt;&gt;a</td>
+              <td>( n1 +n -- n2 )</td>
+              <td>Arithmetic right-shift n1 by +n bits.</td>
+            </tr>
+         <tr>
+              <td>abs</td>
+              <td>( n -- u )</td>
+              <td>Absolute value.</td>
+            </tr>
+         <tr>
+              <td>and</td>
+              <td>( n1 n2 -- n3 )</td>
+              <td>Bitwise logical AND.</td>
+            </tr>
+         <tr>
+              <td>bounds</td>
+              <td>( startadr len -- endadr startadr )</td>
+              <td>Convert <i>startadr len</i> to <i>endadr startadr</i> for 
+ do loop.</td>
+            </tr>
+         <tr>
+              <td>bljoin</td>
+              <td>( b.low b2 b3 b.hi -- long )</td>
+              <td>Join four bytes to form a 32-bit longword.</td>
+            </tr>
+         <tr>
+              <td>bwjoin</td>
+              <td>( b.low b.hi -- word )</td>
+              <td>Join two bytes to form a 16-bit word.</td>
+            </tr>
+         <tr>
+              <td>lbsplit</td>
+              <td>( long -- b.low b2 b3 b.hi )</td>
+              <td>Split a 32-bit longword into four bytes.</td>
+            </tr>
+         <tr>
+              <td>lwsplit</td>
+              <td>( long -- w.low w.hi )</td>
+              <td>Split a 32-bit longword into two 16-bit words.</td>
+            </tr>
+         <tr>
+              <td>max</td>
+              <td>( n1 n2 -- n3 )</td>
+              <td>n3 is maximum of n1 and n2.</td>
+            </tr>
+         <tr>
+              <td>min </td>
+              <td>( n1 n2 -- n3 )</td>
+              <td>n3 is minimum of n1 and n2.</td>
+            </tr>
+         <tr>
+              <td>mod</td>
+              <td>( n1 n2 -- rem )</td>
+              <td>Remainder of n1 / n2.</td>
+            </tr>
+         <tr>
+              <td>negate</td>
+              <td>( n1 -- n2 )</td>
+              <td>Change the sign of n1.</td>
+            </tr>
+         <tr>
+              <td>not<br>
+    invert<br>
+            </td>
+              <td>( n1 -- n2 )</td>
+              <td>Bitwise ones complement.</td>
+            </tr>
+         <tr>
+              <td>or</td>
+              <td>( n1 n2 -- n3 )</td>
+              <td>Bitwise logical OR.</td>
+            </tr>
+         <tr>
+              <td>wbsplit</td>
+              <td>( word -- b.low b.hi )</td>
+              <td>Split 16-bit word into two bytes.</td>
+            </tr>
+         <tr>
+              <td>wljoin</td>
+              <td>( w.low w.hi -- long )</td>
+              <td>Join two words to form a longword.</td>
+            </tr>
+         <tr>
+              <td>xor</td>
+              <td>( n1 n2 -- n3 )</td>
+              <td>Bitwise exclusive OR.</td>
+            </tr>
+                                         
+    </tbody>                
+  </table>
+                       
+  <p> </p>
+                     <a name="Memory Access">  
+  <h3><font color="#006600">Memory Access</font></h3>
+  </a>                         
+  <table border="1">
+         <tbody>
+            <tr>
+              <td>!</td>
+              <td>( n adr16 -- )</td>
+              <td>Store a 32-bit number at adr16, must be 16-bit aligned.</td>
+            </tr>
+         <tr>
+              <td>+!</td>
+              <td>( n adr16 -- )</td>
+              <td>Add n to the 32-bit number stored at adr16, must be 16-bit
+  aligned.</td>
+            </tr>
+         <tr>
+              <td>@</td>
+              <td>( adr16 -- n )</td>
+              <td>Fetch a 32-bit number from adr16, must be 16-bit aligned.</td>
+            </tr>
+         <tr>
+              <td>c!</td>
+              <td>( n adr -- )</td>
+              <td>Store low byte of n at adr.</td>
+            </tr>
+         <tr>
+              <td>c@</td>
+              <td>( adr -- byte )</td>
+              <td>Fetch a byte from adr.</td>
+            </tr>
+         <tr>
+              <td>cpeek </td>
+              <td nowrap="true">( adr -- false | byte true )</td>
+              <td>Fetch the byte at adr. Return the data and true if the
+access    was successful. Return false if a read access error occurred. (Also
+lpeek,    wpeek.)</td>
+            </tr>
+         <tr>
+              <td>cpoke</td>
+              <td>( byte adr -- okay? )</td>
+              <td>Store the byte to adr. Return true if the access was successful.
+    Return false if a write access error occurred. (Also lpoke, wpoke.)</td>
+            </tr>
+         <tr>
+              <td>comp</td>
+              <td>( adr1 adr2 len -- n )</td>
+              <td>Compare two byte arrays, n = 0 if arrays are identical, 
+n  =  1  if first byte that is different is greater in array#1, n = -1 otherwise.</td>
+            </tr>
+         <tr>
+              <td>dump</td>
+              <td>( adr len -- )</td>
+              <td>Display len bytes of memory starting at adr.</td>
+            </tr>
+         <tr>
+              <td>fill</td>
+              <td nowrap="true">( adr size byte -- )</td>
+              <td>Set size bytes of memory to byte.</td>
+            </tr>
+         <tr>
+              <td>L!</td>
+              <td>( n adr32 -- )</td>
+              <td>Store a 32-bit number at adr32.</td>
+            </tr>
+         <tr>
+              <td>L@</td>
+              <td>( adr32 -- long )</td>
+              <td>Fetch a 32-bit number from adr32.</td>
+            </tr>
+         <tr>
+              <td>x!</td>
+              <td>( x adr64 -- )</td>
+              <td>Store a 64-bit number at adr64, must be 64-bit aligned.</td>
+            </tr>
+         <tr>
+              <td>x@</td>
+              <td>( adr64 -- x )</td>
+              <td>Fetch a 64-bit number from adr64, must be 64-bit aligned.</td>
+            </tr>
+         <tr>
+              <td>move</td>
+              <td>( adr1 adr2 u -- )</td>
+              <td>Copy u bytes from adr1 to adr2, handle overlap properly.</td>
+            </tr>
+         <tr>
+              <td>w!</td>
+              <td>( n adr16 -- )</td>
+              <td>Store a 16-bit number at adr16, must be 16-bit aligned.</td>
+            </tr>
+         <tr>
+              <td>w@</td>
+              <td>( adr16 -- word )</td>
+              <td>Fetch a 16-bit number from adr16, must be 16-bit aligned.</td>
+            </tr>
+                                         
+    </tbody>                
+  </table>
+                       
+  <p> </p>
+                     <a name="Memory Allocation">  
+  <h3><font color="#006600">Memory Allocation</font></h3>
+  </a>               
+  <table border="1">
+         <tbody>
+            <tr>
+              <td>alloc-mem</td>
+              <td>( size -- virt )</td>
+              <td>Allocate and map size bytes of available memory; return 
+the   virtual  address.Unmap with free-mem.</td>
+            </tr>
+         <tr>
+              <td>free-mem</td>
+              <td>( virt size -- )</td>
+              <td>Free memory allocated by alloc-mem.</td>
+            </tr>
+     
+    </tbody>                
+  </table>
+                       
+  <p> </p>
+                     <a name="Defining Words">  
+  <h3><font color="#006600">Defining Words</font></h3>
+  </a>                         
+  <table border="1">
+         <tbody>
+            <tr>
+              <td>:  <i>name</i></td>
+              <td>( -- )<br>
+            <i>name</i> ( ??? -- ? )</td>
+              <td>Start creating a new colon definition.</td>
+            </tr>
+         <tr>
+              <td>; </td>
+              <td>( -- )</td>
+              <td>Finish creating a new colon definition.</td>
+            </tr>
+         <tr>
+              <td>buffer: <i>name</i></td>
+              <td>( size -- )<br>
+        <i>name</i> ( -- adr64 ) </td>
+              <td>Create a named array in temporary storage.</td>
+            </tr>
+         <tr>
+              <td>constant <i>name</i> </td>
+              <td>( n -- )<br>
+        <i>name</i> ( -- n ) </td>
+              <td>Define a constant (for example, 3 constant bar).</td>
+            </tr>
+         <tr>
+              <td>create <i>name</i> </td>
+              <td>( -- )<br>
+        <i>name</i> ( -- adr16 ) </td>
+              <td>Generic defining word.</td>
+            </tr>
+         <tr>
+              <td>defer <i>name</i> </td>
+              <td>( -- )<br>
+        <i>name</i> ( ??? -- ? ) </td>
+              <td>Define forward reference or execution vector.</td>
+            </tr>
+         <tr>
+              <td>does&gt;</td>
+              <td>( -- adr16 ) </td>
+              <td>Start the run-time clause for defining words.</td>
+            </tr>
+         <tr>
+              <td>value <i>name</i></td>
+              <td>( n -- )<br>
+        <i>name</i> ( -- n ) </td>
+              <td>Create a changeable, named 32-bit quantity.</td>
+            </tr>
+         <tr>
+              <td>variable <i>name</i></td>
+              <td>( -- )<br>
+        <i>name</i> ( -- adr16 ) </td>
+              <td>Define a variable.</td>
+            </tr>
+                                         
+    </tbody>                
+  </table>
+                       
+  <p> </p>
+                     <a name="Dictionary Searching">  
+  <h3><font color="#006600">Dictionary Searching</font></h3>
+  </a>                         
+  <table border="1">
+         <tbody>
+            <tr>
+              <td>’ <i>name</i> </td>
+              <td>( -- xt )</td>
+              <td>Find the named word in the dictionary. (Returns the execution 
+   token. Use outside definitions.)&nbsp; The space after ' is mandatory.</td>
+            </tr>
+         <tr>
+              <td>[’] <i>name</i> </td>
+              <td>( -- xt )</td>
+              <td>Similar to ’ but is used either inside or outside definitions.</td>
+            </tr>
+         <tr>
+              <td>$find</td>
+              <td>( adr len -- <br>
+            adr len false | xt n )</td>
+              <td>Find a word. n = 0 if not found, n = 1 if immediate, n
+=  -1  otherwise.</td>
+            </tr>
+                                         
+    </tbody>                
+  </table>
+                       
+  <p> </p>
+                     <a name="Dictionary Compilation">  
+  <h3><font color="#006600">Dictionary Compilation</font></h3>
+  </a>                         
+  <table border="1">
+         <tbody>
+            <tr>
+              <td>,</td>
+              <td>( n -- )</td>
+              <td>Place a number in the dictionary.</td>
+            </tr>
+         <tr>
+              <td>c,</td>
+              <td>( byte -- )</td>
+              <td>Place a byte in the dictionary.</td>
+            </tr>
+         <tr>
+              <td>w,</td>
+              <td>( word -- )</td>
+              <td>Place a 16-bit number in the dictionary.</td>
+            </tr>
+         <tr>
+              <td>L,</td>
+              <td>( long -- )</td>
+              <td>Place a 32-bit number in the dictionary.</td>
+            </tr>
+         <tr>
+              <td>allot</td>
+              <td>( n -- )</td>
+              <td>Allocate n bytes in the dictionary.</td>
+            </tr>
+         <tr>
+              <td>forget <i>name</i> </td>
+              <td>( -- )</td>
+              <td>Remove word from dictionary and all subsequent words.</td>
+            </tr>
+         <tr>
+              <td>here </td>
+              <td>( -- adr )</td>
+              <td>Address of top of dictionary.</td>
+            </tr>
+         <tr>
+              <td>is <i>name<br>
+            </i>to <i>name</i><br>
+            </td>
+              <td>( n -- )</td>
+              <td>Install a new action in a defer word or value.</td>
+            </tr>
+              <tr>
+              <td>patch <i>new old name</i> </td>
+              <td>( -- )</td>
+              <td>Replace the first occurrence of <i>old</i> with <i>new</i>
+    in the word <i>name</i>.<br>
+            <i>New</i> and <i>old</i> can be either word names or numbers.<br>
+            </td>
+            </tr>
+         <tr>
+              <td>(patch</td>
+              <td>( new-n old-n xt -- )</td>
+              <td>Replace old-n with new-n in word indicated by xt.</td>
+            </tr>
+                                         
+    </tbody>                
+  </table>
+                       
+  <p> </p>
+                     <a name="Controlling Text Input">  
+  <h3><font color="#006600">Controlling Text Input</font></h3>
+  </a>                         
+  <table border="1">
+         <tbody>
+            <tr>
+              <td>( <i>ccc</i> )</td>
+              <td>( -- )</td>
+              <td>Begin a comment, terminated by the next ). The space after
+  ( is mandatory.</td>
+            </tr>
+         <tr>
+              <td>\ <i>rest-of-line</i> </td>
+              <td>( -- )</td>
+              <td>Skip the rest of the line.</td>
+            </tr>
+         <tr>
+              <td>char <i>ccc</i></td>
+              <td>( -- char )</td>
+              <td>Get numerical value of first ASCII character of next word.</td>
+            </tr>
+         <tr>
+            <td valign="top">[char]<i> ccc</i><br>
+            </td>
+            <td valign="top">( -- char )<br>
+            </td>
+            <td valign="top">Version of char for use inside definitions.<br>
+            </td>
+          </tr>
+          <tr>
+              <td>key</td>
+              <td>( -- char )</td>
+              <td>Read a character from the assigned input device’s keyboard.</td>
+            </tr>
+         <tr>
+              <td>key?</td>
+              <td>( -- flag )</td>
+              <td>True if a key has been typed on the input device’s keyboard.</td>
+            </tr>
+                                         
+    </tbody>                
+  </table>
+                       
+  <p> </p>
+                     <a name="Displaying Text">  
+  <h3><font color="#006600">Displaying Text</font></h3>
+  </a>                         
+  <table border="1">
+         <tbody>
+            <tr>
+              <td>cr</td>
+              <td>( -- )</td>
+              <td>Terminate a line on the display and go to the next line.</td>
+            </tr>
+         <tr>
+              <td>emit </td>
+              <td>( char -- )</td>
+              <td>Display the character.</td>
+            </tr>
+         <tr>
+              <td>type</td>
+              <td>( adr +n -- )</td>
+              <td>Display n characters.</td>
+            </tr>
+                                         
+    </tbody>                
+  </table>
+                       
+  <p> </p>
+                     <a name="Manipulating Text Strings">  
+  <h3><font color="#006600">Manipulating Text Strings</font></h3>
+  </a>                         
+  <table border="1">
+         <tbody>
+            <tr>
+              <td>" <i>ccc</i>"</td>
+              <td>( -- adr len )</td>
+              <td>Collect an input stream string, either interpreted or compiled.
+    Within the string, use "(00,ff...) to include arbitrary byte values.&nbsp;
+   The space after " is mandatory.</td>
+            </tr>
+         <tr>
+              <td nowrap="true">." <i>ccc</i>"</td>
+              <td>( -- )</td>
+              <td>Compile a string for later display.&nbsp; The space after 
+ " is mandatory.</td>
+            </tr>
+         <tr>
+              <td>bl</td>
+              <td>( -- char )</td>
+              <td>ASCII code for the space character; decimal 32. </td>
+            </tr>
+         <tr>
+              <td>count</td>
+              <td nowrap="true">( pstr -- adr +n )</td>
+              <td>Unpack a packed string.</td>
+            </tr>
+                                         
+    </tbody>                
+  </table>
+                       
+  <p> </p>
+                     <a name="Redirecting I/O">  
+  <h3><font color="#006600">Redirecting I/O</font></h3>
+  </a>                         
+  <table border="1">
+         <tbody>
+            <tr>
+              <td>input </td>
+              <td>( device -- )</td>
+              <td>Select device (com1, com2, keyboard, or <i>device-specifier</i>
+)   for  subsequent input. </td>
+            </tr>
+         <tr>
+              <td>io</td>
+              <td>( device -- )</td>
+              <td>Select device for subsequent input and output. </td>
+            </tr>
+         <tr>
+              <td>output</td>
+              <td>( device -- )</td>
+              <td nowrap="true">Select device (com1, com2, screen, or <i>
+device-specifier</i>)   for  subsequent output. </td>
+            </tr>
+                                         
+    </tbody>                
+  </table>
+                       
+  <p> </p>
+                     <a name="Comparison">  
+  <h3><font color="#006600">Comparison</font></h3>
+  </a>                         
+  <table border="1">
+         <tbody>
+            <tr>
+              <td>&lt; </td>
+              <td>( n1 n2 -- flag )</td>
+              <td>True if n1 &lt; n2.</td>
+            </tr>
+         <tr>
+              <td>&lt;=</td>
+              <td>( n1 n2 -- flag )</td>
+              <td>True if n1 &lt;= n2.</td>
+            </tr>
+         <tr>
+              <td>&lt;&gt;</td>
+              <td>( n1 n2 -- flag )</td>
+              <td>True if n1 &lt;&gt; n2.</td>
+            </tr>
+         <tr>
+              <td>=</td>
+              <td>( n1 n2 -- flag )</td>
+              <td>True if n1 = n2.</td>
+            </tr>
+         <tr>
+              <td>&gt;</td>
+              <td>( n1 n2 -- flag )</td>
+              <td>True if n1 &gt; n2.</td>
+            </tr>
+         <tr>
+              <td>&gt;=</td>
+              <td>( n1 n2 -- flag )</td>
+              <td>True if n1 &gt;= n2.</td>
+            </tr>
+         <tr>
+              <td>between</td>
+              <td>( n min max -- flag )</td>
+              <td>True if min &lt;= n &lt;= max.</td>
+            </tr>
+         <tr>
+              <td>u&lt;</td>
+              <td>( u1 u2 -- flag )</td>
+              <td>True if u1 &lt; u2, unsigned.</td>
+            </tr>
+         <tr>
+              <td>u&lt;=</td>
+              <td>( u1 u2 -- flag )</td>
+              <td>True if u1 &lt;= u2, unsigned.</td>
+            </tr>
+         <tr>
+              <td>u&gt;</td>
+              <td>( u1 u2 -- flag )</td>
+              <td>True if u1 &gt; u2, unsigned.</td>
+            </tr>
+         <tr>
+              <td>u&gt;=</td>
+              <td>( u1 u2 -- flag )</td>
+              <td>True if u1 &gt;= u2, unsigned.</td>
+            </tr>
+         <tr>
+              <td>within</td>
+              <td>( n min max -- flag )</td>
+              <td>True if min &lt;= n &lt; max.</td>
+            </tr>
+                                         
+    </tbody>                
+  </table>
+                       
+  <p> </p>
+                     <a name="if-then-else Conditionals">  
+  <h3><font color="#006600">if-then-else Conditionals</font></h3>
+  </a>                         
+  <table border="1">
+         <tbody>
+            <tr>
+              <td>else</td>
+              <td>( -- )</td>
+              <td>Execute the following code if if failed.</td>
+            </tr>
+         <tr>
+              <td>if</td>
+              <td>( flag -- )</td>
+              <td>Execute the following code if flag is true.</td>
+            </tr>
+         <tr>
+              <td>then</td>
+              <td>( -- )</td>
+              <td>Terminate if...then...else.</td>
+            </tr>
+                                         
+    </tbody>                
+  </table>
+                       
+  <p> </p>
+                     <a name="begin (Conditional) Loop">  
+  <h3><font color="#006600">begin (Conditional) Loop</font></h3>
+  </a>                         
+  <table border="1">
+         <tbody>
+            <tr>
+              <td>again</td>
+              <td>( -- )</td>
+              <td>End a begin...again infinite loop.</td>
+            </tr>
+         <tr>
+              <td>begin</td>
+              <td>( -- )</td>
+              <td>Begin a begin...while...repeat, begin...until, or begin...again
+    loop.</td>
+            </tr>
+         <tr>
+              <td>repeat</td>
+              <td>( -- )</td>
+              <td>End a begin...while...repeat loop.</td>
+            </tr>
+         <tr>
+              <td>until</td>
+              <td>( flag -- )</td>
+              <td>Continue executing a begin...until loop until flag is true.</td>
+            </tr>
+         <tr>
+              <td>while</td>
+              <td>( flag -- )</td>
+              <td>Continue executing a begin...while...repeat loop while
+flag   is  true.</td>
+            </tr>
+                                         
+    </tbody>                
+  </table>
+                       
+  <p> </p>
+                     <a name="do (Counted) Loop">  
+  <h3><font color="#006600">do (Counted) Loop</font></h3>
+  </a>                         
+  <table border="1">
+         <tbody>
+            <tr>
+              <td>+loop</td>
+              <td>( n -- )</td>
+              <td>End a do...+loop construct; add n to loop index and return
+  to  do (if n &lt; 0, index goes from start to end inclusive).</td>
+            </tr>
+         <tr>
+              <td>?do</td>
+              <td nowrap="true">( end start -- )</td>
+              <td>Begin ?do...loop to be executed 0 or more times. Index
+goes   from  start to end-1 inclusive. If end = start, loop is not executed.</td>
+            </tr>
+         <tr>
+              <td>do</td>
+              <td nowrap="true">( end start -- )</td>
+              <td>Begin a do...loop. Index goes from start to end-1 inclusive.
+   Example:        <br>
+           10 0 do i . loop  (prints 0 1 2...d e f). </td>
+            </tr>
+         <tr>
+              <td>i</td>
+              <td>( -- n )</td>
+              <td>Loop index.</td>
+            </tr>
+         <tr>
+              <td>j</td>
+              <td>( -- n )</td>
+              <td>Loop index for next enclosing loop.</td>
+            </tr>
+         <tr>
+              <td>leave</td>
+              <td>( -- )</td>
+              <td>Exit from do...loop.</td>
+            </tr>
+         <tr>
+              <td>loop</td>
+              <td>( -- )</td>
+              <td>End of do...loop.</td>
+            </tr>
+                                         
+    </tbody>                
+  </table>
+                       
+  <p> </p>
+                     <a name="case Statement">  
+  <h3><font color="#006600">case Statement</font></h3>
+  </a>                         
+  <blockquote>                    
+    <pre>( value )  <br><b>case</b> <br>   2  <b>of</b>  ." it was two" <b>endof</b> <br>   0  <b>of</b>  ." it was zero" <b>endof</b> <br>   ." it was " dup .  ( optional default clause ) <br><b>endcase</b><br></pre>
+                        </blockquote>
+                 <a name="Program Execution Control">    
+    <h3><font color="#006600">Program Execution Control</font></h3>
+    </a>                                 
+    <table border="1">
+         <tbody>
+            <tr>
+              <td>abort</td>
+              <td>( -- )</td>
+              <td>Abort current execution and interpret keyboard commands.</td>
+            </tr>
+         <tr>
+              <td>abort" <i>ccc</i>"</td>
+              <td>( abort? -- )</td>
+              <td>If flag is true, abort and display message.&nbsp; The space
+  after " is mandatory.</td>
+            </tr>
+         <tr>
+              <td>evaluate</td>
+              <td>( adr len -- )</td>
+              <td>Interpret Forth source from an array. </td>
+            </tr>
+         <tr>
+              <td>execute</td>
+              <td>( xt -- )</td>
+              <td>Execute the word whose execution token is on the stack.</td>
+            </tr>
+         <tr>
+              <td>exit</td>
+              <td>( -- )</td>
+              <td>Return from the current word. (Cannot be used in counted
+ loops.)</td>
+            </tr>
+         <tr>
+              <td>quit</td>
+              <td>( -- )</td>
+              <td>Same as abort, but leave stack intact.</td>
+            </tr>
+                                                 
+      </tbody>                        
+    </table>
+                             <a name="Table of Contents">
+    <h2>Table of Contents</h2>
+    </a> 
+    <h3>Open Firmware</h3>
+ <a href="#Syntax">Syntax</a><br>
+ <a href="#Booting">Booting</a><br>
+ <a href="#Device%20Specifiers">Device Specifiers</a><br>
+ <a href="#Device%20Aliases">Device Aliases</a><br>
+ <a href="#Editor%20Keys%20%28for%20Command%20Lines%20and%20NVRAMRC%29">Editor
+Keys (for Command Lines and NVRAMRC)</a><br>
+ <a href="#Configuration%20Variable%20Commands">Configuration Variable Commands</a><br>
+ <a href="#Common%20Configuration%20Variables">Common Configuration Variables</a><br>
+ <a href="#NVRAMRC%20Script%20Editor">NVRAMRC Script Editor</a><br>
+ <a href="#Device%20Tree%20Browsing">Device Tree Browsing</a><br>
+ <a href="#Help">Help</a><br>
+ <a href="#Diagnostics">Diagnostics</a><br>
+ <a href="#System%20Information">System Information</a><br>
+ <a href="#Emergency%20Keys">Emergency Keys</a><br>
+ <a href="#File%20Loading">File Loading</a><br>
+ <a href="#Generic%20Registers">Generic Registers</a><br>
+ <a href="#x86%20Registers">x86 Registers</a><br>
+ <a href="#MIPS%20Registers">MIPS Registers</a><br>
+ <a href="#SPARC%20Registers">SPARC Registers</a><br>
+ <a href="#Breakpoints">Breakpoints</a><br>
+ <a href="#Disassembler">Disassembler</a><br>
+ <a href="#Miscellaneous%20Operations">Miscellaneous Operations</a><br>
+ 
+    <h3>Forth Language</h3>
+ <a href="#Numeric%20Usage">Numeric Usage</a><br>
+ <a href="#Changing%20the%20Number%20Base">Changing the Number Base</a><br>
+ <a href="#Basic%20Number%20Display">Basic Number Display</a><br>
+ <a href="#Forth%20Debugging">Forth Debugging</a><br>
+ <a href="#Forth%20Debugger%20Keys">Forth Debugger Keys</a><br>
+ <a href="#Stack%20Manipulation">Stack Manipulation</a><br>
+ <a href="#Arithmetic%20Functions">Arithmetic Functions</a><br>
+ <a href="#Memory%20Access">Memory Access</a><br>
+ <a href="#Memory%20Allocation">Memory Allocation</a><br>
+ <a href="#Defining%20Words">Defining Words</a><br>
+ <a href="#Dictionary%20Searching">Dictionary Searching</a><br>
+ <a href="#Dictionary%20Compilation">Dictionary Compilation</a><br>
+ <a href="#Controlling%20Text%20Input">Controlling Text Input</a><br>
+ <a href="#Displaying%20Text">Displaying Text</a><br>
+ <a href="#Manipulating%20Text%20Strings">Manipulating Text Strings</a><br>
+ <a href="#Redirecting%20I/O">Redirecting I/O</a><br>
+ <a href="#Comparison">Comparison</a><br>
+ <a href="#if-then-else%20Conditionals">if-then-else Conditionals</a><br>
+ <a href="#begin%20%28Conditional%29%20Loop">begin (Conditional) Loop</a><br>
+ <a href="#do%20%28Counted%29%20Loop">do (Counted) Loop</a><br>
+ <a href="#case%20Statement">case Statement</a><br>
+ <a href="#Program%20Execution%20Control">Program Execution Control</a><br>
+  
+    <p><small> Copyright&nbsp;© 2002 FirmWorks &nbsp; &nbsp;  All Rights
+Reserved<br>
+ Copyright © 1993 Sun Microsystems, Inc</small>     </p>
+    
+    
+</body></html>

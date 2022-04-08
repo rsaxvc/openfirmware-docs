@@ -1,0 +1,518 @@
+<html><!--This file created 5/16/01 8:31 AM by Claris Home Page version 3.0--><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="ROBOTS" content="NOINDEX, NOFOLLOW">
+            <meta id="book-resource-type" name="book-resource-type" content="Technical Q&amp;A">
+            <meta id="book-title" name="book-title" content="Displaying PCI Configuration Registers contents in Open Firmware">
+            <meta id="book-root" name="book-root" content="./">
+            <meta id="devcenter" name="devcenter" content="Mac Dev Center">
+            <meta id="devcenter-url" name="devcenter-url" content="http://developer.apple.com/devcenter/mac">
+            <meta id="reflib" name="reflib" content="Documentation Archive">
+            <meta id="book-assignments" name="book-assignments" content="{Type/Technical Q&amp;A}, {Technologies/Kernel &amp; Driver Layer/Kernel}">
+            <meta scheme="apple_ref" id="identifier" name="identifier" content="//apple_ref/doc/uid/DTS10001588">
+            <meta id="document-version" name="document-version" content="1.0.2">
+            <meta id="build" name="build" content="c1e4c7a89af8f899a21cfa81fc33ba42">
+            <meta id="description" name="description" content="QA1036: Demonstrates how to display PCI Configuration Resister contents in Open Firmware.">
+            <meta id="resources-uri" name="resources-uri" content="../../Resources/1282/">
+            <meta id="Generator" name="Generator" content="Gutenberg Static e43202ea08">
+            <meta id="Copyright" name="Copyright" content="Copyright 2018 Apple Inc. All Rights Reserved.">
+			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+            <meta id="platforms" name="platforms" content="OS X">
+<link rel="stylesheet" type="text/css" href="Technical%20Q&amp;A%20QA1036%20Displaying%20PCI%20Configuration%20Registers%20contents%20in%20Open%20Firmware_files/screen.css">
+<link rel="stylesheet" type="text/css" href="Technical%20Q&amp;A%20QA1036%20Displaying%20PCI%20Configuration%20Registers%20contents%20in%20Open%20Firmware_files/feedback.css">
+
+   <title>Technical Q&amp;A QA1036: Displaying PCI Configuration Registers contents in Open Firmware</title>
+   <meta name="GENERATOR" content="Claris Home Page 3.0">
+<link rel="stylesheet" href="Technical%20Q&amp;A%20QA1036%20Displaying%20PCI%20Configuration%20Registers%20contents%20in%20Open%20Firmware_files/adcstyle_002.html" type="text/css" id="custom"><link rel="stylesheet" href="Technical%20Q&amp;A%20QA1036%20Displaying%20PCI%20Configuration%20Registers%20contents%20in%20Open%20Firmware_files/style.html" type="text/css" id="custom"><meta name="keywords" content="PCI, Open Firmware, Device Tree, Configuration Registers,
+Config. Reg., .cregs"><meta name="Description" content="Technical Q&amp;A QA1036: Displaying PCI Configuration Resister
+contents in Open Firmware">
+
+
+<meta name="categories" content="Hardware">
+
+
+<meta name="week-posted" content="May 14, 2001 - May 18, 2001">
+
+<link rel="stylesheet" href="Technical%20Q&amp;A%20QA1036%20Displaying%20PCI%20Configuration%20Registers%20contents%20in%20Open%20Firmware_files/adcstyle.html" type="text/css" id="custom"><script language="JavaScript" type="text/javascript" src="Technical%20Q&amp;A%20QA1036%20Displaying%20PCI%20Configuration%20Registers%20contents%20in%20Open%20Firmware_files/adc.html"></script>
+</head>
+
+<body id="StaticPage" class="" bgcolor="#FFFFFF"><a name="//apple_ref/doc/uid/DTS10001588" title="Displaying PCI Configuration Registers contents in Open Firmware"></a>
+
+            <div id="adcHeader" class="hideOnPrint hideInXcodeSC">
+                <div id="ssi_Header" class="hideInXcodeSC unified">
+                    <a id="ssi_LibraryTitle" href="https://developer.apple.com/library/archive/navigation/">Documentation Archive</a>
+                    <a id="ssi_AppleDeveloperConnection" href="https://developer.apple.com/">Developer</a>
+                    <div id="ssi_SearchButton" role="button" title="Search">Search</div>
+                </div>
+                <form id="ssi_SearchMenu" method="get" action="../../search/" accept-charset="utf-8">
+                    <label for="adcsearch">Search Documentation Archive</label>
+                    <input type="search" id="ssi_SearchField" name="q" accesskey="s" results="5">
+                </form>
+            </div>
+            <header id="header">
+                <div id="title" role="banner">
+                    <h1>Displaying PCI Configuration Registers contents in Open Firmware</h1>
+                    <span id="file_links">
+                        <a id="PDF_link" role="button" tabindex="4" rel="alternate" title="Download PDF"><span id="pdf_icon"></span>PDF</a>
+                        <a id="Companion_link" role="button" tabindex="3" title="Download Companion File"><span id="companion_icon"></span>Companion File</a>
+                    </span>
+                </div>
+                <ul id="headerButtons" class="hideOnPrint" role="toolbar">
+                    <li id="toc_button" style="display:none">
+                        <button tabindex="5" id="table_of_contents" class="" role="checkbox" aria-label="Show Table of Contents">
+                        <span class="disclosure"></span>Table of Contents</button>
+                    </li>
+                    <li id="jumpto_button" style="display:none" role="navigation">
+                        <select tabindex="6" id="jumpTo">
+                            <option value="top" selected="selected">&lt;&gt;</option>
+                        </select>
+                    </li>
+                    <li id="downloadSample_button" style="display:none">
+                        <a id="Sample_link"><button id="Sample_button">Download Sample Code</button></a>
+                    </li>
+                </ul>
+            </header>
+            <nav id="tocContainer" class="" tabindex="7">
+                <ul id="toc" role="tree"></ul>
+            </nav>
+            <article id="contents" class="">
+              <div id="technicalQA">
+<p><!-- top_of_header_marker_comment --> <!-- begin_header_information --></p><p><a href="http://developer.apple.com/">ADC Home</a> &gt; <a href="https://developer.apple.com/library/archive/referencelibrary/index.html">Reference Library</a> &gt; <a href="https://developer.apple.com/library/archive/technicalqas/index.html">Technical Q&amp;As</a> &gt; <a href="https://developer.apple.com/library/archive/technicalqas/HardwareDrivers/index.html">Hardware &amp; Drivers</a> &gt; <a href="https://developer.apple.com/library/archive/technicalqas/HardwareDrivers/idxPCIandPCCard-date.html">PCI and PC Card</a> &gt; </p><!-- end_header_information --> <!-- bottom_of_header_marker_comment -->
+
+
+<!-- top_of_titles_marker_comment --><center><table width="600" cellspacing="0" cellpadding="0" border="0">
+<tbody><tr><td scope="row" align="left">
+<h1>
+<div id="pagehead">Technical Q&amp;A QA1036</div>
+<div id="pageheadsub">Displaying PCI Configuration Registers contents in Open Firmware</div>
+</h1>
+</td></tr></tbody></table></center><!-- bottom_of_titles_marker_comment -->
+
+<p></p>
+
+<center><table width="600" cellspacing="1" border="0">
+   <tbody><tr>
+      <td align="left">
+         <p><!-- begin_content -->
+         
+         </p><hr width="500" align="center">
+         
+         <p></p>
+         
+         <p id="p2">Q: How can I display a PCI device's
+         Configuration Registers in sequential order, in Open
+         Firmware?</p>
+         
+         <p id="p4">A:  Displaying the contents of PCI device's
+         Configuration Registers sequentially, as shown
+         in figure 1 can be accomplished in 6 steps.</p>
+         
+       <center><table width="480" cellpadding="0" border="0">
+               <tbody><tr>
+                  <td align="left">
+                     <p>&nbsp;</p>
+                     
+                     <center><img src="Technical%20Q&amp;A%20QA1036%20Displaying%20PCI%20Configuration%20Registers%20contents%20in%20Open%20Firmware_files/qa1036_001.jpg" alt="Format for PCI Configuration
+                     Header (Type 0)" x-claris-useimagewidth="" x-claris-useimageheight="" width="368" height="653" align="bottom"></center>
+                     
+                     <p>&nbsp;</p>
+                     
+                     <p><b>Figure 1</b>. Format for PCI Configuration
+                     Header (Type 0)</p>
+                  </td>
+               </tr>
+            </tbody></table></center>
+         
+         <p id="p4">&nbsp;</p>
+         
+         <p id="p4">1. Locate your device in the device tree in open
+         firmware. An NCR8250 PCI Card as an example.</p>
+         
+<br><br><center><table width="550" cellpadding="4" border="0">
+<tbody><tr><td align="left">
+<p><b>Example 1</b>. Device Tree
+                     Listing</p>
+</td></tr>                
+<tr><td bgcolor="#E6E6E6" align="left">
+<pre>0 &gt; dev / ls
+ff83d620: /cpus
+ff83d8d0:   /PowerPC,G4@0
+ff83dcc8:     /l2-cache
+ff83e948: /chosen
+ff83eb60: /memory@0
+ff83ee00: /openprom
+ff83efa8:   /client-services
+ff840298: /rom@ff800000
+ff840498:   /boot-rom@fff00000
+ff8406c8:   /macos
+ff8407d0: /options
+ff8408d8: /aliases
+ff841428: /packages
+ff841508:   /deblocker
+ff841ea0:   /disk-label
+ff842968:   /obp-tftp
+ff84c248:   /telnet
+ff84cb48:   /mac-parts
+ff84e2f0:   /mac-files
+ff8511a8:   /hfs-plus-files
+ff855fc8:   /fat-files
+ff857dc0:   /iso-9660-files
+ff858c20:   /bootinfo-loader
+ff85a8f8:   /xcoff-loader
+ff85b390:   /pe-loader
+ff85bde0:   /elf-loader
+ff85d488:   /usb-hid-class
+ff85ffc8:   /usb-ms-class
+ff862c18:   /usb-audio-class
+ff8d0790:   /sbp2-disk
+ff8d3130:   /ata-disk
+ff8d4e98:   /atapi-disk
+ff8d6de0:   /bootpath-search
+ff8dd770:   /terminal-emulator
+ff8dd880: /firewire-disk-mode
+ff8f2138: /pseudo-hid
+ff8f2238:   /keyboard
+ff8f2930:   /mouse
+ff8f2ec8:   /eject-key
+ff8f3398: /pseudo-sound
+ff8f36c8: /multiboot
+ff9066b8: /diagnostics
+ff906798: /nvram@fff04000
+ff907398: /uni-n@f8000000
+ff907660:   /i2c@f8001000
+ff907f28:     /cereal
+ff908658: /pci@f0000000
+ff94b290:   /uni-north-agp@b
+ff94b578:   /ATY,Rage128Ps@10
+ff909800: /pci@f2000000
+ff90a968:   /pci-bridge@d
+ff90cc20:     /mac-io@7
+ff910bd8:       /interrupt-controller@40000
+ff910e28:       /gpio@50
+ff910f90:         /extint-gpio1
+ff9111b0:         /programmer-switch
+ff911360:       /escc-legacy@12000
+ff9115d0:         /ch-a@12004
+ff9117d0:         /ch-b@12000
+ff9119d0:       /escc@13000
+ff911c58:         /ch-a@13020
+ff912680:         /ch-b@13000
+ff913018:       /davbus@14000
+ff913350:         /sound
+ff913ad0:       /timer@15000
+ff913ce0:       /via-pmu@16000
+ff9172b8:         /rtc
+ff917a28:         /power-mgt
+ff96ac40:           /usb-power-mgt
+ff917d10:       /i2c@18000
+ff918618:         /cereal
+ff918d60:       /ata-4@1f000
+ff91b450:         /disk
+ff91bbb0:       /ata-3@20000
+ff91e2a0:         /disk
+ff91ea00:       /ata-3@21000
+ff9210f0:         /disk
+ff927a80:     /AAPL,NCR8250S@4  &lt;----------  My Device
+ff927de0:     /usb@8
+ff92fa68:     /usb@9
+ff9693a0:       /hub@1
+ff9695a8:         /device@1
+ff969720:           /keyboard@0
+ff969ab0:           /eject-key@1
+ff969e18:         /mouse@2
+ff9376f0:     /firewire@a
+ff90baa8: /pci@f4000000
+ff9468c8:   /ethernet@f
+ff96ae20:     /ethernet-phy
+ ok
+</pre>
+</td></tr></tbody></table></center><br><br>
+
+
+         
+         <p id="p4">&nbsp;</p>
+         
+         <p id="p4">2. Select your device in the device tree in open
+         firmware.&nbsp;</p>
+         
+         <p id="p4">
+         
+<br><br></p><center><table width="550" cellpadding="4" border="0">
+<tbody><tr><td align="left">
+<p>
+<b>Example 2</b>. Selecting the Device
+</p>
+</td></tr>                
+<tr><td bgcolor="#E6E6E6" align="left">
+<pre>0 &gt; dev bridge/@4 ok
+0 &gt; pwd /pci@f2000000/pci-bridge@d/AAPL,NCR8250S@4 ok
+</pre>
+</td></tr></tbody></table></center>
+         <p id="p4">
+               Note that the word "dev" was used to select
+               the device path. The "devalias" for the PCI
+               bridge path and the unit address for the device,
+               were used to abriviate the path name. Finally, the
+               "pwd" (Print Working Directory) word was used to
+               display the selected device path.</p>
+         
+         <p></p>
+         
+         <p id="p4">&nbsp;</p>
+         
+         <p id="p4">3. Display the devices properties.&nbsp;</p>
+         
+         
+<br><br><center><table width="550" cellpadding="4" border="0">
+<tbody><tr><td align="left">
+<p>
+<b>Example 3</b>. Device Properties
+</p>
+</td></tr>                
+<tr><td bgcolor="#E6E6E6" align="left">
+<pre>0 &gt; .properties
+vendor-id               00001000
+device-id               00000003
+revision-id             00000002
+class-code              00010000
+interrupts              00000001
+min-grant               00000000
+max-latency             00000000
+devsel-speed            00000001
+fcode-rom-offset        00000000
+name                    AAPL,NCR8250S
+device_type             scsi
+model                   8250S
+reg                     00012000 00000000 00000000  00000000 00000000
+                        02012030 00000000 00000000  00000000 00008000
+                        02012014 00000000 00000000  00000000 00000100
+power-consumption       00000000 00000000 007270e0  007270e0 00000000
+                        00000000 007b98a0 007b98a0
+jsun                    4920616d 20686572 6500
+assigned-addresses      82012030 00000000 80088000  00000000 00008000
+                        82012014 00000000 80080000  00000000 00000100
+
+ ok
+</pre>
+</td></tr></tbody></table></center>
+         
+         
+         
+         <p id="p4">&nbsp;</p>
+         
+         <p id="p4">4. Note the Configuration Space address (phys.hi) from
+         the "reg" property.&nbsp;</p>
+         
+
+<br><br><center><table width="550" cellpadding="4" border="0">
+<tbody><tr><td align="left">
+<p>
+<b>Example 4</b>. Configuration Space address is "phys.hi" from the first 
+entry in the "reg" property. In this case the Configuration Space 
+address for the device is 0x00012000.
+</p>
+</td></tr>                
+<tr><td bgcolor="#E6E6E6" align="left">
+<pre>reg                     00012000
+</pre>
+</td></tr></tbody></table></center>
+
+
+
+
+         <p id="p4">&nbsp;</p>
+         
+         <p id="p4">5. Define the following word (.cregs) in Open
+         Firmware:</p>
+         
+
+<br><br><center><table width="550" cellpadding="4" border="0">
+<tbody><tr><td align="left">
+<pre>: .cregs base @
+swap 10 base ! h# 40 bounds
+do cr i 5 u.r "
+: " type i do-config-l@ 8 u.r 4 +loop
+base !
+;
+</pre>
+</td></tr></tbody></table></center>
+
+
+<br><br><center><table width="550" cellpadding="4" border="0">
+<tbody><tr><td align="left">
+<p>
+<b>Example 5.</b>. Define the word, ".cregs".
+</p>
+</td></tr>                
+<tr><td bgcolor="#E6E6E6" align="left">
+<pre>0
+&gt; : .cregs base @ swap 10 base !
+h# 40 bounds do cr i 5 u.r " : " type
+i do-config-l@ 8 u.r 4 +loop base !
+;  ok
+</pre>
+</td></tr></tbody></table></center>
+
+
+
+         
+         <p id="p4">6. Enter the Configuration Space address (phys.hi) and
+         then the word .cregs.&nbsp;&nbsp;</p>
+         
+<br><br><center><table width="550" cellpadding="4" border="0">
+<tbody><tr><td align="left">
+<p>
+<b>Example 6.</b>. Using ".cregs"
+</p>
+</td></tr>                
+<tr><td bgcolor="#E6E6E6" align="left">
+<pre>0 &gt; 00012000 .cregs
+12000: 00031000
+12004: 02000004
+12008: 01000002
+1200c: 00001000
+12010: 00000001
+12014: 80080000
+12018: 00000000
+1201c: 00000000
+12020: 00000000
+12024: 00000000
+12028: 00000000
+1202c: 00000000
+12030: 80088000
+12034: 00000000
+12038: 00000000
+1203c: 00000100 ok
+</pre>
+</td></tr></tbody></table></center>
+         
+         
+     
+            
+            <p id="p4">
+               Note that the Vendor ID , Device ID, Revision ID
+               and Class Code values match the coresponding
+               properties when compared to the byte ordered layout
+               in figure 1.</p>
+         
+         <p>
+         
+         </p><hr width="500" align="center">
+         
+         <p></p>
+         
+         <!-- begin_date --><h4 align="center">[May 18 2001]</h4><!-- end_date -->
+      </td>
+   </tr>
+</tbody></table>
+</center>
+
+<p><!-- begin_footer_information --></p>
+
+<div id="globalfooter" class="hideInXcode hideOnPrint">
+	<div class="gf-sosumi">
+	    <p>Copyright © 2016 Apple Inc. All rights reserved.</p>
+	    <ul class="piped">
+		    <li><a href="http://www.apple.com/legal/internet-services/terms/site.html" class="first" target="_blank">Terms of Use</a></li>
+		    <li><a href="http://www.apple.com/privacy/" target="_blank">Privacy Policy</a></li>
+	    </ul>
+	</div>
+</div><!--/globalfooter-->
+<!-- end_footer_information -->
+
+<p></p>
+</div>
+            </article>
+
+<script type="text/javascript" src="Technical%20Q&amp;A%20QA1036%20Displaying%20PCI%20Configuration%20Registers%20contents%20in%20Open%20Firmware_files/prototype.js"></script>
+<script type="text/javascript" src="Technical%20Q&amp;A%20QA1036%20Displaying%20PCI%20Configuration%20Registers%20contents%20in%20Open%20Firmware_files/library.js"></script>
+<script type="text/javascript" src="Technical%20Q&amp;A%20QA1036%20Displaying%20PCI%20Configuration%20Registers%20contents%20in%20Open%20Firmware_files/feedback.js"></script>
+
+
+
+<div id="blackout">
+    <div id="preload"></div>
+</div><div id="modal" aria-hidden="true">
+    <div id="closebox" tabindex="0" aria-label="Close feedback form" role="button"></div>
+    <div id="sending" class="hidden">
+        <h2 tabindex="0">Sending feedback…</h2>
+        <div id="sending_img"></div>
+    </div>
+    <div id="error" class="hidden">
+        <h2 tabindex="0">We’re sorry, an error has occurred.</h2>
+        <p>Please try submitting your feedback later.</p>
+        <div id="error_icon"></div>
+    </div>
+    <div id="success" class="hidden">
+        <h2 tabindex="0">Thank you for providing feedback!</h2>
+        <p>Your input helps improve our developer documentation.</p>
+        <div id="thank_you_icon"></div>
+    </div>
+    
+    <form id="feedback" action="#" method="post">
+        <div class="left-leaf">
+            <h2 id="helpful_title" data-asterisk="a1" tabindex="0">How helpful is this document?</h2>     
+            <sup id="a1" class="asterisk" aria-hidden="true">*</sup>
+
+            <div id="star_group" role="radiogroup" aria-required="true">
+                <label> 
+                    <input class="radio" type="radio" name="helped" value="1"> 
+                    Very helpful
+                </label>
+                <label> 
+                    <input class="radio" type="radio" name="helped" value="2"> 
+                    Somewhat helpful
+                </label>
+                <label>
+                    <input class="radio" type="radio" name="helped" value="3"> 
+                    Not helpful
+                </label>
+            </div>
+        </div>
+        <div class="right-leaf">
+            <h2>How can we improve this document?</h2>
+            <div id="improve" class="checkboxes">
+                <label>
+                    <input type="checkbox" name="typo"> 
+                    Fix typos or links
+                </label>
+                <label>
+                    <input type="checkbox" name="infoIncorrect"> 
+                    Fix incorrect information
+                </label>
+                <label>
+                    <input type="checkbox" name="needs_examples"> 
+                    Add or update code samples
+                </label>
+                <label>
+                    <input type="checkbox" name="needs_art"> 
+                    Add or update illustrations
+                </label>
+                <label>
+                    <input type="checkbox" name="missingInfo"> 
+                    Add information about...
+                </label>
+            </div>
+        </div>
+
+        <textarea id="comment" name="problem" cols="70" rows="8" placeholder="Please tell us more about your experience with this document" data-asterisk="a2" required=""></textarea>
+        <sup id="a2" class="asterisk" aria-hidden="true">*</sup>
+
+        <p class="fineprint">
+            <em aria-hidden="true"><span>*</span> Required information</em>
+        </p> 
+
+        <input id="submit" type="button" value="Send">
+
+        <section id="legal">
+            <p>
+                To submit a product bug or enhancement request, please visit the 
+                <a href="https://developer.apple.com/bugreporter/" target="_blank">Bug Reporter</a> 
+                page.
+            </p>
+            <p>
+                Please read <a href="http://www.apple.com/legal/policies/ideas.html" target="_blank">Apple's Unsolicited Idea Submission Policy</a> 
+                before you send us your feedback.
+            </p> 
+        </section>
+    </form>
+</div></body></html>

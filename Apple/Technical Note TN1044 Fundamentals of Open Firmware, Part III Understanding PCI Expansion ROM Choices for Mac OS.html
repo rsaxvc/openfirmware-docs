@@ -1,0 +1,828 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html><!-- Template 03-24-01 --><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="ROBOTS" content="NOINDEX, NOFOLLOW">
+            <meta id="book-resource-type" name="book-resource-type" content="Technical Note">
+            <meta id="book-title" name="book-title" content="Fundamentals of Open Firmware, Part III: Understanding PCI Expansion ROM Choices for Mac OS">
+            <meta id="book-root" name="book-root" content="./">
+            <meta id="devcenter" name="devcenter" content="Mac Dev Center">
+            <meta id="devcenter-url" name="devcenter-url" content="http://developer.apple.com/devcenter/mac">
+            <meta id="reflib" name="reflib" content="Documentation Archive">
+            <meta id="book-assignments" name="book-assignments" content="{Type/Technical Note}">
+            <meta scheme="apple_ref" id="identifier" name="identifier" content="//apple_ref/doc/uid/DTS10002886">
+            <meta id="document-version" name="document-version" content="1.0.3">
+            <meta id="build" name="build" content="c1e4c7a89af8f899a21cfa81fc33ba42">
+            <meta id="description" name="description" content="TN1044: Recommended contents for PCI expansion ROMs, including a table of standard devices, properties and methods.">
+            <meta id="resources-uri" name="resources-uri" content="../../Resources/1282/">
+            <meta id="Generator" name="Generator" content="Gutenberg Static e43202ea08">
+            <meta id="Copyright" name="Copyright" content="Copyright 2018 Apple Inc. All Rights Reserved.">
+			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+            <meta id="platforms" name="platforms" content="OS X">
+<link rel="stylesheet" type="text/css" href="Technical%20Note%20TN1044%20Fundamentals%20of%20Open%20Firmware,%20Part%20III%20Understanding%20PCI%20Expansion%20ROM%20Choices%20for%20Mac%20OS_files/screen.css">
+<link rel="stylesheet" type="text/css" href="Technical%20Note%20TN1044%20Fundamentals%20of%20Open%20Firmware,%20Part%20III%20Understanding%20PCI%20Expansion%20ROM%20Choices%20for%20Mac%20OS_files/feedback.css">
+
+
+<link rel="stylesheet" href="Technical%20Note%20TN1044%20Fundamentals%20of%20Open%20Firmware,%20Part%20III%20Understanding%20PCI%20Expansion%20ROM%20Choices%20for%20Mac%20OS_files/adcstyle_002.html" type="text/css" id="custom">
+<link rel="stylesheet" href="Technical%20Note%20TN1044%20Fundamentals%20of%20Open%20Firmware,%20Part%20III%20Understanding%20PCI%20Expansion%20ROM%20Choices%20for%20Mac%20OS_files/style.html" type="text/css" id="custom">
+
+
+   <title>Technical Note TN1044: Fundamentals of Open Firmware, Part III: Understanding PCI Expansion ROM Choices for Mac OS</title>
+   <meta name="Description" content="Technical Note TN1044:      [Textual description of document
+as you want it to appear in the text     sections of search
+engines supporting this field]    "><meta name="Identifier-URL" content="http://www.apple.com/metadata/sample.html">
+
+    <meta name="keywords" content="Mac OS 8 PCI expansion ROM guidelines Open firmware nodes">
+    <meta name="Description" content="Technical Note TN1044: This Technical Note addresses PCI
+expansion ROM contents for Mac OS 8. The information here
+also applies to all Macintosh computers with PCI expansion
+capability, such as the Power Macintosh 9500, 8500, and 7500.
+The Note looks at the basic device types as defined in the
+IEEE 1275-1994 Open Firmware standard. It defines the recommended
+contents common for all ROMs, as well as the specific recommended
+contents for the various standard device types, excluding
+bridge devices. Also included is a table of Standard devices,
+properties and methods.">
+
+
+<meta name="categories" content="Hardware">
+
+
+<meta name="week-posted" content="Jun 25, 2001 - Jun 29, 2001">
+
+<link rel="stylesheet" href="Technical%20Note%20TN1044%20Fundamentals%20of%20Open%20Firmware,%20Part%20III%20Understanding%20PCI%20Expansion%20ROM%20Choices%20for%20Mac%20OS_files/adcstyle.html" type="text/css" id="custom"><script language="JavaScript" type="text/javascript" src="Technical%20Note%20TN1044%20Fundamentals%20of%20Open%20Firmware,%20Part%20III%20Understanding%20PCI%20Expansion%20ROM%20Choices%20for%20Mac%20OS_files/adc.html"></script>
+</head>
+
+
+
+<body id="StaticPage" class="" bgcolor="#FFFFFF"><a name="//apple_ref/doc/uid/DTS10002886" title="Fundamentals of Open Firmware, Part III: Understanding PCI Expansion ROM Choices for Mac OS"></a>
+
+            <div id="adcHeader" class="hideOnPrint hideInXcodeSC">
+                <div id="ssi_Header" class="hideInXcodeSC unified">
+                    <a id="ssi_LibraryTitle" href="https://developer.apple.com/library/archive/navigation/">Documentation Archive</a>
+                    <a id="ssi_AppleDeveloperConnection" href="https://developer.apple.com/">Developer</a>
+                    <div id="ssi_SearchButton" role="button" title="Search">Search</div>
+                </div>
+                <form id="ssi_SearchMenu" method="get" action="../../search/" accept-charset="utf-8">
+                    <label for="adcsearch">Search Documentation Archive</label>
+                    <input type="search" id="ssi_SearchField" name="q" accesskey="s" results="5">
+                </form>
+            </div>
+            <header id="header">
+                <div id="title" role="banner">
+                    <h1>Fundamentals of Open Firmware, Part III: Understanding PCI Expansion ROM Choices for Mac OS</h1>
+                    <span id="file_links">
+                        <a id="PDF_link" role="button" tabindex="4" rel="alternate" title="Download PDF"><span id="pdf_icon"></span>PDF</a>
+                        <a id="Companion_link" role="button" tabindex="3" title="Download Companion File"><span id="companion_icon"></span>Companion File</a>
+                    </span>
+                </div>
+                <ul id="headerButtons" class="hideOnPrint" role="toolbar">
+                    <li id="toc_button" style="display:none">
+                        <button tabindex="5" id="table_of_contents" class="" role="checkbox" aria-label="Show Table of Contents">
+                        <span class="disclosure"></span>Table of Contents</button>
+                    </li>
+                    <li id="jumpto_button" style="display:none" role="navigation">
+                        <select tabindex="6" id="jumpTo">
+                            <option value="top" selected="selected">&lt;&gt;</option>
+                        </select>
+                    </li>
+                    <li id="downloadSample_button" style="display:none">
+                        <a id="Sample_link"><button id="Sample_button">Download Sample Code</button></a>
+                    </li>
+                </ul>
+            </header>
+            <nav id="tocContainer" class="" tabindex="7">
+                <ul id="toc" role="tree"></ul>
+            </nav>
+            <article id="contents" class="">
+              <div id="technical">
+<a name="top"></a>
+ <!-- begin_header_information --><p><a href="http://developer.apple.com/">ADC Home</a> &gt; <a href="https://developer.apple.com/library/archive/referencelibrary/index.html">Reference Library</a> &gt; <a href="https://developer.apple.com/library/archive/technicalnotes/index.html">Technical Notes</a> &gt; <a href="https://developer.apple.com/library/archive/technicalnotes/HardwareDrivers/index.html">Hardware &amp; Drivers</a> &gt; <a href="https://developer.apple.com/library/archive/technicalnotes/HardwareDrivers/idxOpenFirmware-date.html">Open Firmware</a> &gt; </p><!-- end_header_information -->
+<!-- bottom_of_header_marker_comment -->
+<!-- top_of_titles_marker_comment --><center><table width="600" cellspacing="0" cellpadding="0" border="0">
+<tbody><tr><td scope="row" align="left">
+<h1>
+<div id="pagehead">Technical Note TN1044</div>
+<div id="pageheadsub">Fundamentals of Open Firmware, Part III: Understanding PCI Expansion ROM Choices for Mac OS</div>
+</h1>
+</td></tr></tbody></table></center><!-- bottom_of_titles_marker_comment -->
+<center><table width="600" cellspacing="1" border="0"><tbody><tr><td align="left">
+ <!-- begin_header_box -->
+ <table width="600" cellspacing="0" cellpadding="0" border="0">
+	<tbody><tr>
+		<td scope="row" width="300" valign="top" align="left">
+			<table width="300" cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>    
+            <td width="300" align="left"> <img src="Technical%20Note%20TN1044%20Fundamentals%20of%20Open%20Firmware,%20Part%20III%20Understanding%20PCI%20Expansion%20ROM%20Choices%20for%20Mac%20OS_files/tnmenutop.gif" alt="" width="300" height="7" align="bottom"></td>
+				</tr>
+				<tr bgcolor="#e6e6e6">
+					<td width="300" background="Technical%20Note%20TN1044%20Fundamentals%20of%20Open%20Firmware,%20Part%20III%20Understanding%20PCI%20Expansion%20ROM%20Choices%20for%20Mac%20OS_files/tnmenubody.gif" align="left">
+						<span id="menutitle">
+							CONTENTS 
+    <br>
+    <br>
+						</span>
+					</td>
+				</tr>
+				<tr bgcolor="#e6e6e6">
+					<td width="300" background="Technical%20Note%20TN1044%20Fundamentals%20of%20Open%20Firmware,%20Part%20III%20Understanding%20PCI%20Expansion%20ROM%20Choices%20for%20Mac%20OS_files/tnmenubody.gif" align="left">
+						<p id="menutext">
+							<a href="#Section1">
+		 Providing Open Firmware Support
+</a>
+<br>
+<br>
+							<a href="#RTFToC2">
+		 Properties Common To All Device Types
+</a>
+<br>
+<br>
+							<a href="#RTFToC3">
+		 Standard Device Nodes and Their Properties
+</a>
+<br>
+<br>
+<a href="#RTFToC4">
+Summary</a><br><br>
+<a href="#references">References</a><br><br>
+<a href="#Downloads">Downloadables</a><br>
+</p>
+						
+					</td>
+				</tr>
+				<tr>
+					<td scope="row" width="300" align="left">
+						<img src="Technical%20Note%20TN1044%20Fundamentals%20of%20Open%20Firmware,%20Part%20III%20Understanding%20PCI%20Expansion%20ROM%20Choices%20for%20Mac%20OS_files/tnmenubottom.gif" alt="" width="300" height="16">
+					</td>
+				</tr>
+			</tbody></table>
+		</td>
+		<td width="300" valign="top" align="left">
+			<p id="introtext">
+This Technote addresses PCI expansion ROM contents for Mac OS. The
+information here also applies to all Macintosh computers with PCI
+expansion capability, such as the Power Macintosh 9500, 8500, and
+7500. The Note looks at the basic device types as defined in the IEEE
+1275-1994 Open Firmware standard. It defines the recommended contents
+common for all ROMs, as well as the specific recommended contents for
+the various standard device types, excluding bridge devices.</p>
+			
+<p id="introtext">This Note is intended for PCI expansion device driver writers. It
+can also be of value to board designers because it discusses the
+various ROM contents that can supersede the values that are
+hard-coded into PCI Configuration Space. It also addresses why the
+board designer might want to constrain the design based on the
+various ROM contents, such as specifying maximum memory requirements
+in Configuration Space and particular requirements in the "reg"
+property -- that is, using the Configuration Space register to define
+memory requirements for one OS and using properties for another OS.
+</p>
+
+<p id="introtext">This Technote assumes you understand the Open Firmware process
+integral to the newer Macintosh computers that use the PCI-I/O
+expansion model. It also assumes you understand "properties" and know
+how to create and use them.</p>
+<!-- end_intro_text -->
+<!-- begin_date -->
+<h3>&nbsp;Updated: [Jun 26 2001]</h3>
+<!-- end_date -->
+                </td>
+             </tr>
+          </tbody></table>
+          <!-- end_table_box -->
+ <br><br>
+          <hr width="500" align="center">
+          <br><br>
+ <!-- begin_content -->
+
+<p><a href="#top">Back to top</a></p>
+
+<a name="Section1"></a>
+
+<h2>Providing Open Firmware Support</h2>
+
+<p>Since the ROM contents is ultimately decided by third-party
+developers, the first issue to address is what level of Open Firmware
+support the device will provide. This can be divided into the
+following categories: </p>
+
+<ul>
+   <li>no support</li>
+   
+   <li>minimum support</li>
+   
+   <li>full support</li>
+</ul>
+
+<p>For each level of support, this Note addresses what can and cannot
+be accomplished by the device for Mac OS or other operating systems
+the device may target.</p>
+
+<h3>Defining "Boot" and "Runtime" Drivers</h3>
+
+<p>At this point, before explaining the different levels of Open
+Firmware support provided by the device, we need to distinguish
+between "boot" and "runtime" drivers.</p>
+
+	<center><table width="525" cellpadding="4" border="0"> <tbody><tr> <td bgcolor="#e6e6e6" align="left">
+<p><b>Important: </b><br>
+   
+   Boot drivers are programmed in FCode, a byte-encoded OS
+   (Operating System) and ISA (Instruction Set Architecture)
+   independent form of software. They are used before control has
+   been passed to the main operating system by Open Firmware and its
+   client. <br><br>
+   
+   Runtime drivers are OS-dependent and are, in the context of
+   this Note, Macintosh drivers.</p>
+	</td> </tr>
+	</tbody></table></center>
+
+
+<h3>No Support of Open Firmware</h3>
+
+<p>The first type of Open Firmware support is that of no support.
+This lack of support does not require an expansion ROM at all,
+although an expansion ROM with no FCode is also contained in this
+category. However, placing an expansion ROM on a device costs money,
+and it makes little sense to provide an empty ROM.</p>
+
+<h4>Problems With This Approach</h4>
+
+<p>There are problems that you should consider with this type of
+support: 1) not being plug-and-play, 2) having an ambiguous device
+driver name, 3) wasting memory space, since using base registers only
+allow memory sizes to be multiples of powers of two, and 4) not being
+able to define sub-apertures. Sub-apertures are defined using the
+Configuration Space base registers. A typical example is a display
+device with a frame buffer, video controller, and RAMDAC. By defining
+three base registers, one for each function on the device, families
+can write memory differently than they do registers. This is useful
+for caching.</p>
+
+<h4>No Plug-and-Play</h4>
+
+<p>Without an expansion ROM, the device won't be plug and play. Nor
+will it be available to the user until the file system is initialized
+because the driver container must be placed on a hard disk and loaded
+from there. Note that the driver container does not necessarily have
+to be place on a hard disk: it could, for example, be located on a
+network. However, the device and driver will be matched and loaded.
+</p>
+
+<h4>Ambiguous Device Driver Name</h4>
+
+<p>Another issue to consider is that a distinct device "name"
+property cannot be provided when there is no expansion ROM. This
+makes unique device/driver matching ambiguous. For example, two
+manufacturers may supply a similar driver for a particular device, or
+a chip vendor may rev a PCI interface chip used on your device. Open
+Firmware during its probing process first looks for a name property
+in the Expansion ROM. It then looks for the Subsystem ID and
+Subsystem Vendor ID. And finally, it will choose the Device ID and
+Vendor ID if the name property is not defined and the Subsystem ID
+and Subsystem Vendor ID are zero.</p>
+
+<p>Runtime drivers may fall into the no-support category but boot
+drivers cannot exist without an expansion ROM and therefore do not
+belong in this category.</p>
+
+<p>The no-support category is populated mostly by applications
+controlling a device via a private driver. The device is not
+available to other applications. Since the name may not be unique,
+the driver should provide additional software to make sure that the
+device it has been matched with by the operating system is indeed its
+device. This could be some sort of a signature diagnostic. For
+instance, all drivers have a validateHardware interface that is
+called by the family that instantiates the driver to validate that
+the match is correct and the device is functional.</p>
+
+<h3>Minimum Support of Open Firmware</h3>
+
+<p>To achieve minimum support requires an expansion ROM. Minimum
+support or Run Time Support requires a driver
+property. It should also include a "name" property. This will
+eliminate ambiguous driver/devices matching and provide
+plug-and-play.</p>
+
+<h3>Full Support of Open Firmware</h3>
+
+<p>The last category -- full support -- includes but is not limited
+to unambiguous driver/device matching, plug-and-play support, and
+boot support. The presence of a "name" property in the ROM guarantees
+matching, the presence of a runtime driver in the ROM guarantees
+plug-and-play, and the presence of a boot driver guarantees Open
+Firmware driver support such as display and network devices.</p>
+<p><a href="#top">Back to top</a></p>
+
+<p><a name="RTFToC2"></a></p>
+
+<h2>Properties Common To All Device Types</h2>
+
+<p>Given that your device has an expansion ROM, there are properties
+common to all devices as well as device-specific properties. What
+follows is an introduction to those properties that are defined by
+the IEEE 1275-1994 Specification, the PCI Binding Specification, and
+Apple Computer.</p>
+
+<h3>The "name" Property</h3>
+
+<p>The "name" property is uniquely used to define the name of your
+node in the Open Firmware device tree. This is also the name of your
+device. This is the only required property. If you do not supply this
+property, the Open Firmware is obliged to construct one on your
+behalf because it is required. This is the algorithm. The Open
+Firmware probing process first looks for FCode to define this
+property in the device tree. If it is not present, it then uses the
+Subsystem ID and SystemVendor ID that is hard-wired in Configuration
+Space on your device. If those fields are zero, it then uses the
+Vendor ID and Device ID also in the Configuration Space. It will
+construct a "name" property of the form pcixxxx,yyyy. The yyyy field
+can be the System ID or Device ID while the xxxx field can be a
+SubsystemVendor ID or Vendor ID.</p>
+
+<h3>The "reg" Property</h3>
+
+<p>The "reg" property is used to define your device's PCI
+memory-mapped areas including I/O space. If a "reg" property is
+contained in your expansion ROM, it will be used. If not, the Open
+Firmware probing process constructs one for you. It does so by
+writing all 1's to the Base Address Registers. (0x10 through 0x24) in
+Configuration Space. It then reads back the values. These registers
+are hardwired in powers of two to define your memory needs. Bits
+returning a zero effectively define the memory requirements. See the
+PCI Local Bus Specification Revision 2.1 Section 6.2.5 Base Addresses
+for details. A word about the "assigned-addresses" property. This
+property is also generated during the probing process from the "reg"
+property. It is not, however, contained in the expansion ROM but is
+placed in the device tree.
+</p>
+
+<h3>The "device-type" Property</h3>
+
+<p>The "device-type" property defines the device by function such as
+display, network, block, and so on. A word of caution is required.
+All device types except type PCI to PCI bridges use a PCI
+Configuration Register Map. Bridges use a PCI-to-PCI Bridge Register
+Map. See <i>Designing PCI Cards and Drivers for Power Macintosh
+Computers</i>, Chapter 4, "Startup &amp; System Configuration,"
+Figures 4-1 and 4-2 for details.</p>
+
+<h3>The "interrupts" Property</h3>
+
+<p>Use this property to define whether your device can generate
+interrupts. Its absence defines no interrupt needs. Since all
+interrupt pins on the PCI bridge chip are "ORed" together, there can
+be only one interrupt source on your device. Your device will be
+required to supply, in the case of multiple sources, a method for the
+driver to determine which source is the one requiring service.</p>
+
+<h3>The "model" Property</h3>
+
+<p>The model number or name of your device.</p>
+
+<h3>The "address" Property</h3>
+
+<p>Used to define large virtual address regions. Currently unused by
+Open Firmware.</p>
+
+<h3>The "compatible" Property</h3>
+
+<p>Used to define alternate "name" property values. You would
+typically use this property to tell the Open Firmware that there are
+other device choices that can be matched with a driver, given the
+original "name" property could not be matched. The compatible
+property allows other drivers to match against your device. For
+example, consider an XYZ networking card that is register-compatible
+with an Apple networking card. In this case, the name property would
+be "XYZ,xxx,yyy" and, correspondingly, the compatible property would
+be AAPL,xxx,yyy".</p>
+
+<h3>The "status" Property</h3>
+
+<p>The status of your device. Use this when you run diagnostics on
+your device during the Open Firmware boot process and you wish to
+report the results to Open Firmware. Currently unused by Open
+Firmware.</p>
+<p><a href="#top">Back to top</a></p>
+
+<p><a name="RTFToC3"></a></p>
+
+<h2>Standard Device Nodes and Their Properties</h2>
+
+<p>That concludes our discussion of the properties that are common to
+all device nodes. Now let's look at some standard device nodes and
+their properties. The most common five are: "block", "byte",
+"display", "network", and "serial".</p>
+
+
+	<center><table width="525" cellpadding="4" border="1">
+	<tbody><tr> <td colspan="3" align="left">
+	<p><b>Table 1: </b> Standard devices, properties and methods</p>
+	</td></tr>
+	<tr>
+	  <td align="left"><p><b>Device</b></p></td>
+	  <td align="left"><p><b>Property</b></p></td>
+	  <td align="left"><p><b>Function</b></p></td>
+	</tr>
+	
+	<tr> <td colspan="3" align="left">
+	<hr width="500" align="center">
+	</td></tr>
+
+	<tr>
+	  <td align="left"><p>block</p></td>
+	  <td align="left"><p>open</p></td>
+	  <td align="left"><p>Prepares device for use</p></td>
+	</tr>
+	<tr>
+	  <td align="left"><p></p></td>
+	  <td align="left"><p>close</p></td>
+	  <td align="left"><p>Closes previously opened device</p></td>
+	</tr>
+	<tr>
+	  <td align="left"><p></p></td>
+	  <td align="left"><p>read</p></td>
+	  <td align="left"><p>Moves device memory contents to main       
+                              memory</p></td>
+	</tr>
+	<tr>
+	  <td align="left"><p></p></td>
+	  <td align="left"><p>write</p></td>
+	  <td align="left"><p>Moves main memory contents to device       
+                              memory</p></td>
+	</tr>
+	<tr>
+	  <td align="left"><p></p></td>
+	  <td align="left"><p>seek</p></td>
+	  <td align="left"><p>Sets device position</p></td>
+	</tr>
+	<tr>
+	  <td align="left"><p></p></td>
+	  <td align="left"><p>load</p></td>
+	  <td align="left"><p>Loads a client program from device to      
+			main memory<br>
+			<b>Note: </b> To be bootable, block devices must   
+			support disk-label and deblocker packages and
+			implement associated methods, such as read-blocks.</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td align="left"><p>byte</p></td>
+	  <td align="left"><p>open</p></td>
+	  <td align="left"><p>Prepares device for use</p></td>
+	</tr>
+	<tr>
+	  <td align="left"><p></p></td>
+	  <td align="left"><p>close</p></td>
+	  <td align="left"><p>Closes previously opened device</p></td>
+	</tr>
+	<tr>
+	  <td align="left"><p></p></td>
+	  <td align="left"><p>read</p></td>
+	  <td align="left"><p>Moves device memory contents to main       
+                              memory</p></td>
+	</tr>
+	<tr>
+	  <td align="left"><p></p></td>
+	  <td align="left"><p>write</p></td>
+	  <td align="left"><p>Moves main memory contents to device       
+                              memory</p></td>
+	</tr>
+	<tr>
+	  <td align="left"><p></p></td>
+	  <td align="left"><p>seek</p></td>
+	  <td align="left"><p>Sets device position</p></td>
+	</tr>
+	<tr>
+	  <td align="left"><p></p></td>
+	  <td align="left"><p>load</p></td>
+	  <td align="left"><p>Loads a client program from device to      
+                              main memory</p></td>
+	</tr>
+
+	<tr>
+	  <td align="left"><p>display</p></td>
+	  <td align="left"><p>open</p></td>
+	  <td align="left"><p>Prepares device for use</p></td>
+	</tr>
+	<tr>
+	  <td align="left"><p></p></td>
+	  <td align="left"><p>close</p></td>
+	  <td align="left"><p>Closes previously opened device</p></td>
+	</tr>
+	<tr>
+	  <td align="left"><p></p></td>
+	  <td align="left"><p>write</p></td>
+	  <td align="left"><p>Puts characters on boot screen</p></td>
+	</tr>
+	<tr>
+	  <td align="left"><p></p></td>
+	  <td align="left"><p>draw-logo</p></td>
+	  <td align="left"><p>Calls the FCode function to draw           
+                              caller's bit-mapped logo</p></td>
+	</tr>
+	<tr>
+	  <td align="left"><p></p></td>
+	  <td align="left"><p>restore</p></td>
+	  <td align="left"><p>Resets your device</p></td>
+	</tr>
+	<tr>
+	  <td align="left"><p></p></td>
+	  <td align="left"><p>character-set</p></td>
+	  <td align="left"><p>Defines which standard set of characters   
+             your device supports, such as ISO8859-1</p></td>
+	</tr>
+
+	<tr>
+	  <td align="left"><p>network</p></td>
+	  <td align="left"><p>open</p></td>
+	  <td align="left"><p>Prepares device for use</p></td>
+	</tr>
+	<tr>
+	  <td align="left"><p></p></td>
+	  <td align="left"><p>close</p></td>
+	  <td align="left"><p>Closes previously opened device</p></td>
+	</tr>
+	<tr>
+	  <td align="left"><p></p></td>
+	  <td align="left"><p>read</p></td>
+	  <td align="left"><p>Moves device memory contents to main       
+                              memory</p></td>
+	</tr>
+	<tr>
+	  <td align="left"><p></p></td>
+	  <td align="left"><p>write</p></td>
+	  <td align="left"><p>Moves main memory contents to device       
+                              memory</p></td>
+	</tr>
+	<tr>
+	  <td align="left"><p></p></td>
+	  <td align="left"><p>load</p></td>
+	  <td align="left"><p>Loads a client program from device to      
+                              main memory</p></td>
+	</tr>
+	<tr>
+	  <td align="left"><p></p></td>
+	  <td align="left"><p>local-mac-address</p></td>
+	  <td align="left"><p>The preassigned network address. The mac   
+                              stands for Media Access Control and        
+                              should not be confused with the            
+                              Macintosh.</p></td>
+	</tr>
+	<tr>
+	  <td align="left"><p></p></td>
+	  <td align="left"><p>mac-address</p></td>
+	  <td align="left"><p>Contains the last used network address</p></td>
+	</tr>
+	<tr>
+	  <td align="left"><p></p></td>
+	  <td align="left"><p>address-bits</p></td>
+	  <td align="left"><p>Contains the length of the network         
+                              address</p></td>
+	</tr>
+	<tr>
+	  <td align="left"><p></p></td>
+	  <td align="left"><p>max-frame-size</p></td>
+	  <td align="left"><p>Contains the maximum packet size</p></td>
+	</tr>
+
+	<tr>
+	  <td align="left"><p>serial</p></td>
+	  <td align="left"><p>open</p></td>
+	  <td align="left"><p>Prepares device for use</p></td>
+	</tr>
+	<tr>
+	  <td align="left"><p></p></td>
+	  <td align="left"><p>close</p></td>
+	  <td align="left"><p>Closes previously opened device</p></td>
+	</tr>
+	<tr>
+	  <td align="left"><p></p></td>
+	  <td align="left"><p>read</p></td>
+	  <td align="left"><p>Moves device memory contents to main       
+                              memory, i.e., character</p></td>
+	</tr>
+	<tr>
+	  <td align="left"><p></p></td>
+	  <td align="left"><p>write</p></td>
+	  <td align="left"><p>Moves main memory contents to device       
+                              memory, i.e., character</p></td>
+	</tr>
+	<tr>
+	  <td align="left"><p></p></td>
+	  <td align="left"><p>restore</p></td>
+	  <td align="left"><p>Resets your device</p></td>
+	</tr>
+	<tr>
+	  <td align="left"><p></p></td>
+	  <td align="left"><p>install-abort</p></td>
+	  <td align="left"><p>When used, polls for a console abort       
+                              sequence</p></td>
+	</tr>
+	<tr>
+	  <td align="left"><p></p></td>
+	  <td align="left"><p>remove-abort</p></td>
+	  <td align="left"><p>Reverses the effect of install-abort</p></td>
+	</tr>
+	<tr>
+	  <td align="left"><p></p></td>
+	  <td align="left"><p>ring-bell</p></td>
+	  <td align="left"><p>Need no further comment</p></td>
+	</tr>
+	
+	<tr> <td colspan="3" align="left">
+	<hr width="500" align="center">
+	</td></tr>
+
+	</tbody></table></center>
+    
+<br>
+<br>
+
+	
+<p><a href="#top">Back to top</a></p>
+
+<p><a name="RTFToC4"></a></p>
+
+<h2>Summary</h2>
+
+<p>This Technote introduces you to the possible expansion ROM
+contents for all PCI Macintosh computers. The least risky
+choice between no ROM, minimum ROM, and full ROM is, of course, full
+support, but the actual decision is constrained by how the board will
+be used. This Note is intended to make you aware of your ROM-content
+choices.</p>
+
+<p>A closing caveat is that devices of type 'ndrv' or IOKit were not discussed in
+this Note. These Apple-derived types allow developers to
+move to PCI before certain families are introduced into the OS. With
+time, all device types should use families. However, 'ndrv' is a
+valid type and can be used. Having an expansion ROM on a 'ndrv' or IOKit
+device can allow the driver writer to at least generate a "name"
+property with its unambiguous value. This alone will prevent a
+third-party manufacturer from having to recall its drivers to revise
+its DriverDescription data structure.</p>
+
+<p><a href="#top">Back to top</a></p>
+<br>
+
+<a name="references"></a>
+         
+         <h2>References</h2>
+
+
+   <p>Starting FORTH; Brody</p>
+   
+   <p>Writing FCode Program for PCI</p>
+   
+   <p>PCI Local Bus Specification Revision 2.1</p>
+            <p><a href="https://developer.apple.com/library/archive/technotes/tn/tn1061.html">Technote
+   1061 - Fundamentals of Open Firmware, Part I: The User
+   Interface</a>,&nbsp; provides an overview of using Forth
+   and the Open Firmware user interface.</p>
+            
+            <p><a href="https://developer.apple.com/library/archive/technotes/tn/tn1062.html">Technote
+   1062 - Fundamentals of Open Firmware, Part II: The Device
+   Tree</a>,&nbsp; is intended to get you started with the
+   device tree.</p>
+            
+
+<p><a href="#top">Back to top</a></p>
+
+
+
+         <p><a name="Downloads"></a></p>
+         
+         <h2>Downloadables</h2>
+         
+         <table width="100%" cellpadding="3" border="0">
+            <tbody><tr>
+               <td width="50" align="left">
+                  <p align="center"><img src="Technical%20Note%20TN1044%20Fundamentals%20of%20Open%20Firmware,%20Part%20III%20Understanding%20PCI%20Expansion%20ROM%20Choices%20for%20Mac%20OS_files/acrobatsmall.gif" alt="Acrobat" width="22" height="23" align="middle"></p>
+               </td>
+               <td align="left">
+                  <p>Acrobat version of this Note (72K).</p>
+               </td>
+               <td width="60" align="left">
+                  <p><a href="https://developer.apple.com/library/archive/technotes/tn/pdf/tn1044.pdf">Download</a></p>
+               </td>
+            </tr>
+</tbody></table>
+<p><a href="#top">Back to top</a></p>
+
+
+</td></tr></tbody></table></center>
+
+<!-- begin_footer_information -->
+
+<div id="globalfooter" class="hideInXcode hideOnPrint">
+	<div class="gf-sosumi">
+	    <p>Copyright © 2016 Apple Inc. All rights reserved.</p>
+	    <ul class="piped">
+		    <li><a href="http://www.apple.com/legal/internet-services/terms/site.html" class="first" target="_blank">Terms of Use</a></li>
+		    <li><a href="http://www.apple.com/privacy/" target="_blank">Privacy Policy</a></li>
+	    </ul>
+	</div>
+</div><!--/globalfooter-->
+<!-- end_footer_information -->
+
+
+
+
+</div>
+            </article>
+
+<script type="text/javascript" src="Technical%20Note%20TN1044%20Fundamentals%20of%20Open%20Firmware,%20Part%20III%20Understanding%20PCI%20Expansion%20ROM%20Choices%20for%20Mac%20OS_files/prototype.js"></script>
+<script type="text/javascript" src="Technical%20Note%20TN1044%20Fundamentals%20of%20Open%20Firmware,%20Part%20III%20Understanding%20PCI%20Expansion%20ROM%20Choices%20for%20Mac%20OS_files/library.js"></script>
+<script type="text/javascript" src="Technical%20Note%20TN1044%20Fundamentals%20of%20Open%20Firmware,%20Part%20III%20Understanding%20PCI%20Expansion%20ROM%20Choices%20for%20Mac%20OS_files/feedback.js"></script>
+
+
+
+
+<div id="blackout">
+    <div id="preload"></div>
+</div><div id="modal" aria-hidden="true">
+    <div id="closebox" tabindex="0" aria-label="Close feedback form" role="button"></div>
+    <div id="sending" class="hidden">
+        <h2 tabindex="0">Sending feedback…</h2>
+        <div id="sending_img"></div>
+    </div>
+    <div id="error" class="hidden">
+        <h2 tabindex="0">We’re sorry, an error has occurred.</h2>
+        <p>Please try submitting your feedback later.</p>
+        <div id="error_icon"></div>
+    </div>
+    <div id="success" class="hidden">
+        <h2 tabindex="0">Thank you for providing feedback!</h2>
+        <p>Your input helps improve our developer documentation.</p>
+        <div id="thank_you_icon"></div>
+    </div>
+    
+    <form id="feedback" action="#" method="post">
+        <div class="left-leaf">
+            <h2 id="helpful_title" data-asterisk="a1" tabindex="0">How helpful is this document?</h2>     
+            <sup id="a1" class="asterisk" aria-hidden="true">*</sup>
+
+            <div id="star_group" role="radiogroup" aria-required="true">
+                <label> 
+                    <input class="radio" type="radio" name="helped" value="1"> 
+                    Very helpful
+                </label>
+                <label> 
+                    <input class="radio" type="radio" name="helped" value="2"> 
+                    Somewhat helpful
+                </label>
+                <label>
+                    <input class="radio" type="radio" name="helped" value="3"> 
+                    Not helpful
+                </label>
+            </div>
+        </div>
+        <div class="right-leaf">
+            <h2>How can we improve this document?</h2>
+            <div id="improve" class="checkboxes">
+                <label>
+                    <input type="checkbox" name="typo"> 
+                    Fix typos or links
+                </label>
+                <label>
+                    <input type="checkbox" name="infoIncorrect"> 
+                    Fix incorrect information
+                </label>
+                <label>
+                    <input type="checkbox" name="needs_examples"> 
+                    Add or update code samples
+                </label>
+                <label>
+                    <input type="checkbox" name="needs_art"> 
+                    Add or update illustrations
+                </label>
+                <label>
+                    <input type="checkbox" name="missingInfo"> 
+                    Add information about...
+                </label>
+            </div>
+        </div>
+
+        <textarea id="comment" name="problem" cols="70" rows="8" placeholder="Please tell us more about your experience with this document" data-asterisk="a2" required=""></textarea>
+        <sup id="a2" class="asterisk" aria-hidden="true">*</sup>
+
+        <p class="fineprint">
+            <em aria-hidden="true"><span>*</span> Required information</em>
+        </p> 
+
+        <input id="submit" type="button" value="Send">
+
+        <section id="legal">
+            <p>
+                To submit a product bug or enhancement request, please visit the 
+                <a href="https://developer.apple.com/bugreporter/" target="_blank">Bug Reporter</a> 
+                page.
+            </p>
+            <p>
+                Please read <a href="http://www.apple.com/legal/policies/ideas.html" target="_blank">Apple's Unsolicited Idea Submission Policy</a> 
+                before you send us your feedback.
+            </p> 
+        </section>
+    </form>
+</div></body></html>

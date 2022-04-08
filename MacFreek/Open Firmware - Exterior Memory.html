@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html dir="ltr" class="client-js" lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="UTF-8">
+<title>Open Firmware - Exterior Memory</title>
+<meta name="generator" content="MediaWiki 1.25.3">
+<link rel="shortcut icon" href="http://www.macfreek.nl/favicon.ico">
+<link rel="search" type="application/opensearchdescription+xml" href="http://www.macfreek.nl/memory/opensearch_desc.php" title="Exterior Memory (en)">
+<link rel="EditURI" type="application/rsd+xml" href="http://www.macfreek.nl/memory/api.php?action=rsd">
+<link rel="alternate" hreflang="x-default" href="http://www.macfreek.nl/memory/Open_Firmware">
+<link rel="copyright" href="http://creativecommons.org/licenses/by/3.0/nl/">
+<link rel="alternate" type="application/atom+xml" title="Exterior Memory Atom feed" href="http://www.macfreek.nl/memory/index.php?title=Special:RecentChanges&amp;feed=atom">
+<link rel="stylesheet" href="Open%20Firmware%20-%20Exterior%20Memory_files/load.css">
+<style>
+.mw-collapsible-toggle{float:right;-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;user-select:none}  .mw-content-ltr .mw-collapsible-toggle,.mw-content-rtl .mw-content-ltr .mw-collapsible-toggle{float:right} .mw-content-rtl .mw-collapsible-toggle,.mw-content-ltr .mw-content-rtl .mw-collapsible-toggle{float:left}.mw-customtoggle,.mw-collapsible-toggle{cursor:pointer} caption .mw-collapsible-toggle,.mw-content-ltr caption .mw-collapsible-toggle,.mw-content-rtl caption .mw-collapsible-toggle,.mw-content-rtl .mw-content-ltr caption .mw-collapsible-toggle,.mw-content-ltr .mw-content-rtl caption .mw-collapsible-toggle{float:none} li .mw-collapsible-toggle,.mw-content-ltr li .mw-collapsible-toggle,.mw-content-rtl li .mw-collapsible-toggle,.mw-content-rtl .mw-content-ltr li .mw-collapsible-toggle,.mw-content-ltr .mw-content-rtl li .mw-collapsible-toggle{float:none} .mw-collapsible-toggle-li{list-style:none}
+/* cache key: memorywiki:resourceloader:filter:minify-css:7:e1ffd603cbaaa5f1a36e0d13fe843535 */
+.suggestions{overflow:hidden;position:absolute;top:0;left:0;width:0;border:none;z-index:1099;padding:0;margin:-1px 0 0 0}.suggestions-special{position:relative;background-color:white;cursor:pointer;border:solid 1px #aaaaaa;padding:0;margin:0;margin-top:-2px;display:none;padding:0.25em 0.25em;line-height:1.25em}.suggestions-results{background-color:white;cursor:pointer;border:solid 1px #aaaaaa;padding:0;margin:0}.suggestions-result{color:black;margin:0;line-height:1.5em;padding:0.01em 0.25em;text-align:left; overflow:hidden;-o-text-overflow:ellipsis; text-overflow:ellipsis;white-space:nowrap}.suggestions-result-current{background-color:#4C59A6;color:white}.suggestions-special .special-label{color:gray;text-align:left}.suggestions-special .special-query{color:black;font-style:italic;text-align:left}.suggestions-special .special-hover{background-color:silver}.suggestions-result-current .special-label,.suggestions-result-current .special-query{color:white}.highlight{font-weight:bold}
+/* cache key: memorywiki:resourceloader:filter:minify-css:7:f8d0c6895ce3ae14434c16b8fca59432 */
+.postedit-container{margin:0 auto;position:fixed;top:0;height:0;left:50%;z-index:1000;font-size:13px}.postedit-container:hover{cursor:pointer}.postedit{position:relative;top:0.6em;left:-50%;padding:.6em 3.6em .6em 1.1em;line-height:1.5625em;color:#626465;background-color:#f4f4f4;border:1px solid #dcd9d9;text-shadow:0 0.0625em 0 rgba(255,255,255,0.5);border-radius:5px;box-shadow:0 2px 5px 0 #ccc;-webkit-transition:all 0.25s ease-in-out;-moz-transition:all 0.25s ease-in-out;-ms-transition:all 0.25s ease-in-out;-o-transition:all 0.25s ease-in-out;transition:all 0.25s ease-in-out}.skin-monobook .postedit{top:6em !important}.postedit-faded{opacity:0}.postedit-icon{padding-left:41px;  line-height:25px;background-repeat:no-repeat;background-position:8px 50%}.postedit-icon-checkmark{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAABblBMVEUAAAD///////9PfTf///80aRdTgjn///9Feij///////////9Rfzf///////////9PfjZRgDh1o1xOfTb///////+bwYqLtnj///////9PfTa82K////9WhT6YxIL///9QgDdTgzr////////j7uDl7eLq8efi693k7OH///////9UhjuBr2rp9uRUhjr///9YljVKgir///9WiTlYjT3////9/v57vFlbkT5PjC9dlD/5/fhuq09stUTs9uhxuElctCpfnT1huDFloEZloUZmpENmvDZpvDxpvTxqvjxrvT5rvT9rwTxsqktswD5uwkBvuUdxw0NztFBztU9ztVBzwkp0tlJ1xkd2t1R3uVR4w1F4xk54x014yE15uVZ5v1R5xVB6v1R7yFJ8wVh9xVl9yFR9yVd9ylN+xVh+yFd/x1l/yFeAylmEx1+Ny2uY0Hqe04Wj1Ymv3Ze33qLD47TJ5L3O6cPU7Mrq9eb2+/Q4j37OAAAAQHRSTlMAAQIEBAUFBQwPFB4fJCUoKiosQEhJS01RUlZZXmdydXaChYuSlJSWmJmoq6uur8LExcvM19fg5ejt8fX2+Pr7SljgewAAAKpJREFUGBkFwQNCAwAAAMDLtl3LtrG4rWXbtvX77gAgZ6grFwC0bhwNVgKgdPZx8b0dgLi+s7Wn0VoAqpfOI9+BNADZI7fLrz2pSEwGHZuH+78lSK8ZLkLezF3ooyUG3VPXq2USei9WngeyoG195yBYWDF3E/2pAhl1e9Gr8bGT+bfOFCC2fnvh4X7rcqIAQNNu+HT6sxkAjceTL/2ZAIhv+PorBwBJxfkA//dFHSCBy/UTAAAAAElFTkSuQmCC);background-image:url(http://www.macfreek.nl/memory/resources/src/mediawiki.action/images/green-checkmark.png?2015-10-16T17:01:40Z)!ie;background-position:left}.postedit-close{position:absolute;padding:0 .8em;right:0;top:0;font-size:1.25em;font-weight:bold;line-height:2.3em;color:black;text-shadow:0 0.0625em 0 white;text-decoration:none;opacity:0.2;filter:alpha(opacity=20)}.postedit-close:hover{color:black;text-decoration:none;opacity:0.4;filter:alpha(opacity=40)}
+/* cache key: memorywiki:resourceloader:filter:minify-css:7:d2d0ea9af95c55c6cb1363d2651221ca */</style><style>
+.suggestions a.mw-searchSuggest-link,.suggestions a.mw-searchSuggest-link:hover,.suggestions a.mw-searchSuggest-link:active,.suggestions a.mw-searchSuggest-link:focus{color:black;text-decoration:none}.suggestions-result-current a.mw-searchSuggest-link,.suggestions-result-current a.mw-searchSuggest-link:hover,.suggestions-result-current a.mw-searchSuggest-link:active,.suggestions-result-current a.mw-searchSuggest-link:focus{color:white}.suggestions a.mw-searchSuggest-link .special-query{ overflow:hidden;-o-text-overflow:ellipsis; text-overflow:ellipsis;white-space:nowrap}
+/* cache key: memorywiki:resourceloader:filter:minify-css:7:ae3fa4570b5ac0c6cf7b3776c8ae4d6f */</style><meta name="ResourceLoaderDynamicStyles" content="">
+<link rel="stylesheet" href="Open%20Firmware%20-%20Exterior%20Memory_files/load_002.css">
+<style>a:lang(ar),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}
+/* cache key: memorywiki:resourceloader:filter:minify-css:7:ad09c45e66b7b64cfb43a1f736bf6b56 */</style>
+<script src="Open%20Firmware%20-%20Exterior%20Memory_files/load.php"></script><script src="Open%20Firmware%20-%20Exterior%20Memory_files/load_002.php"></script>
+<script>if(window.mw){
+mw.config.set({"wgCanonicalNamespace":"","wgCanonicalSpecialPageName":false,"wgNamespaceNumber":0,"wgPageName":"Open_Firmware","wgTitle":"Open Firmware","wgCurRevisionId":4332,"wgRevisionId":4332,"wgArticleId":1698,"wgIsArticle":true,"wgIsRedirect":false,"wgAction":"view","wgUserName":null,"wgUserGroups":["*"],"wgCategories":["Hardware","Mac OS X"],"wgBreakFrames":false,"wgPageContentLanguage":"en","wgPageContentModel":"wikitext","wgSeparatorTransformTable":["",""],"wgDigitTransformTable":["",""],"wgDefaultDateFormat":"dmy","wgMonthNames":["","January","February","March","April","May","June","July","August","September","October","November","December"],"wgMonthNamesShort":["","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"wgRelevantPageName":"Open_Firmware","wgRelevantArticleId":1698,"wgIsProbablyEditable":false,"wgRestrictionEdit":[],"wgRestrictionMove":[],"wgWikiEditorEnabledModules":{"toolbar":false,"dialogs":false,"hidesig":true,"preview":false,"publish":false},"wgCategoryTreePageCategoryOptions":"{\"mode\":0,\"hideprefix\":20,\"showcount\":true,\"namespaces\":false}"});
+}</script><script>if(window.mw){
+mw.loader.implement("user.options",function($,jQuery){mw.user.options.set({"variant":"en"});});mw.loader.implement("user.tokens",function($,jQuery){mw.user.tokens.set({"editToken":"+\\","patrolToken":"+\\","watchToken":"+\\"});});
+/* cache key: memorywiki:resourceloader:filter:minify-js:7:a5c52c063dc436c1ca7c9f456936a5e9 */
+}</script>
+<script>if(window.mw){
+mw.loader.load(["mediawiki.page.startup","mediawiki.legacy.wikibits","mediawiki.legacy.ajax","skins.vector.js"]);
+}</script><script src="Open%20Firmware%20-%20Exterior%20Memory_files/load_004.php"></script>
+<!--[if lt IE 7]><style type="text/css">body{behavior:url("/memory/skins/Vector/csshover.min.htc")}</style><![endif]-->
+</head>
+<body class="mediawiki ltr sitedir-ltr ns-0 ns-subject page-Open_Firmware skin-vector action-view">
+		<div id="mw-page-base" class="noprint"></div>
+		<div id="mw-head-base" class="noprint"></div>
+		<div id="content" class="mw-body" role="main">
+			<a id="top"></a>
+
+						<div class="mw-indicators">
+</div>
+			<h1 id="firstHeading" class="firstHeading" lang="en">Open Firmware</h1>
+						<div id="bodyContent" class="mw-body-content">
+									<div id="siteSub">From Exterior Memory</div>
+								<div id="contentSub"></div>
+												<div id="jump-to-nav" class="mw-jump">
+					Jump to:					<a href="#mw-head">navigation</a>, 					<a href="#p-search">search</a>
+				</div>
+				<div id="mw-content-text" dir="ltr" class="mw-content-ltr" lang="en"><p>Open Firmware was a bootloader used on PowerPC Macintoshes. It is not actively used anymore.
+</p>
+<div id="toc" class="toc"><div id="toctitle"><h2>Contents</h2><span class="toctoggle">&nbsp;[<a href="#" id="togglelink">hide</a>]&nbsp;</span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Boot_in_OpenFirmware_Prompt"><span class="tocnumber">1</span> <span class="toctext">Boot in OpenFirmware Prompt</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#List_Hardware"><span class="tocnumber">2</span> <span class="toctext">List Hardware</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#List_File_System"><span class="tocnumber">3</span> <span class="toctext">List File System</span></a></li>
+<li class="toclevel-1 tocsection-4"><a href="#Boot"><span class="tocnumber">4</span> <span class="toctext">Boot</span></a></li>
+<li class="toclevel-1 tocsection-5"><a href="#NVRAM_parameters"><span class="tocnumber">5</span> <span class="toctext">NVRAM parameters</span></a></li>
+</ul>
+</div>
+
+<h3><span class="mw-headline" id="Boot_in_OpenFirmware_Prompt">Boot in OpenFirmware Prompt</span></h3>
+<p>Hold command-option-o-f during boot to get the Open Firmware prompt.
+</p>
+<h3><span class="mw-headline" id="List_Hardware">List Hardware</span></h3>
+<p>List hardware with memory addresses:
+</p>
+<pre>dev / ls
+</pre>
+<p>List aliases of devices:
+</p>
+<pre>devalias
+</pre>
+<p>For example, if this list may define a shortcut "hd" (hard disk) for the following hardware address:
+</p>
+<pre>hd     /pci@f2000000/mac-io@17/ata-4@1f000/disk@0
+</pre>
+<h3><span class="mw-headline" id="List_File_System">List File System</span></h3>
+<pre>dir hd:5,\
+</pre>
+<p>Lists the files of partition 5 of the "hd" device.
+</p>
+<pre>dir hd:\
+</pre>
+<p>Lists the files of the default partition of the "hd" device.
+</p><p>To eject a CD:
+</p>
+<pre>eject cd
+</pre>
+<h3><span class="mw-headline" id="Boot">Boot</span></h3>
+<p>Boot with the default settings (as stored in the boot-device NVRAM setting):
+</p>
+<pre>mac-boot
+</pre>
+<p>Boot with the file yaboot, on partition 5 of the "hd" device:
+</p>
+<pre>boot-device hd:5,yaboot
+</pre>
+<p>Boot with the file with TYPE code "tbxi" in the root folder of the default partition of the "hd" device (this is the default):
+</p>
+<pre>boot-device hd:,\\:tbxi
+</pre>
+<h3><span class="mw-headline" id="NVRAM_parameters">NVRAM parameters</span></h3>
+<p>Display all NVRAM settings:
+</p>
+<pre>printenv
+</pre>
+<p>Change an NVRAM setting:
+</p>
+<pre>setenv boot-device mac-io/ata-4@1f000/@0:2,\System\Library\CoreServices\BootX
+</pre>
+<p><br>
+More information:
+</p>
+<ul><li> <a class="external text" href="http://developer.apple.com/technotes/tn/tn1061.html">Fundamentals of Open Firmware, Part I: The User Interface</a></li>
+<li> <a class="external text" href="http://www.kernelthread.com/mac/osx/arch_boot.html">Booting Mac OS X</a>. Excellent overview at kernelthread.com</li>
+<li> <a class="external text" href="http://developer.apple.com/technotes/tn/tn2001.html">Technical Note TN2001: Running files from a hard drive in Open Firmware</a>. Slightly off-topic, but interesting nonetheless.</li>
+<li> <a class="external text" href="http://www.firmworks.com/QuickRef.html">Open Firmware Quick Reference</a>. Formal description of a few commands.</li></ul>
+
+<!-- 
+NewPP limit report
+CPU time usage: 0.016 seconds
+Real time usage: 0.046 seconds
+Preprocessor visited node count: 19/1000000
+Preprocessor generated node count: 24/1000000
+Post‐expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Highest expansion depth: 2/40
+Expensive parser function count: 0/100
+-->
+
+<!-- 
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    0.000      1 - -total
+-->
+
+<!-- Saved in parser cache with key memorywiki:pcache:idhash:1698-0!*!*!!en!*!* and timestamp 20220407050317 and revision id 4332
+ -->
+</div>									<div class="printfooter">
+						Retrieved from "<a dir="ltr" href="http://www.macfreek.nl/memory/index.php?title=Open_Firmware&amp;oldid=4332">http://www.macfreek.nl/memory/index.php?title=Open_Firmware&amp;oldid=4332</a>"					</div>
+													<div id="catlinks" class="catlinks"><div id="mw-normal-catlinks" class="mw-normal-catlinks"><a href="http://www.macfreek.nl/memory/Special:Categories" title="Special:Categories">Categories</a>: <ul><li><a href="http://www.macfreek.nl/memory/Category:Hardware" title="Category:Hardware">Hardware</a></li><li><a href="http://www.macfreek.nl/memory/Category:Mac_OS_X" title="Category:Mac OS X">Mac OS X</a></li></ul></div></div>												<div class="visualClear"></div>
+							</div>
+		</div>
+		<div id="mw-navigation">
+			<h2>Navigation menu</h2>
+
+			<div id="mw-head">
+									<div id="p-personal" role="navigation" class="" aria-labelledby="p-personal-label">
+						<h3 id="p-personal-label">Personal tools</h3>
+						<ul>
+							<li id="pt-createaccount"><a href="http://www.macfreek.nl/memory/index.php?title=Special:UserLogin&amp;returnto=Open+Firmware&amp;type=signup" title="You are encouraged to create an account and log in; however, it is not mandatory">Create account</a></li><li id="pt-login"><a href="http://www.macfreek.nl/memory/index.php?title=Special:UserLogin&amp;returnto=Open+Firmware" title="You are encouraged to log in; however, it is not mandatory [Alt+Shift+o]" accesskey="o">Log in</a></li>						</ul>
+					</div>
+									<div id="left-navigation">
+										<div id="p-namespaces" role="navigation" class="vectorTabs" aria-labelledby="p-namespaces-label">
+						<h3 id="p-namespaces-label">Namespaces</h3>
+						<ul>
+															<li id="ca-nstab-main" class="selected"><span><a href="http://www.macfreek.nl/memory/Open_Firmware" title="View the content page [Alt+Shift+c]" accesskey="c">Page</a></span></li>
+															<li id="ca-talk" class="new"><span><a href="http://www.macfreek.nl/memory/index.php?title=Talk:Open_Firmware&amp;action=edit&amp;redlink=1" title="Discussion about the content page [Alt+Shift+t]" accesskey="t">Discussion</a></span></li>
+													</ul>
+					</div>
+										<div id="p-variants" role="navigation" class="vectorMenu emptyPortlet" aria-labelledby="p-variants-label">
+												<h3 id="p-variants-label" tabindex="0"><span>Variants</span><a href="#" tabindex="-1"></a></h3>
+
+						<div class="menu">
+							<ul>
+															</ul>
+						</div>
+					</div>
+									</div>
+				<div id="right-navigation">
+										<div id="p-views" role="navigation" class="vectorTabs" aria-labelledby="p-views-label">
+						<h3 id="p-views-label">Views</h3>
+						<ul>
+															<li id="ca-view" class="selected"><span><a href="http://www.macfreek.nl/memory/Open_Firmware">Read</a></span></li>
+															<li id="ca-viewsource"><span><a href="http://www.macfreek.nl/memory/index.php?title=Open_Firmware&amp;action=edit" title="This page is protected.
+You can view its source [Alt+Shift+e]" accesskey="e">View source</a></span></li>
+															<li id="ca-history" class="collapsible"><span><a href="http://www.macfreek.nl/memory/index.php?title=Open_Firmware&amp;action=history" title="Past revisions of this page [Alt+Shift+h]" accesskey="h">View history</a></span></li>
+													</ul>
+					</div>
+										<div id="p-cactions" role="navigation" class="vectorMenu emptyPortlet" aria-labelledby="p-cactions-label" style="">
+						<h3 id="p-cactions-label" tabindex="0"><span>More</span><a href="#" tabindex="-1"></a></h3>
+
+						<div class="menu">
+							<ul>
+															</ul>
+						</div>
+					</div>
+										<div id="p-search" role="search">
+						<h3>
+							<label for="searchInput">Search</label>
+						</h3>
+
+						<form action="/memory/index.php" id="searchform">
+														<div id="simpleSearch">
+															<input type="search" name="search" placeholder="Search" title="Search Exterior Memory [Alt+Shift+f]" accesskey="f" id="searchInput" tabindex="1" autocomplete="off"><input type="hidden" value="Special:Search" name="title"><input type="submit" name="go" value="Go" title="Go to a page with this exact name if exists" id="searchButton" class="searchButton">								</div>
+						</form>
+					</div>
+									</div>
+			</div>
+			<div id="mw-panel">
+				<div id="p-logo" role="banner"><a class="mw-wiki-logo" href="http://www.macfreek.nl/memory/Main_Page" title="Visit the main page"></a></div>
+						<div class="portal" role="navigation" id="p-navigation" aria-labelledby="p-navigation-label">
+			<h3 id="p-navigation-label">Navigation</h3>
+
+			<div class="body">
+									<ul>
+													<li id="n-mainpage"><a href="http://www.macfreek.nl/memory/Main_Page" title="Visit the main page [Alt+Shift+z]" accesskey="z">Main Page</a></li>
+													<li id="n-Categories"><a href="http://www.macfreek.nl/memory/Template:Categories">Categories</a></li>
+													<li id="n-recentchanges"><a href="http://www.macfreek.nl/memory/Special:RecentChanges" title="A list of recent changes in the wiki [Alt+Shift+r]" accesskey="r">Recent changes</a></li>
+													<li id="n-All-Pages"><a href="http://www.macfreek.nl/memory/Special:AllPages">All Pages</a></li>
+											</ul>
+							</div>
+		</div>
+			<div class="portal" role="navigation" id="p-tb" aria-labelledby="p-tb-label">
+			<h3 id="p-tb-label">Tools</h3>
+
+			<div class="body">
+									<ul>
+													<li id="t-whatlinkshere"><a href="http://www.macfreek.nl/memory/Special:WhatLinksHere/Open_Firmware" title="A list of all wiki pages that link here [Alt+Shift+j]" accesskey="j">What links here</a></li>
+													<li id="t-recentchangeslinked"><a href="http://www.macfreek.nl/memory/Special:RecentChangesLinked/Open_Firmware" title="Recent changes in pages linked from this page [Alt+Shift+k]" accesskey="k">Related changes</a></li>
+													<li id="t-specialpages"><a href="http://www.macfreek.nl/memory/Special:SpecialPages" title="A list of all special pages [Alt+Shift+q]" accesskey="q">Special pages</a></li>
+													<li id="t-print"><a href="http://www.macfreek.nl/memory/index.php?title=Open_Firmware&amp;printable=yes" rel="alternate" title="Printable version of this page [Alt+Shift+p]" accesskey="p">Printable version</a></li>
+													<li id="t-permalink"><a href="http://www.macfreek.nl/memory/index.php?title=Open_Firmware&amp;oldid=4332" title="Permanent link to this revision of the page">Permanent link</a></li>
+													<li id="t-info"><a href="http://www.macfreek.nl/memory/index.php?title=Open_Firmware&amp;action=info" title="More information about this page">Page information</a></li>
+											</ul>
+							</div>
+		</div>
+				</div>
+		</div>
+		<div id="footer" role="contentinfo">
+							<ul id="footer-info">
+											<li id="footer-info-lastmod"> This page was last modified on 1 January 2011, at 23:34.</li>
+											<li id="footer-info-copyright">Content is available under <a class="external" href="http://creativecommons.org/licenses/by/3.0/nl/">Creative Commons Attribution 3.0 Netherlands</a> unless otherwise noted.</li>
+									</ul>
+							<ul id="footer-places">
+											<li id="footer-places-privacy"><a href="http://www.macfreek.nl/memory/Exterior_Memory:Privacy_policy" title="Exterior Memory:Privacy policy">Privacy policy</a></li>
+											<li id="footer-places-about"><a href="http://www.macfreek.nl/memory/Exterior_Memory:About" title="Exterior Memory:About">About Exterior Memory</a></li>
+											<li id="footer-places-disclaimer"><a href="http://www.macfreek.nl/memory/Exterior_Memory:General_disclaimer" title="Exterior Memory:General disclaimer">Disclaimers</a></li>
+									</ul>
+										<ul id="footer-icons" class="noprint">
+											<li id="footer-copyrightico">
+															<a href="http://creativecommons.org/licenses/by/3.0/nl/"><img src="Open%20Firmware%20-%20Exterior%20Memory_files/cc-by.html" alt="Creative Commons Attribution 3.0 Netherlands" width="88" height="31"></a>
+													</li>
+											<li id="footer-poweredbyico">
+															<a href="http://www.mediawiki.org/"><img src="Open%20Firmware%20-%20Exterior%20Memory_files/poweredby_mediawiki_88x31.html" alt="Powered by MediaWiki" srcset="Open%20Firmware%20-%20Exterior%20Memory_files/poweredby_mediawiki_132x47.html 1.5x, Open%20Firmware%20-%20Exterior%20Memory_files/poweredby_mediawiki_176x62.html 2x" width="88" height="31"></a>
+													</li>
+									</ul>
+						<div style="clear:both"></div>
+		</div>
+		<script>if(window.jQuery)jQuery.ready();</script><script>if(window.mw){
+mw.loader.state({"site":"loading","user":"ready","user.groups":"ready"});
+}</script>
+<script>if(window.mw){
+mw.loader.load(["mediawiki.toc","mediawiki.action.view.postEdit","mediawiki.user","mediawiki.hidpi","mediawiki.page.ready","mediawiki.searchSuggest"],null,true);
+}</script>
+<script>if(window.mw){
+document.write("\u003Cscript src=\"http://www.macfreek.nl/memory/load.php?debug=false\u0026amp;lang=en\u0026amp;modules=site\u0026amp;only=scripts\u0026amp;skin=vector\u0026amp;*\"\u003E\u003C/script\u003E");
+}</script><script src="Open%20Firmware%20-%20Exterior%20Memory_files/load_003.php"></script>
+<script>if(window.mw){
+mw.config.set({"wgBackendResponseTime":435});
+}</script>
+	
+
+<div style="display: none; font-size: 13px;" class="suggestions"><div class="suggestions-results"></div><div class="suggestions-special"></div></div></body></html>

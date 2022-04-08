@@ -1,0 +1,644 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="ROBOTS" content="NOINDEX, NOFOLLOW">
+            <meta id="book-resource-type" name="book-resource-type" content="Technical Q&amp;A">
+            <meta id="book-title" name="book-title" content="Reducing the size of Physical Memory in Open Firmware">
+            <meta id="book-root" name="book-root" content="./">
+            <meta id="devcenter" name="devcenter" content="Mac Dev Center">
+            <meta id="devcenter-url" name="devcenter-url" content="http://developer.apple.com/devcenter/mac">
+            <meta id="reflib" name="reflib" content="Documentation Archive">
+            <meta id="book-assignments" name="book-assignments" content="{Type/Technical Q&amp;A}">
+            <meta scheme="apple_ref" id="identifier" name="identifier" content="//apple_ref/doc/uid/DTS10001647">
+            <meta id="document-version" name="document-version" content="1.0.2">
+            <meta id="build" name="build" content="c1e4c7a89af8f899a21cfa81fc33ba42">
+            <meta id="description" name="description" content="QA1099: Describes how to configure the Power Macintosh so less memory is recognized than is actually present.">
+            <meta id="resources-uri" name="resources-uri" content="../../Resources/1282/">
+            <meta id="Generator" name="Generator" content="Gutenberg Static e43202ea08">
+            <meta id="Copyright" name="Copyright" content="Copyright 2018 Apple Inc. All Rights Reserved.">
+			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+            <meta id="platforms" name="platforms" content="OS X">
+<link rel="stylesheet" type="text/css" href="Technical%20Q&amp;A%20QA1099%20Reducing%20the%20size%20of%20Physical%20Memory%20in%20Open%20Firmware_files/screen.css">
+<link rel="stylesheet" type="text/css" href="Technical%20Q&amp;A%20QA1099%20Reducing%20the%20size%20of%20Physical%20Memory%20in%20Open%20Firmware_files/feedback.css">
+
+   <title>Technical Q&amp;A QA1099: Reducing the size of Physical Memory in Open Firmware</title>
+			
+	<link rel="stylesheet" href="Technical%20Q&amp;A%20QA1099%20Reducing%20the%20size%20of%20Physical%20Memory%20in%20Open%20Firmware_files/adcstyle.html" type="text/css" id="custom">
+	<link rel="stylesheet" href="Technical%20Q&amp;A%20QA1099%20Reducing%20the%20size%20of%20Physical%20Memory%20in%20Open%20Firmware_files/style.html" type="text/css" id="custom">
+
+	<meta name="keywords" content="Open Firmware, maxmem">
+	<meta name="Description" content="Technical Q&amp;A QA1099: limiting physical memory without having
+to remove memory">
+
+
+
+<meta name="categories" content="Hardware">
+
+
+<meta name="week-posted" content="Dec 17, 2001 - Dec 21, 2001">
+
+<link rel="stylesheet" href="Technical%20Q&amp;A%20QA1099%20Reducing%20the%20size%20of%20Physical%20Memory%20in%20Open%20Firmware_files/adcstyle_002.html" type="text/css" id="custom"><script language="JavaScript" type="text/javascript" src="Technical%20Q&amp;A%20QA1099%20Reducing%20the%20size%20of%20Physical%20Memory%20in%20Open%20Firmware_files/adc.html"></script>
+</head>
+
+
+
+<body id="StaticPage" class="" bgcolor="white"><a name="//apple_ref/doc/uid/DTS10001647" title="Reducing the size of Physical Memory in Open Firmware"></a>
+
+            <div id="adcHeader" class="hideOnPrint hideInXcodeSC">
+                <div id="ssi_Header" class="hideInXcodeSC unified">
+                    <a id="ssi_LibraryTitle" href="https://developer.apple.com/library/archive/navigation/">Documentation Archive</a>
+                    <a id="ssi_AppleDeveloperConnection" href="https://developer.apple.com/">Developer</a>
+                    <div id="ssi_SearchButton" role="button" title="Search">Search</div>
+                </div>
+                <form id="ssi_SearchMenu" method="get" action="../../search/" accept-charset="utf-8">
+                    <label for="adcsearch">Search Documentation Archive</label>
+                    <input type="search" id="ssi_SearchField" name="q" accesskey="s" results="5">
+                </form>
+            </div>
+            <header id="header">
+                <div id="title" role="banner">
+                    <h1>Reducing the size of Physical Memory in Open Firmware</h1>
+                    <span id="file_links">
+                        <a id="PDF_link" role="button" tabindex="4" rel="alternate" title="Download PDF"><span id="pdf_icon"></span>PDF</a>
+                        <a id="Companion_link" role="button" tabindex="3" title="Download Companion File"><span id="companion_icon"></span>Companion File</a>
+                    </span>
+                </div>
+                <ul id="headerButtons" class="hideOnPrint" role="toolbar">
+                    <li id="toc_button" style="display:none">
+                        <button tabindex="5" id="table_of_contents" class="" role="checkbox" aria-label="Show Table of Contents">
+                        <span class="disclosure"></span>Table of Contents</button>
+                    </li>
+                    <li id="jumpto_button" style="display:none" role="navigation">
+                        <select tabindex="6" id="jumpTo">
+                            <option value="top" selected="selected">&lt;&gt;</option>
+                        </select>
+                    </li>
+                    <li id="downloadSample_button" style="display:none">
+                        <a id="Sample_link"><button id="Sample_button">Download Sample Code</button></a>
+                    </li>
+                </ul>
+            </header>
+            <nav id="tocContainer" class="" tabindex="7">
+                <ul id="toc" role="tree"></ul>
+            </nav>
+            <article id="contents" class="">
+              <div id="technicalQA">
+
+
+<!-- top_of_header_marker_comment -->
+<!-- begin_header_information --><p><a href="http://developer.apple.com/">ADC Home</a> &gt; <a href="https://developer.apple.com/library/archive/referencelibrary/index.html">Reference Library</a> &gt; <a href="https://developer.apple.com/library/archive/technicalqas/index.html">Technical Q&amp;As</a> &gt; <a href="https://developer.apple.com/library/archive/technicalqas/HardwareDrivers/index.html">Hardware &amp; Drivers</a> &gt; <a href="https://developer.apple.com/library/archive/technicalqas/HardwareDrivers/idxAppleHardware-date.html">Apple Hardware</a> &gt; </p><!-- end_header_information -->
+<!-- bottom_of_header_marker_comment -->
+<!-- top_of_titles_marker_comment --><center><table width="600" cellspacing="0" cellpadding="0" border="0">
+<tbody><tr><td scope="row" align="left">
+<h1>
+<div id="pagehead">Technical Q&amp;A QA1099</div>
+<div id="pageheadsub">Reducing the size of Physical Memory in Open Firmware</div>
+</h1>
+</td></tr></tbody></table></center><!-- bottom_of_titles_marker_comment -->
+
+<center><table width="600" cellspacing="1" border="0">
+   <tbody><tr>
+      <td align="left">
+         <p><!-- begin_content -->
+         
+         </p><hr width="500" align="center">
+         
+         <p></p>
+         
+         <p id="p2">Q: Can I configure the Power Macintosh system so
+         that the system thinks that there is less physical memory
+         present than there actually is without having to open the
+         system to remove memory sticks.</p>
+         
+         <p id="p4">A: For all Power Macintosh systems with Open
+         Firmware, you can implement settings to make the system
+         believe that there is less physical memory than is actually
+         present. This is useful for testing purposes when you don't
+         want to have to physically remove RAM such as on the earlier
+         iMacs or PowerBooks which require disassembly. The simplest
+         method is supported by Mac OS X only. Under Mac OS X, you
+         can use the Terminal application to enter the nvram command
+         and reboot the system. There are additional methods which
+         work within the Open Firmware environment.</p>
+         
+         <br><br>
+         
+         <h2>Using Terminal to Set the Physical Memory Size for Mac OS X</h2>
+         
+         <p id="p4">The following instructions works for Mac OS X only.
+         You must have root privileges in order to make this change.
+         You will use the Terminal application to issue the nvram
+         command to set the "boot-arg" environment variable. Follow
+         these steps.</p>
+         
+         <p id="p4">Step 1. Launch the Terminal application. The
+         Terminal application is found at <code>/Applications/Utilities/Terminal</code></p>
+         
+         <p id="p4">Step 2. Enter the following command</p>
+         
+<br><br><center><table width="550" cellpadding="4" border="0">
+<tbody><tr><td bgcolor="#E6E6E6" align="left">
+<pre>         % sudo nvram boot-args="maxmem=64"
+</pre>
+</td></tr></tbody></table></center><br><br>
+                             
+         <p id="p4">Step 3. Restart the system</p>
+         
+         <p id="p4">The above commands implements the <code>"maxmem"</code>
+         setting into nonvolatile RAM. This means that the setting is
+         persistent across system restarts. If you had previous set
+         <code>boot-args</code> to a different value,
+         then the original value will be lost to be replaced by the
+         <code>"maxmem"</code> setting. If you decide
+         to change the setting before restarting, a subsequent
+         setting will overwrite a preceding setting. If you misspell
+         "<code>boot-args</code>" , there is no
+         warning, a (probably useless) new entry into NVRAM is made,
+         and the RAM use will be unchanged after restart.</p>
+         
+         <p id="p4">An important caveat - the "desired memory size"
+         must be a multiple of 2. If you specify an odd setting of
+         65, 129, etc, your system may hang during the boot process.
+         If this happens, you will need to "zap PRAM" as described in
+         the next section "<a href="#ClearMaxmem">Clearing the
+         "maxmem" Setting</a>".</p>
+         
+         <p id="p4">Note that you can also implement the <code>boot-args</code>
+         setting within Open Firmware. This option is discussed at
+         the end of this Q&amp;A under the section "<a href="#SetSizeMacXInOF">Setting
+         the Physical Memory Size for Mac OS X using "maxmem" in Open
+         Firmware</a>".</p>
+         
+         <br><br>
+         <a name="ClearMaxmem"></a>
+         
+         <h2>Clearing the "maxmem" Setting</h2>
+         
+         <p id="p4">The <code>maxmem </code>setting is
+         set in NVRAM and will affect all system restarts, unless the
+         setting is changed or cleared. Use the instructions above to
+         set <code>"maxmem"</code> to a different
+         value. To clear the <code>maxmem</code>
+         setting, there are three options.</p>
+         
+         <p id="p4">1. Use the Terminal application to clear the
+         <code>boot-args</code> setting. For example,
+         you could enter the following command within the Terminal
+         application</p>
+         
+<br><br><center><table width="550" cellpadding="4" border="0">
+<tbody><tr><td bgcolor="#E6E6E6" align="left">
+<pre>         % sudo nvram boot-args=""
+</pre>
+</td></tr></tbody></table></center><br><br>
+                             
+         <p id="p4">This command sequence clears the value of
+         <code>boot-args</code>.</p>
+         
+         <p id="p4">2. You can clear <code>boot-args
+         </code>by "zapping PRAM". Restart the system and hold down
+         the "Command-Option-P-R" keys until you hear the start beep
+         a second time. Release the keys and the system will restart
+         normally with all memory recognized. Keep in mind that
+         resetting PRAM has the effect of clearing all custom NVRAM
+         settings.</p>
+         
+         <p id="p4">3. Finally, you can clear the <code>"maxmem"
+         </code>setting using the Startup Disk Preference Panel to
+         switch startup to a different disk or to Mac OS 9. This
+         clears the <code>boot-args</code>
+         "<code>maxmem</code>" setting and is similar
+         to using the Terminal application to clear this setting.</p>
+         
+         <br><br>
+         
+         <h2>Setting the Physical Memory Size
+         for Mac OS 8/9 and Mac OS X Under Open
+         Firmware</h2>
+         
+         <p id="p4">The following method works for system starts into
+         both Mac OS 8/9 and Mac OS X. To have less physical RAM
+         recognized, you need to delete the existing "reg" property
+         in the memory node and create a replacement property with
+         less memory specified. Follow these instructions.</p>
+         
+         <p id="p4">Step 1. Enter Open Firmware.<br>
+         Restart the system and hold the "Command-Option-O-F" keys
+         down until the Open Firmware screen is displayed.</p>
+         
+         <p id="p4">Step 2. Set the current directory to the memory
+         node.<br>
+         Enter the following at the Open Firmware prompt.</p>
+         
+<br><br><center><table width="550" cellpadding="4" border="0">
+<tbody><tr><td bgcolor="#E6E6E6" align="left">
+<pre>         dev /memory
+</pre>
+</td></tr></tbody></table></center><br><br>
+                             
+         <p id="p4">Step 3. Display the contents of the memory
+         node.<br>
+         Enter the following command.</p>
+         
+<br><br><center><table width="550" cellpadding="4" border="0">
+<tbody><tr><td bgcolor="#E6E6E6" align="left">
+<pre>         .properties
+</pre>
+</td></tr></tbody></table></center><br><br>
+                             
+         <p id="p4">Remember to include the period character at the
+         beginning of the command. The following are the memory node
+         properties for a PowerBook G3 (FireWire) with a 32M SODIMM
+         in the lower slot and a 128M SODIMM in the upper slot.</p>
+         
+         
+   <br><br><center><table width="550" cellpadding="4" border="0">
+<tbody><tr><td bgcolor="#E6E6E6" align="left">
+<pre>name memory
+device_type memory
+reg &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;00000000 08000000
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;08000000 02000000
+slot-names &nbsp;00000003
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SODIMM0/J2
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SODIMM1/J1
+available   00003000 09bfd000
+dimm-info   8008040c 09024000 01a06000 80100001 8f040601 01000ec0 70000014 14143210
+            20102010 00000000 00000000 00000000 00000000 00000000 00000000 0000123e
+            ce000000 00000000 014b4d4d 34203634 53313732 34425431 2d464c31 42010023
+            a85400ff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffff64cd
+            8008040c 08014000 01a08000 80100001 8f040601 01000ef0 8000001e 141e3c08
+            00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000141
+            1cffffff ffffffff 014d4834 53363442 4b472d31 304c2020 20202000 57631a33
+            b00a1400 00000000 00000000 00000000 00000000 00000000 00000000 00006606
+dimm-types &nbsp;SDRAM
+            SDRAM
+dimm-speeds PC100-322S
+            PC100-333S
+</pre>
+</td></tr></tbody></table></center><br><br>
+                          
+         
+                  
+         <p id="p4">Step 4. Identify the "reg" values<br>
+         Case 1 - The "reg" property from above is</p>
+         
+<br><br><center><table width="550" cellpadding="4" border="0">
+<tbody><tr><td bgcolor="#E6E6E6" align="left">
+<pre>         reg 00000000 08000000
+             08000000 02000000
+</pre>
+</td></tr></tbody></table></center><br><br>
+                             
+         <p id="p4">The first column is the starting address for the
+         DIMM and the second column is the size of the DIMM -
+         0x08000000 is equivalent to 128M, 0x02000000 is equivalent
+         to 32M. Note that the memory space always begins at location
+         0. If you try to set the starting address to an address
+         other than 0, the system may not boot.</p>
+         
+         <p id="p4">Case 2 - For a system with only 1 memory DIMM
+         present, you might see</p>
+         
+<br><br><center><table width="550" cellpadding="4" border="0">
+<tbody><tr><td bgcolor="#E6E6E6" align="left">
+<pre>         reg 00000000 08000000
+</pre>
+</td></tr></tbody></table></center><br><br>
+                             
+         <p id="p4">In this case, there is a single DIMM (SODIMM) of
+         128M memory present.</p>
+         
+         <p id="p4">Step 5. Decide how much memory you want the system
+         to think is present. You can only specify the same or less
+         memory than is physically present.</p>
+         
+         <p id="p4">Let's assume you want the system to recognize only
+         32M of the 160M of RAM present in Case 1 above.</p>
+         
+         <p id="p4">Step 6. Delete the existing " reg" property.<br>
+         At the OF prompt enter</p>
+         
+<br><br><center><table width="550" cellpadding="4" border="0">
+<tbody><tr><td bgcolor="#E6E6E6" align="left">
+<pre>         " reg" delete-property
+</pre>
+</td></tr></tbody></table></center><br><br>
+                             
+         <p id="p4">There is a leading space character in <code>"
+         reg"</code></p>
+         
+         <p id="p4">You can verify that the property is gone by
+         entering the <code>".properties"</code>
+         command.</p>
+         
+         <p id="p4">Step 7. Enter in a replacement <code>"
+         reg"</code> property array. You will enter pairs of values
+         where the first value is the beginning address and the
+         second value is the size of memory at that location. To
+         simulate 32M we can enter the following for both cases noted
+         above.</p>
+         
+<br><br><center><table width="550" cellpadding="4" border="0">
+<tbody><tr><td bgcolor="#E6E6E6" align="left">
+<pre>         0 encode-int 2000000 encode-int encode+ " reg" property
+</pre>
+</td></tr></tbody></table></center><br><br>
+                             
+         <p id="p4">In this case, 0 is the memory starting address and
+         2000000 (32M) is the memory size.</p>
+         
+         <p id="p4">Verify that the property is now present with only a
+         single array entry by using the ".properties" command. You
+         should now see the following <code>"
+         reg"</code> entry</p>
+         
+<br><br><center><table width="550" cellpadding="4" border="0">
+<tbody><tr><td bgcolor="#E6E6E6" align="left">
+<pre>         reg 00000000 02000000
+</pre>
+</td></tr></tbody></table></center><br><br>
+                             
+         <p id="p4">Step 8. Continue the boot process<br>
+         Enter the following at the OF Prompt.</p>
+         
+<br><br><center><table width="550" cellpadding="4" border="0">
+<tbody><tr><td bgcolor="#E6E6E6" align="left">
+<pre>         mac-boot
+</pre>
+</td></tr></tbody></table></center><br><br>
+                             
+         <p id="p4">Once the Mac OS is active, you can verify that the
+         system now only thinks that there is 32M present.</p>
+         
+         <p id="p4">Note that this information is not written to NVRAM.
+         When you reboot the system, the system will recognize the
+         Physical RAM which is present.</p>
+         
+         
+         <br><br>
+         
+         <h2>Another Example Open Firmware
+         Example</h2>
+         
+         <p id="p4">You may have a system with only one or multiple RAM
+         DIMMs present. For all cases, the generalized command is</p>
+         
+<br><br><center><table width="550" cellpadding="4" border="0">
+<tbody><tr><td bgcolor="#E6E6E6" align="left">
+<pre>         0 encode-int XXX00000 encode-int encode+ " reg" property
+</pre>
+</td></tr></tbody></table></center><br><br>
+                             
+         <p id="p4">where <code>XXX00000</code> is the
+         desired size of memory to limit the system to. <code>XXX00000
+         </code>cannot be greater than the amount of physical memory
+         present on the system.</p>
+         
+         <p id="p4">For case 1, if we want the system to think that
+         there is 144M of memory instead of the full 160M, we do the
+         following for step 7. Enter the following for this step.</p>
+         
+<br><br><center><table width="550" cellpadding="4" border="0">
+<tbody><tr><td bgcolor="#E6E6E6" align="left">
+<pre>         0 encode-int 9000000 encode-int encode+
+</pre>
+</td></tr></tbody></table></center><br><br>
+                             
+         <p id="p4">This creates a <code>" reg"</code>
+         property for a memory DIMM starting at location 0 with a
+         size of 144M. After booting, if you open Apple System
+         Profiler, it will show that there is only a single memory
+         DIMM of 144M in the first slot. While it is possible to
+         recreate the <code>" reg"</code> property so
+         that two DIMM's are listed, that is beyond the scope of this
+         Q&amp;A.</p>
+         
+         
+         <br><br>
+         
+         
+         <h2>Three DIMM Open Firmware Example</h2>
+         
+         <p id="p4">Whether you have one, two or many more DIMMs
+         present, the same command format is used. You might have a
+         G4 with three 128M DIMMs installed as displayed using the
+         <code>.properties</code> command.</p>
+         
+<br><br><center><table width="550" cellpadding="4" border="0">
+<tbody><tr><td bgcolor="#E6E6E6" align="left">
+<pre>         reg 00000000 08000000
+             08000000 08000000
+             10000000 08000000
+</pre>
+</td></tr></tbody></table></center><br><br>
+                             
+         <p id="p4">The total memory present is 384M. Lets assume that
+         you want to limit the system to recognizing only 320M. For
+         step 7. Enter the following.</p>
+         
+<br><br><center><table width="550" cellpadding="4" border="0">
+<tbody><tr><td bgcolor="#E6E6E6" align="left">
+<pre>         0 encode-int 14000000 encode-int encode+ " reg" property
+</pre>
+</td></tr></tbody></table></center><br><br>
+                             
+         <br><br>
+         
+         <h2>2M Limitation</h2>
+         
+         <p id="p4">When specifying the size of memory present, the
+         size must be a multiple of 200000 (or 2M) else the system
+         may hang on start or enter a kernel panic. You cannot
+         specify that the available memory is 65M for example, but
+         you can specify that it is 66M. If you specify an invalid
+         value, you may have to "zap PRAM" as described in the
+         section - "<a href="#ClearMaxmem">Clearing the "maxmem"
+         Setting</a>".</p>
+         
+         <br><br>
+         
+         
+         
+         <a name="SetSizeMacXInOF"></a>
+         
+         <h2>Setting
+         the Physical Memory Size for Mac OS X using "maxmem" in Open
+         Firmware</h2>
+         
+         <p id="p4">For Mac OS X, you can create the <code>maxmem</code>
+         property in nonvolatile (NVRAM) memory, which Mac OS X uses,
+         if present, to define the amount of physical memory present.
+         If this setting is greater than the actual amount of
+         physical memory present, then the setting is not used. Once
+         the setting is in NVRAM, the setting persists across system
+         restarts.</p>
+         
+         <p id="p4">To define the <code>maxmem</code>
+         property from within Open Firmware, follow these
+         instructions:</p>
+         
+         <p id="p4">Step 1. Enter Open Firmware.<br>
+         Restart the system and hold the "Command-Option-O-F" keys
+         down until the Open Firmware screen is displayed.</p>
+         
+         <p id="p4">Step 2. Enter the following command</p>
+         
+<br><br><center><table width="550" cellpadding="4" border="0">
+<tbody><tr><td bgcolor="#E6E6E6" align="left">
+<pre>         setenv boot-args maxmem=64
+</pre>
+</td></tr></tbody></table></center><br><br>
+                             
+         <p id="p4">Note that there are no "double" quote characters
+         used in this command line as there are when using the
+         Terminal application.</p>
+         
+         <p id="p4">Step 3. After the "ok" response, enter</p>
+         
+<br><br><center><table width="550" cellpadding="4" border="0">
+<tbody><tr><td bgcolor="#E6E6E6" align="left">
+<pre>         mac-boot
+</pre>
+</td></tr></tbody></table></center><br><br>
+                             
+         <p id="p4">to continue the boot process.</p>
+         
+         <p id="p4">The above commands implements the maxmem setting
+         into nonvolatile RAM, which means that the setting is
+         persistent across system restarts. To clear this setting,
+         refer to the options described above in the section
+         "<a href="#ClearMaxmem">Clearing the "maxmem"
+         Setting</a>".</p>
+         
+         
+         <br><br>
+         
+         
+         
+         <h2>References</h2>
+         
+         <p id="p4"><a href="https://developer.apple.com/library/archive/technotes/tn/tn1061.html">Tech
+         Note 1061 Fundamentals of Open Firmware, Part I: The User
+         Interface</a>, Part I in the Open Firmware Technote
+         Series</p>
+         
+         <p id="p4"><a href="https://developer.apple.com/library/archive/technotes/tn/tn2004.html">Tech
+         Note 2004 Debugging Open Firmware Using Telnet</a></p>
+         
+         <p id="p4"><a href="https://developer.apple.com/library/archive/technotes/tn/tn1062.html">Tech
+         Note 1062 Fundamentals of Open Firmware, Part II: The Device
+         Tree</a> Part II in the Open Firmware Technote Series</p>
+         
+         <!-- begin_date --><h4 align="center">[Dec 20 2001]</h4><!-- end_date -->
+
+
+</td> </tr> </tbody></table></center>
+
+<!-- begin_footer_information -->
+
+<div id="globalfooter" class="hideInXcode hideOnPrint">
+	<div class="gf-sosumi">
+	    <p>Copyright © 2016 Apple Inc. All rights reserved.</p>
+	    <ul class="piped">
+		    <li><a href="http://www.apple.com/legal/internet-services/terms/site.html" class="first" target="_blank">Terms of Use</a></li>
+		    <li><a href="http://www.apple.com/privacy/" target="_blank">Privacy Policy</a></li>
+	    </ul>
+	</div>
+</div><!--/globalfooter-->
+<!-- end_footer_information -->
+
+</div>
+            </article>
+
+<script type="text/javascript" src="Technical%20Q&amp;A%20QA1099%20Reducing%20the%20size%20of%20Physical%20Memory%20in%20Open%20Firmware_files/prototype.js"></script>
+<script type="text/javascript" src="Technical%20Q&amp;A%20QA1099%20Reducing%20the%20size%20of%20Physical%20Memory%20in%20Open%20Firmware_files/library.js"></script>
+<script type="text/javascript" src="Technical%20Q&amp;A%20QA1099%20Reducing%20the%20size%20of%20Physical%20Memory%20in%20Open%20Firmware_files/feedback.js"></script>
+
+
+
+<div id="blackout">
+    <div id="preload"></div>
+</div><div id="modal" aria-hidden="true">
+    <div id="closebox" tabindex="0" aria-label="Close feedback form" role="button"></div>
+    <div id="sending" class="hidden">
+        <h2 tabindex="0">Sending feedback…</h2>
+        <div id="sending_img"></div>
+    </div>
+    <div id="error" class="hidden">
+        <h2 tabindex="0">We’re sorry, an error has occurred.</h2>
+        <p>Please try submitting your feedback later.</p>
+        <div id="error_icon"></div>
+    </div>
+    <div id="success" class="hidden">
+        <h2 tabindex="0">Thank you for providing feedback!</h2>
+        <p>Your input helps improve our developer documentation.</p>
+        <div id="thank_you_icon"></div>
+    </div>
+    
+    <form id="feedback" action="#" method="post">
+        <div class="left-leaf">
+            <h2 id="helpful_title" data-asterisk="a1" tabindex="0">How helpful is this document?</h2>     
+            <sup id="a1" class="asterisk" aria-hidden="true">*</sup>
+
+            <div id="star_group" role="radiogroup" aria-required="true">
+                <label> 
+                    <input class="radio" type="radio" name="helped" value="1"> 
+                    Very helpful
+                </label>
+                <label> 
+                    <input class="radio" type="radio" name="helped" value="2"> 
+                    Somewhat helpful
+                </label>
+                <label>
+                    <input class="radio" type="radio" name="helped" value="3"> 
+                    Not helpful
+                </label>
+            </div>
+        </div>
+        <div class="right-leaf">
+            <h2>How can we improve this document?</h2>
+            <div id="improve" class="checkboxes">
+                <label>
+                    <input type="checkbox" name="typo"> 
+                    Fix typos or links
+                </label>
+                <label>
+                    <input type="checkbox" name="infoIncorrect"> 
+                    Fix incorrect information
+                </label>
+                <label>
+                    <input type="checkbox" name="needs_examples"> 
+                    Add or update code samples
+                </label>
+                <label>
+                    <input type="checkbox" name="needs_art"> 
+                    Add or update illustrations
+                </label>
+                <label>
+                    <input type="checkbox" name="missingInfo"> 
+                    Add information about...
+                </label>
+            </div>
+        </div>
+
+        <textarea id="comment" name="problem" cols="70" rows="8" placeholder="Please tell us more about your experience with this document" data-asterisk="a2" required=""></textarea>
+        <sup id="a2" class="asterisk" aria-hidden="true">*</sup>
+
+        <p class="fineprint">
+            <em aria-hidden="true"><span>*</span> Required information</em>
+        </p> 
+
+        <input id="submit" type="button" value="Send">
+
+        <section id="legal">
+            <p>
+                To submit a product bug or enhancement request, please visit the 
+                <a href="https://developer.apple.com/bugreporter/" target="_blank">Bug Reporter</a> 
+                page.
+            </p>
+            <p>
+                Please read <a href="http://www.apple.com/legal/policies/ideas.html" target="_blank">Apple's Unsolicited Idea Submission Policy</a> 
+                before you send us your feedback.
+            </p> 
+        </section>
+    </form>
+</div></body></html>

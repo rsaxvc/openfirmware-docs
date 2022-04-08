@@ -1,0 +1,352 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<title>Off-the-Shelf Drivers</title>
+</head>
+<body vlink="#FF4400" text="#000000" link="#0000FF" bgcolor="#FFFFFF">
+
+
+<center>
+<h1>Off-the-Shelf Drivers</h1>
+</center>
+
+<p>
+
+FirmWorks is committed a variety of product markets including CHRP
+and Network Computers (NCs). CHRP and NC platforms consist of 
+a variety of microprocessor varients, bus types and device controllers.
+For instance, a typical CHRP system consists of the following devices:
+
+</p><ol type="1">
+
+<li>CPU (603, 603e, 604, 604e, Arthur, Mach5. etc..)</li>
+<li>PPC to PCI Bridge  (Grackle, Golden Gate, etc..)</li>
+<li>Memory (DRAM, SDRAM, row column formats, capacities, speed..)</li>
+<li>L2 Cache  (0, 256K, 512K, 1 MB, COASt, etc..)</li>
+<li>Mac IO (Hydra including MESH SCSI, ADB, SCC, VIA, etc..)</li>
+<li>PCI-ISA Bridge (Winbond, Tollgate, etc..)</li>
+<li>Super I/O (National varieties, etc..)</li>
+<li>Keyboard, Mouse Controllers</li>
+<li>Serial Ports Controllers</li>
+<li>IDE Controllers, Hard drive controllers, CD-ROM controllers</li>
+<li>Mac ROM</li>
+<li>Video Controller</li>
+<li>Ethernet Controller</li>
+<li>SCSI Controller</li>
+<li>IrDA Controller</li>
+<li>Flash ROM</li>
+<li>Audio</li>
+<li>Others, as designed in by individual platform developer.</li>
+
+</ol>
+
+<p>
+It is FCode drivers that provide the software control of these devices
+during the period a computer system is booting.
+
+</p><h2>Where is the FCode Stored?</h2>
+
+<p>
+Physically, the FirmWorks FCode drivers which control the devices in the
+previous list, and the numerous other devices FirmWorks supports, reside in
+two primary locations on any given system:
+
+</p><ol type="A">
+
+<li>Integrated into the System Boot ROM that is located on the system
+motherboard, or</li>
+
+<li>Located in a peripheral card's ROM.</li>
+
+</ol>
+
+<p>
+
+In the case where there is FCode on a peripheral ROM, there is a known
+mechanism which is built into each System Boot ROM to probe each slot of
+each expansion bus, locate any peripheral ROMs and their FCode (if any), and
+load the FCode into system memory for use.  It is really transparent as to
+where the FCode is stored in the system, but we thought you should know.
+
+</p><p>
+
+So, if you are a system builder, what you want to know is whether we 
+support the variety of on-board and plug in device controllers you have
+selected to build your system.
+
+</p><p>
+
+If you are a peripheral card manufacturer, your primary concern is
+whether we have previously developed an FCode driver for the particular
+controller chip you are considering using.
+
+</p><p>
+
+Let's see what's available.
+
+
+</p><h2>Back to the Devices</h2>
+
+<p>
+
+A wide variety of devices (for which Open Firmware device drivers must
+exist) are required to build a System ROM.  It is our intention to create a
+driver for any device that assists the development of the CHRP and NC
+marketplaces.
+
+</p><p>
+
+FirmWorks's general policy is to require platform and card manufacturers to
+provide us with working hardware upon which to develop and test all
+delivered FCode drivers. This is due to the fact that while our FCode
+drivers are targeted to a particular controller chip, it is very often the
+case that supporting glue logic impacts the programming model of the FCode
+driver. Therefore, we prefer to test and tweak drivers to ensure our
+delivered products work, as expected, on the target hardware (e.g. to modify
+the PCI header to include the proper vendor and product IDs which should be
+unique for each product).
+
+</p><p>
+
+Exceptions are made in situations where FirmWorks believes the FCode driver
+is extremely generic across adapter implementations or where the customer
+has firmware expertise required to support minor field mods.
+
+</p><p>
+
+For these reasons, our preference is for our customers to send us a working
+copy of their hardware (including the device to be driven and any required
+cables) such that we can test the driver on the specific hardware and make
+any required modifications necessary, if any.
+
+</p><p>
+
+However, with the proliferation of OEMs entering the CHRP and NC
+marketplaces, FirmWorks can make available source code for a wide variety of
+devices, under proper licensing agreements, for individual OEMs to support
+in house product differentiation.
+
+
+</p><h2>Samples of the Available FCode Drivers</h2>
+
+<p>
+
+We are in the process of developing FCode drivers for the most popular PCI
+graphics adapters, SCSI controllers and Ethernet interfaces to help the PCI
+peripheral card market make the transition to FCode.  Consequently, the list
+of supported PCI peripheral cards is continuously expanding.  (Please see
+our white paper describing FirmWorks's SuperDriver(tm) FCode driver
+technology.)  Additionally, we continue to work with system manufacturers to
+provide drivers for motherboard level components that are in common (and not
+so common) use.
+
+</p><p>
+
+The following list provides an overview of the FCode device drivers
+available to FirmWorks.  Additionally, source licensees of FirmWorks will
+have these drivers available for use in the creation of their Open Firmware
+system ROMs.  If there is something that you need which is not on the list,
+please ask for it.  It is our intention to create a driver for any device
+that assists the development of the CHRP or NC marketplaces.
+
+</p><p>
+
+In fact, since we are continuously expanding our list of supported devices,
+when you ask about a device that is not on the list, you may be pleasantly
+surprised to find out that the driver for it is already in development or
+available!
+
+</p><p>
+
+In order that you understand the power of our existing firmware code
+base to support your unique needs, the following list shows the broad
+variety of peripheral cards that can be supported by a small set of
+these device drivers.  The list also shows the list of plug in video
+cards that are <b>known</b> to be supported by our SuperDriver.
+(Sometimes, when we plug in a video card that we've never tried
+before, the SuperDriver just drives it without any modification.)
+
+
+</p><h2>Currently Supported Devices</h2>
+
+<li>Apple I/O
+<ul>
+<li>ADB
+</li><li>MESH SCSI
+</li><li>SCC
+</li><li>HYDRA
+</li><li>HYDRA I2C
+</li><li>MPIC
+</li><li>VIA
+</li></ul>
+</li><li>Audio 
+<ul>
+<li>AD1848
+</li><li>AMD7930
+</li><li>CS42xx
+</li><li>MWCodec
+</li><li>Cyrix-MediaGX with various PC 98 Codec's
+</li></ul>
+</li><li>Ethernet 
+<ul>
+<li>AMD 7990, 7996x, 7997x 
+</li><li>3COM (3c509, 3c590, 3c905)
+</li><li>DEC 21040, 21140 
+</li><li>Fujitsu MB86964
+</li><li>Intel 82559
+</li><li>IE 82586
+</li></ul>
+</li><li>FDDI
+<ul>
+<li>National Chipset
+</li></ul>
+</li><li>Flash Memory 
+<ul>
+<li>AMD 29Fxxx and compatibles
+</li><li>AMD 29LV800
+</li><li>ATMEL AT29C020
+</li><li>Intel 28Fxxx 
+</li></ul>
+</li><li>Floppy Controllers 
+<ul>
+<li>i8207x floppy
+</li></ul>
+</li><li>Graphics Adapters (a sampling)
+<ul>
+<li>ATI Graphics Pro Turbo 
+</li><li>Cirrus Alpine 5434 
+</li><li>Diamond Speedstar 
+</li><li>Diamond Speedstar Pro SE 
+</li><li>Diamond Stealth 64 Video 3240 
+</li><li>Diamond Stealth 64 Video 2121 
+</li><li>Diamond Stealth 64 Graphics 2120 
+</li><li>Diamond Viper 
+</li><li>Diamond Viper Pro 
+</li><li>Elsa Winner 2000PRO/X 
+</li><li>Matrox Millenium 
+</li><li>Metheus Imagine 128
+</li><li>Number Nine FX Motion 531 
+</li><li>Number Nine FX Motion 771 
+</li><li>Number Nine FX Vision 330 
+</li><li>Number Nine GXE64 PCI 
+</li><li>Number Nine GXE64 Pro PCI 
+</li><li>Number Nine GXE PCI 
+</li><li>Omnicomp 3Demon 
+</li><li>Orchid Fahrenheit-64 
+</li><li>Orchid Fahrenheit-64 Pro 
+</li><li>Orchid Fahrenheit-64 ProVideo 
+</li><li>Orchid Kelvin-64 
+</li><li>S3 Trio64V+
+</li><li>Spea V7-Mercury P-64V 
+</li><li>STB Powergraph 64 Video 
+</li><li>Sun CG14
+</li><li>Western Digital Bahamas 64 
+</li><li>Western Digital Barbados 64 
+</li></ul>
+</li><li>Graphics Chipsets
+<ul>
+<li>ATI
+</li><li>Cirrus Logic
+</li><li>Cyrix MediaGX
+</li><li>Matrox
+</li><li>S3 (numerous varieties)
+</li><li>Weitek
+</li><li>Generic VGA
+</li><li>Generic memory-mapped framebuffer
+</li></ul>
+</li><li>IDE 
+<ul>
+<li>CMD 0646 PCI Bus Master IDE Controller 
+</li><li>Winbond/Symphony Labs PCI Bus Master IDE Controller 
+</li><li>Generic IDE 
+</li></ul>
+</li><li>Interrupt Controllers
+<ul>
+<li>i8259
+</li><li>OpenPIC
+</li></ul>
+</li><li>Keyboard/Mouse 
+<ul>
+<li>Apple ADB keyboard and mouse for CHRP 
+</li><li>i8042 - (PC keyboard, PS2 mouse)
+</li><li>Most serial mice
+</li><li>USB - OHCI programming model
+</li></ul>
+</li><li>NVRAM/RTC 
+<ul>
+<li>DS1385 NVRAM/RTC
+</li><li>DS17885 NVRAM
+</li><li>MK48Txx NVRAM/RTC 
+</li></ul>
+</li><li>PCI-to-ISA Bridges 
+<ul>
+<li>i82378-IB/ZB 
+</li><li>SL82D553 
+</li><li>UM8886 
+</li><li>VLSI Tollgate 
+</li><li>Winbond W83C553F/Symphony SL82C565/553
+</li><li>ALI
+</li></ul>
+</li><li>PCI-to-PCI Bridges 
+<ul>
+<li>DEC 21050 
+</li><li>DEC 21052 
+</li><li>IBM 82352 
+</li><li>Any bridge compliant with "PCI to PCI Bridge Architecture Specification" 
+</li></ul>
+</li><li>PPC-to-PCI Bridges 
+<ul>
+<li>FirePower Systems 
+</li><li>IBM 650/660 
+</li><li>Motorola MPC105 ("Eagle") 
+</li><li>Motorola MPC106 ("Grackle") 
+</li><li>VLSI Golden Gate II 
+</li></ul>
+</li><li>RAID
+<ul>
+<li>AMI 438 MegaRAID LVDS
+</li></ul>
+</li><li>SCSI Controllers 
+<ul>
+<li>Adaptec 78xx
+</li><li>AMD 53974 
+</li><li>Apple MESH SCSI 
+</li><li>Bus Logic 948
+</li><li>DPT 2x24, 3xxx
+</li><li>DPT I2O based 2554, 3754
+</li><li>Fujitsu MB86601
+</li><li>ISP1000, ISP1000U
+</li><li>NCR/Symbios 5390, 537x0, 538xx 
+</li><li>QLogic ISP1020, ISP2100
+</li><li>Western Digital 33C296 
+</li></ul>
+</li><li>Super I/O 
+<ul>
+<li>Intel 82091 AIP
+</li><li>National Semiconductor (many varieties)
+</li><li>Standard Microsystems FDC37C66x
+</li><li>ALI
+</li></ul>
+</li><li>UARTs 
+<ul>
+<li>16650 and variants
+</li><li>AMD8530
+</li><li>MC68681
+</li></ul>
+</li><li>VLBus-to-ISA Bridges
+<ul>
+<li>PICO/Cirrus/AMD "Sequoia" 
+</li></ul>
+<p>
+If you don't see what you want, ask.  We'll either have it or we can do it.
+
+</p><p>
+
+Back to <a href="http://firmworks.com/www/products.htm#">Products</a><br>
+Back to <a href="http://firmworks.com/home.htm#">FirmWorks Home Page</a>
+
+</p><p>
+</p><hr>
+<h5>Last Modified: February 16, 1999</h5>
+
+
+</li></body></html>

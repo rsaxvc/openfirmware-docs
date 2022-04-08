@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+    <title>Building and Debugging Kernels</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=7">
+    <meta charset="utf-8">
+    <meta id="book-resource-type" name="book-resource-type" content="Guide">
+    <meta scheme="apple_ref" id="identifier" name="identifier" content="//apple_ref/doc/uid/TP30000905">
+    <meta id="document-version" name="document-version" content="6.6.0">
+    <meta id="build" name="build" content="c1e4c7a89af8f899a21cfa81fc33ba42">
+    <meta id="chapterId" name="chapterId" content="TP30000905-CH221">
+    <meta id="date" name="date" content="2013-08-08">
+    <meta id="description" name="description" content="Essential information for programming in the OS X kernel. Includes a high-level overview.">
+    <meta id="book-title" name="book-title" content="Kernel Programming Guide">
+    <meta id="book-root" name="book-root" content="../">
+    <meta id="book-json" name="book-json" content="../book.json">
+    <meta id="devcenter" name="devcenter" content="Mac Dev Center">
+    <meta id="devcenter-url" name="devcenter-url" content="http://developer.apple.com/devcenter/mac">
+    <meta id="reflib" name="reflib" content="Documentation Archive">
+    <meta id="book-assignments" name="book-assignments" content="{Type/Guide}, {Technologies/Kernel &amp; Driver Layer/Kernel}, {Topic/Drivers, Kernel, &amp; Hardware/General Kernel Extensions}">
+    
+    
+    <meta id="copyright" name="copyright" content="Copyright 2018 Apple Inc. All Rights Reserved.">
+    <meta id="xcode-display" name="xcode-display" content="render">
+    <meta id="IndexTitle" name="IndexTitle" content="Kernel Programming Guide: Building and Debugging Kernels">
+    <meta id="resources-uri" name="resources-uri" content="../../../../../Resources/1282">
+    <link id="book-index-page" rel="Start" title="Kernel Programming Guide" type="text/html" href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/index.html">
+    <link id="next-page" rel="Next" type="text/html" href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Bibliography/Bibliography.html">
+    <link id="previous-page" rel="Prev" type="text/html" href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Extend/Extend.html">
+    <link rel="stylesheet" type="text/css" href="Building%20and%20Debugging%20Kernels_files/screen.css">
+    
+    <!-- xcode_css -->
+    <link rel="stylesheet" type="text/css" href="Building%20and%20Debugging%20Kernels_files/feedback.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta id="platforms" name="platforms" content="">
+</head>    
+<body class="isShowingTOC" id=""><a name="//apple_ref/doc/uid/TP30000905-CH221" title="Building and Debugging Kernels"></a>
+    <div id="_omniture_top">
+    <!-- SiteCatalyst code version: H.8. Copyright 1997-2006 Omniture, Inc. -->
+    <script type="text/javascript">
+    /* RSID: */
+    var s_account="appleglobal,appleusdeveloper,dappdeveloperlib"
+    </script>
+
+    <script type="text/javascript" src="Building%20and%20Debugging%20Kernels_files/s_code_h.js"></script>
+    <script type="text/javascript">
+    s.pageName=AC.Tracking.pageName();
+    s.channel="www.us.developer"
+
+    /************* DO NOT ALTER ANYTHING BELOW THIS LINE ! **************/
+    var s_code=s.t();if(s_code)document.write(s_code)</script>
+    <!-- End SiteCatalyst code version: H.8. -->
+    </div>
+
+    <div id="adcHeader" class="hideOnPrint hideInXcode">
+        <div id="ssi_Header" class="hideInXcode unified">
+            <a id="ssi_LibraryTitle" href="https://developer.apple.com/library/archive/navigation/" onclick='s_objectID="https://developer.apple.com/library/archive/navigation/_1";return this.s_oc?this.s_oc(e):true'>Documentation Archive</a>
+            <a id="ssi_AppleDeveloperConnection" href="https://developer.apple.com/" onclick='s_objectID="https://developer.apple.com/_1";return this.s_oc?this.s_oc(e):true'>Developer</a>
+            <div id="ssi_SearchButton" role="button" title="Search">Search</div>
+        </div>
+        <form id="ssi_SearchMenu" method="get" action="../../../../../search/" accept-charset="utf-8">
+            <label for="adcsearch">Search Documentation Archive</label>
+            
+            
+    
+            <input type="search" id="ssi_SearchField" name="q" accesskey="s" results="5">
+        </form>
+    </div>
+
+    <header id="header">
+        <div id="title" role="banner">
+            <h1>Kernel Programming Guide</h1>
+            <span id="file_links">
+                <a id="PDF_link" role="button" tabindex="4" rel="alternate" title="Download PDF" class=""><span id="pdf_icon"></span>PDF</a>
+                <a id="Companion_link" role="button" tabindex="3" title="Download Companion File" class=""><span id="companion_icon"></span>Companion File</a>
+            </span>
+        </div>
+        <ul id="headerButtons" class="hideOnPrint" role="toolbar">
+            <li id="toc_button" style="">
+                <button tabindex="5" id="table_of_contents" class="open" role="checkbox" aria-label="Show Table of Contents"><span class="disclosure"></span>Table of Contents</button>
+            </li>
+            <li id="jumpto_button" style="display:none" role="navigation"><select tabindex="6" id="jumpTo"><option value="top" selected="selected">Jump To…</option></select></li>
+            <li id="downloadSample_button" style="display:none">
+                <a id="Sample_link"><button id="Sample_button">Download Sample Code</button></a>
+            </li>
+        </ul>
+    </header>
+    <nav id="tocContainer" tabindex="7" class="isShowingTOC">
+        <ul id="toc" role="tree"><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH204-TPXREF101" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/About/About.html#//apple_ref/doc/uid/TP30000905-CH204-TPXREF101">About This Document</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH204-TPXREF102"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/About/About.html#//apple_ref/doc/uid/TP30000905-CH204-TPXREF102">Who Should Read This Document</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH204-TPXREF103"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/About/About.html#//apple_ref/doc/uid/TP30000905-CH204-TPXREF103">Road Map</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH204-TPXREF104"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/About/About.html#//apple_ref/doc/uid/TP30000905-CH204-TPXREF104">Other Apple Publications</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH204-CHDHDDGC"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/About/About.html#//apple_ref/doc/uid/TP30000905-CH204-CHDHDDGC">Mach API Reference</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH204-TPXREF105"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/About/About.html#//apple_ref/doc/uid/TP30000905-CH204-TPXREF105">Information on the Web</a></span></li></ul></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH205-BEHJDFCA" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/keepout/keepout.html#//apple_ref/doc/uid/TP30000905-CH205-BEHJDFCA">Keep Out</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH205-TPXREF108"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/keepout/keepout.html#//apple_ref/doc/uid/TP30000905-CH205-TPXREF108">Why You Should Avoid Programming in the Kernel</a></span></li></ul></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH1g-CACDAEDC" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Architecture/Architecture.html#//apple_ref/doc/uid/TP30000905-CH1g-CACDAEDC">Kernel Architecture Overview</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH1g-TPXREF101"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Architecture/Architecture.html#//apple_ref/doc/uid/TP30000905-CH1g-TPXREF101">Darwin</a></span></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH1g-TPXREF102" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Architecture/Architecture.html#//apple_ref/doc/uid/TP30000905-CH1g-TPXREF102">Architecture</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH1g-TPXREF103"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Architecture/Architecture.html#//apple_ref/doc/uid/TP30000905-CH1g-TPXREF103">Mach</a></span></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH1g-TPXREF104" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Architecture/Architecture.html#//apple_ref/doc/uid/TP30000905-CH1g-TPXREF104">BSD</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH1g-TPXREF106"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Architecture/Architecture.html#//apple_ref/doc/uid/TP30000905-CH1g-TPXREF106">Networking</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH1g-TPXREF107"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Architecture/Architecture.html#//apple_ref/doc/uid/TP30000905-CH1g-TPXREF107">File Systems</a></span></li></ul></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH1g-TPXREF105"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Architecture/Architecture.html#//apple_ref/doc/uid/TP30000905-CH1g-TPXREF105">I/O Kit</a></span></li></ul></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH1g-TPXREF108"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Architecture/Architecture.html#//apple_ref/doc/uid/TP30000905-CH1g-TPXREF108">Kernel Extensions</a></span></li></ul></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-SW2-BAJJBJEG" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/booting/booting.html#//apple_ref/doc/uid/TP30000905-SW2-BAJJBJEG">The Early Boot Process</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-SW2-100040-TPXREF103"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/booting/booting.html#//apple_ref/doc/uid/TP30000905-SW2-100040-TPXREF103">Boot ROM</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-SW2-115736-TPXREF104"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/booting/booting.html#//apple_ref/doc/uid/TP30000905-SW2-115736-TPXREF104">The Boot Loader</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-SW2-SW2"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/booting/booting.html#//apple_ref/doc/uid/TP30000905-SW2-SW2">Rooting</a></span></li></ul></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH206-BEHJDFCA" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/security/security.html#//apple_ref/doc/uid/TP30000905-CH206-BEHJDFCA">Security Considerations</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH206-TPXREF108"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/security/security.html#//apple_ref/doc/uid/TP30000905-CH206-TPXREF108">Security Implications of Paging</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH206-TPXREF109"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/security/security.html#//apple_ref/doc/uid/TP30000905-CH206-TPXREF109">Buffer Overflows and Invalid Input</a></span></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH206-TPXREF110" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/security/security.html#//apple_ref/doc/uid/TP30000905-CH206-TPXREF110">User Credentials</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH206-SW2"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/security/security.html#//apple_ref/doc/uid/TP30000905-CH206-SW2">Basic User Credentials</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH206-SW4"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/security/security.html#//apple_ref/doc/uid/TP30000905-CH206-SW4">Access Control Lists</a></span></li></ul></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH206-CDDBJFHC" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/security/security.html#//apple_ref/doc/uid/TP30000905-CH206-CDDBJFHC">Remote Authentication</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH206-TPXREF111"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/security/security.html#//apple_ref/doc/uid/TP30000905-CH206-TPXREF111">One-Time Pads</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH206-TPXREF112"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/security/security.html#//apple_ref/doc/uid/TP30000905-CH206-TPXREF112">Time-based authentication</a></span></li></ul></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH206-TPXREF113"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/security/security.html#//apple_ref/doc/uid/TP30000905-CH206-TPXREF113">Temporary Files</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH206-TPXREF114"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/security/security.html#//apple_ref/doc/uid/TP30000905-CH206-TPXREF114">/dev/mem  and  /dev/kmem</a></span></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH206-CDDHHEFC" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/security/security.html#//apple_ref/doc/uid/TP30000905-CH206-CDDHHEFC">Key-based Authentication and Encryption</a></span><ul><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH206-TPXREF121" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/security/security.html#//apple_ref/doc/uid/TP30000905-CH206-TPXREF121">Public Key Weaknesses</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH206-TPXREF122"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/security/security.html#//apple_ref/doc/uid/TP30000905-CH206-TPXREF122">Trust Models</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH206-TPXREF123"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/security/security.html#//apple_ref/doc/uid/TP30000905-CH206-TPXREF123">Sensitivity to Patterns and Short Messages</a></span></li></ul></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH206-TPXREF117"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/security/security.html#//apple_ref/doc/uid/TP30000905-CH206-TPXREF117">Using Public Keys for Message Exchange</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH206-TPXREF118"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/security/security.html#//apple_ref/doc/uid/TP30000905-CH206-TPXREF118">Using Public Keys for Identity Verification</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH206-TPXREF119"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/security/security.html#//apple_ref/doc/uid/TP30000905-CH206-TPXREF119">Using Public Keys for Data Integrity Checking</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH206-TPXREF120"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/security/security.html#//apple_ref/doc/uid/TP30000905-CH206-TPXREF120">Encryption Summary</a></span></li></ul></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH206-TPXREF115"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/security/security.html#//apple_ref/doc/uid/TP30000905-CH206-TPXREF115">Console Debugging</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH206-TPXREF116"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/security/security.html#//apple_ref/doc/uid/TP30000905-CH206-TPXREF116">Code Passing</a></span></li></ul></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH207-BEHJDFCA" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/performance/performance.html#//apple_ref/doc/uid/TP30000905-CH207-BEHJDFCA">Performance Considerations</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH207-TPXREF108"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/performance/performance.html#//apple_ref/doc/uid/TP30000905-CH207-TPXREF108">Interrupt Latency</a></span></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH207-TPXREF109" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/performance/performance.html#//apple_ref/doc/uid/TP30000905-CH207-TPXREF109">Locking Bottlenecks</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH207-TPXREF110"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/performance/performance.html#//apple_ref/doc/uid/TP30000905-CH207-TPXREF110">Working With Highly Contended Locks</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH207-TPXREF111"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/performance/performance.html#//apple_ref/doc/uid/TP30000905-CH207-TPXREF111">Reducing Contention by Decreasing Granularity</a></span></li></ul></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH207-TPXREF112" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/performance/performance.html#//apple_ref/doc/uid/TP30000905-CH207-TPXREF112">Code Profiling</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH207-TPXREF113"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/performance/performance.html#//apple_ref/doc/uid/TP30000905-CH207-TPXREF113">Using Counters for Code Profiling</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH207-TPXREF114"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/performance/performance.html#//apple_ref/doc/uid/TP30000905-CH207-TPXREF114">Lock Profiling</a></span></li></ul></li></ul></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH208-BEHJDFCA" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/style/style.html#//apple_ref/doc/uid/TP30000905-CH208-BEHJDFCA">Kernel Programming Style</a></span><ul><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH208-CIADFJJI" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/style/style.html#//apple_ref/doc/uid/TP30000905-CH208-CIADFJJI">C++ Naming Conventions</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH208-TPXREF108"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/style/style.html#//apple_ref/doc/uid/TP30000905-CH208-TPXREF108">Basic Conventions</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH208-TPXREF109"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/style/style.html#//apple_ref/doc/uid/TP30000905-CH208-TPXREF109">Additional Guidelines</a></span></li></ul></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH208-CIADJCFH"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/style/style.html#//apple_ref/doc/uid/TP30000905-CH208-CIADJCFH">Standard C Naming Conventions</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH208-TPXREF110"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/style/style.html#//apple_ref/doc/uid/TP30000905-CH208-TPXREF110">Commonly Used Functions</a></span></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH208-CIAFCEBB" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/style/style.html#//apple_ref/doc/uid/TP30000905-CH208-CIAFCEBB">Performance and Stability Tips</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH208-TPXREF111"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/style/style.html#//apple_ref/doc/uid/TP30000905-CH208-TPXREF111">Performance and Stability Tips</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH208-TPXREF112"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/style/style.html#//apple_ref/doc/uid/TP30000905-CH208-TPXREF112">Stability Tips</a></span></li></ul></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH208-TPXREF113"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/style/style.html#//apple_ref/doc/uid/TP30000905-CH208-TPXREF113">Style Summary</a></span></li></ul></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH209-TPXREF101" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Mach/Mach.html#//apple_ref/doc/uid/TP30000905-CH209-TPXREF101">Mach Overview</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH209-TPXREF102"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Mach/Mach.html#//apple_ref/doc/uid/TP30000905-CH209-TPXREF102">Mach Kernel Abstractions</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH209-TPXREF103"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Mach/Mach.html#//apple_ref/doc/uid/TP30000905-CH209-TPXREF103">Tasks and Threads</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH209-TPXREF104"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Mach/Mach.html#//apple_ref/doc/uid/TP30000905-CH209-TPXREF104">Ports, Port Rights, Port Sets, and Port Namespaces</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH209-TPXREF105"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Mach/Mach.html#//apple_ref/doc/uid/TP30000905-CH209-TPXREF105">Memory Management</a></span></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH209-CEGJEIAG" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Mach/Mach.html#//apple_ref/doc/uid/TP30000905-CH209-CEGJEIAG">Interprocess Communication (IPC)</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH209-CEGBBEBF"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Mach/Mach.html#//apple_ref/doc/uid/TP30000905-CH209-CEGBBEBF">IPC Transactions and Event Dispatching</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH209-TPXREF106"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Mach/Mach.html#//apple_ref/doc/uid/TP30000905-CH209-TPXREF106">Message Queues</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH209-TPXREF107"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Mach/Mach.html#//apple_ref/doc/uid/TP30000905-CH209-TPXREF107">Semaphores</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH209-TPXREF108"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Mach/Mach.html#//apple_ref/doc/uid/TP30000905-CH209-TPXREF108">Notifications</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH209-TPXREF109"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Mach/Mach.html#//apple_ref/doc/uid/TP30000905-CH209-TPXREF109">Locks</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH209-TPXREF110"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Mach/Mach.html#//apple_ref/doc/uid/TP30000905-CH209-TPXREF110">Remote Procedure Call (RPC) Objects</a></span></li></ul></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH209-TPXREF111"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Mach/Mach.html#//apple_ref/doc/uid/TP30000905-CH209-TPXREF111">Time Management</a></span></li></ul></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH210-BEHJDFCA" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/vm/vm.html#//apple_ref/doc/uid/TP30000905-CH210-BEHJDFCA">Memory and Virtual Memory</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH210-CHDEDGCA"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/vm/vm.html#//apple_ref/doc/uid/TP30000905-CH210-CHDEDGCA">OS X VM Overview</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH210-CHDGIDHB"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/vm/vm.html#//apple_ref/doc/uid/TP30000905-CH210-CHDGIDHB">Memory Maps Explained</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH210-TPXREF109"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/vm/vm.html#//apple_ref/doc/uid/TP30000905-CH210-TPXREF109">Named Entries</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH210-CHDIFICG"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/vm/vm.html#//apple_ref/doc/uid/TP30000905-CH210-CHDIFICG">Universal Page Lists (UPLs)</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH210-CHDBJBEJ"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/vm/vm.html#//apple_ref/doc/uid/TP30000905-CH210-CHDBJBEJ">Using Mach Memory Maps</a></span></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH210-CHDJBFBC" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/vm/vm.html#//apple_ref/doc/uid/TP30000905-CH210-CHDJBFBC">Other VM and VM-Related Subsystems</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH210-TPXREF110"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/vm/vm.html#//apple_ref/doc/uid/TP30000905-CH210-TPXREF110">Pagers</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH210-TPXREF111"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/vm/vm.html#//apple_ref/doc/uid/TP30000905-CH210-TPXREF111">Working Set Detection Subsystem</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH210-TPXREF112"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/vm/vm.html#//apple_ref/doc/uid/TP30000905-CH210-TPXREF112">VM Shared Memory Server Subsystem</a></span></li></ul></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH210-CHDBCBCB" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/vm/vm.html#//apple_ref/doc/uid/TP30000905-CH210-CHDBCBCB">Address Spaces</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH210-TPXREF113"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/vm/vm.html#//apple_ref/doc/uid/TP30000905-CH210-TPXREF113">Background Info on PCI Address Translation</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH210-TPXREF114"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/vm/vm.html#//apple_ref/doc/uid/TP30000905-CH210-TPXREF114">IOMemoryDescriptor Changes</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH210-TPXREF115"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/vm/vm.html#//apple_ref/doc/uid/TP30000905-CH210-TPXREF115">VM System and  pmap Changes:</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH210-TPXREF116"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/vm/vm.html#//apple_ref/doc/uid/TP30000905-CH210-TPXREF116">Kernel Dependency Changes</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH210-TPXREF117"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/vm/vm.html#//apple_ref/doc/uid/TP30000905-CH210-TPXREF117">Summary</a></span></li></ul></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH210-CHDHIIJF" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/vm/vm.html#//apple_ref/doc/uid/TP30000905-CH210-CHDHIIJF">Allocating Memory in the Kernel</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH210-SW3"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/vm/vm.html#//apple_ref/doc/uid/TP30000905-CH210-SW3">Allocating Memory From a Non-I/O-Kit Kernel Extension</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH210-TPXREF108"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/vm/vm.html#//apple_ref/doc/uid/TP30000905-CH210-TPXREF108">Allocating Memory From the I/O Kit</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH210-CHDBGHAC"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/vm/vm.html#//apple_ref/doc/uid/TP30000905-CH210-CHDBGHAC">Allocating Memory In the Kernel Itself</a></span></li></ul></li></ul></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH211-BEHJDFCA" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/scheduler/scheduler.html#//apple_ref/doc/uid/TP30000905-CH211-BEHJDFCA">Mach Scheduling and Thread Interfaces</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH211-BABFGDHA"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/scheduler/scheduler.html#//apple_ref/doc/uid/TP30000905-CH211-BABFGDHA">Overview of Scheduling</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH211-TPXREF108"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/scheduler/scheduler.html#//apple_ref/doc/uid/TP30000905-CH211-TPXREF108">Why Did My Thread Priority Change?</a></span></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH211-BABCHEEB" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/scheduler/scheduler.html#//apple_ref/doc/uid/TP30000905-CH211-BABCHEEB">Using Mach Scheduling From User Applications</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH211-TPXREF109"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/scheduler/scheduler.html#//apple_ref/doc/uid/TP30000905-CH211-TPXREF109">Using the pthreads API to Influence Scheduling</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH211-BABHGEFA"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/scheduler/scheduler.html#//apple_ref/doc/uid/TP30000905-CH211-BABHGEFA">Using the Mach Thread API to Influence Scheduling</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH211-TPXREF110"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/scheduler/scheduler.html#//apple_ref/doc/uid/TP30000905-CH211-TPXREF110">Using the Mach Task API to Influence Scheduling</a></span></li></ul></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH211-BABBEEBI" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/scheduler/scheduler.html#//apple_ref/doc/uid/TP30000905-CH211-BABBEEBI">Kernel Thread APIs</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH211-TPXREF111"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/scheduler/scheduler.html#//apple_ref/doc/uid/TP30000905-CH211-TPXREF111">Creating and Destroying Kernel Threads</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH211-TPXREF112"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/scheduler/scheduler.html#//apple_ref/doc/uid/TP30000905-CH211-TPXREF112">SPL  and Friends</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH211-TPXREF113"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/scheduler/scheduler.html#//apple_ref/doc/uid/TP30000905-CH211-TPXREF113">Wait Queues and Wait Primitives</a></span></li></ul></li></ul></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH212-BEHJDFCA" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/contexts/contexts.html#//apple_ref/doc/uid/TP30000905-CH212-BEHJDFCA">Bootstrap Contexts</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH212-TPXREF108"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/contexts/contexts.html#//apple_ref/doc/uid/TP30000905-CH212-TPXREF108">How Contexts Affect Users</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH212-TPXREF109"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/contexts/contexts.html#//apple_ref/doc/uid/TP30000905-CH212-TPXREF109">How Contexts Affect Developers</a></span></li></ul></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH213-SW1" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/IOKit/IOKit.html#//apple_ref/doc/uid/TP30000905-CH213-SW1">I/O Kit Overview</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH213-TPXREF101"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/IOKit/IOKit.html#//apple_ref/doc/uid/TP30000905-CH213-TPXREF101">Redesigning the I/O Model</a></span></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH213-BEHEFHEH" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/IOKit/IOKit.html#//apple_ref/doc/uid/TP30000905-CH213-BEHEFHEH">I/O Kit Architecture</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH213-TPXREF102"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/IOKit/IOKit.html#//apple_ref/doc/uid/TP30000905-CH213-TPXREF102">Families</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH213-BEHDCDDC"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/IOKit/IOKit.html#//apple_ref/doc/uid/TP30000905-CH213-BEHDCDDC">Drivers</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH213-TPXREF103"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/IOKit/IOKit.html#//apple_ref/doc/uid/TP30000905-CH213-TPXREF103">Nubs</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH213-TPXREF104"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/IOKit/IOKit.html#//apple_ref/doc/uid/TP30000905-CH213-TPXREF104">Connection Example</a></span></li></ul></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH213-BEHEGHEG"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/IOKit/IOKit.html#//apple_ref/doc/uid/TP30000905-CH213-BEHEGHEG">For More Information</a></span></li></ul></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH214-TPXREF101" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/BSD/BSD.html#//apple_ref/doc/uid/TP30000905-CH214-TPXREF101">BSD Overview</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH214-TPXREF102"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/BSD/BSD.html#//apple_ref/doc/uid/TP30000905-CH214-TPXREF102">BSD Facilities</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH214-TPXREF103"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/BSD/BSD.html#//apple_ref/doc/uid/TP30000905-CH214-TPXREF103">Differences between OS X and BSD</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH214-TPXREF104"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/BSD/BSD.html#//apple_ref/doc/uid/TP30000905-CH214-TPXREF104">For Further Reading</a></span></li></ul></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH215-BABEEHFF" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Filesystem/Filesystem.html#//apple_ref/doc/uid/TP30000905-CH215-BABEEHFF">File Systems Overview</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH215-BABIBDJI"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Filesystem/Filesystem.html#//apple_ref/doc/uid/TP30000905-CH215-BABIBDJI">Working With the File System</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH215-TPXREF102"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Filesystem/Filesystem.html#//apple_ref/doc/uid/TP30000905-CH215-TPXREF102">VFS Transition</a></span></li></ul></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH216-BABHCHFC"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Networking/Networking.html#//apple_ref/doc/uid/TP30000905-CH216-BABHCHFC">Network Architecture</a></span></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH217-BEHJDFCA" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/boundaries/boundaries.html#//apple_ref/doc/uid/TP30000905-CH217-BEHJDFCA">Boundary Crossings</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH217-TPXREF109"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/boundaries/boundaries.html#//apple_ref/doc/uid/TP30000905-CH217-TPXREF109">Security Considerations</a></span></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH217-TPXREF110" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/boundaries/boundaries.html#//apple_ref/doc/uid/TP30000905-CH217-TPXREF110">Choosing a Boundary Crossing Method</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH217-TPXREF111"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/boundaries/boundaries.html#//apple_ref/doc/uid/TP30000905-CH217-TPXREF111">Kernel Subsystems</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH217-TPXREF112"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/boundaries/boundaries.html#//apple_ref/doc/uid/TP30000905-CH217-TPXREF112">Bandwidth and Latency</a></span></li></ul></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH217-BABDECEG" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/boundaries/boundaries.html#//apple_ref/doc/uid/TP30000905-CH217-BABDECEG">Mach Messaging and Mach Interprocess Communication (IPC)</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH217-TPXREF108"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/boundaries/boundaries.html#//apple_ref/doc/uid/TP30000905-CH217-TPXREF108">Using Well-Defined Ports</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH217-TPXREF113"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/boundaries/boundaries.html#//apple_ref/doc/uid/TP30000905-CH217-TPXREF113">Remote Procedure Calls (RPC)</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH217-BABDAJGG"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/boundaries/boundaries.html#//apple_ref/doc/uid/TP30000905-CH217-BABDAJGG">Calling RPC From User Applications</a></span></li></ul></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH217-BABCEGBF"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/boundaries/boundaries.html#//apple_ref/doc/uid/TP30000905-CH217-BABCEGBF">BSD syscall API</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH217-BABGJBFJ"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/boundaries/boundaries.html#//apple_ref/doc/uid/TP30000905-CH217-BABGJBFJ">BSD ioctl  API</a></span></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH217-BABJJBHG" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/boundaries/boundaries.html#//apple_ref/doc/uid/TP30000905-CH217-BABJJBHG">BSD sysctl API</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH217-TPXREF114"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/boundaries/boundaries.html#//apple_ref/doc/uid/TP30000905-CH217-TPXREF114">General Information on Adding a sysctl</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH217-TPXREF115"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/boundaries/boundaries.html#//apple_ref/doc/uid/TP30000905-CH217-TPXREF115">Adding a sysctl Procedure Call</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH217-TPXREF116"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/boundaries/boundaries.html#//apple_ref/doc/uid/TP30000905-CH217-TPXREF116">Registering a New Top Level  sysctl</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH217-TPXREF117"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/boundaries/boundaries.html#//apple_ref/doc/uid/TP30000905-CH217-TPXREF117">Adding a Simple  sysctl</a></span></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH217-TPXREF118" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/boundaries/boundaries.html#//apple_ref/doc/uid/TP30000905-CH217-TPXREF118">Calling a sysctl  From User Space</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH217-TPXREF119"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/boundaries/boundaries.html#//apple_ref/doc/uid/TP30000905-CH217-TPXREF119">The sysctlbyname   System Call</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH217-TPXREF120"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/boundaries/boundaries.html#//apple_ref/doc/uid/TP30000905-CH217-TPXREF120">The sysctl  System Call</a></span></li></ul></li></ul></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH217-BABEDGJJ"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/boundaries/boundaries.html#//apple_ref/doc/uid/TP30000905-CH217-BABEDGJJ">Memory Mapping and Block Copying</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH217-TPXREF121"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/boundaries/boundaries.html#//apple_ref/doc/uid/TP30000905-CH217-TPXREF121">Summary</a></span></li></ul></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH218-BEHJDFCA" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/synchronization/synchronization.html#//apple_ref/doc/uid/TP30000905-CH218-BEHJDFCA">Synchronization Primitives</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH218-TPXREF108"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/synchronization/synchronization.html#//apple_ref/doc/uid/TP30000905-CH218-TPXREF108">Semaphores</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH218-TPXREF109"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/synchronization/synchronization.html#//apple_ref/doc/uid/TP30000905-CH218-TPXREF109">Condition Variables</a></span></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH218-TPXREF110" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/synchronization/synchronization.html#//apple_ref/doc/uid/TP30000905-CH218-TPXREF110">Locks</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH218-TPXREF111"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/synchronization/synchronization.html#//apple_ref/doc/uid/TP30000905-CH218-TPXREF111">Spinlocks</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH218-TPXREF112"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/synchronization/synchronization.html#//apple_ref/doc/uid/TP30000905-CH218-TPXREF112">Mutexes</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH218-CJHFIAEH"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/synchronization/synchronization.html#//apple_ref/doc/uid/TP30000905-CH218-CJHFIAEH">Read-Write Locks</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH218-CJHDBCAD"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/synchronization/synchronization.html#//apple_ref/doc/uid/TP30000905-CH218-CJHDBCAD">Spin/Sleep Locks</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH218-BABCHEIA"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/synchronization/synchronization.html#//apple_ref/doc/uid/TP30000905-CH218-BABCHEIA">Using Lock Functions</a></span></li></ul></li></ul></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH219-BEHJDFCA" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/services/services.html#//apple_ref/doc/uid/TP30000905-CH219-BEHJDFCA">Miscellaneous Kernel Services</a></span><ul><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH219-CHDJBFEF" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/services/services.html#//apple_ref/doc/uid/TP30000905-CH219-CHDJBFEF">Using Kernel Time Abstractions</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH219-TPXREF108"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/services/services.html#//apple_ref/doc/uid/TP30000905-CH219-TPXREF108">Obtaining Time Information</a></span></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH219-TPXREF109" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/services/services.html#//apple_ref/doc/uid/TP30000905-CH219-TPXREF109">Event and Timer Waits</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH219-TPXREF110"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/services/services.html#//apple_ref/doc/uid/TP30000905-CH219-TPXREF110">Using IODelay and  IOSleep</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH219-CHDGFEFE"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/services/services.html#//apple_ref/doc/uid/TP30000905-CH219-CHDGFEFE">Using Mach Absolute Time Functions</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH219-CHDFIGGH"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/services/services.html#//apple_ref/doc/uid/TP30000905-CH219-CHDFIGGH">Using msleep</a></span></li></ul></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH219-SW2"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/services/services.html#//apple_ref/doc/uid/TP30000905-CH219-SW2">Handling Version Dependencies</a></span></li></ul></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH219-CHDCEBBJ"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/services/services.html#//apple_ref/doc/uid/TP30000905-CH219-CHDCEBBJ">Boot Option Handling</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH219-CHDJHGEF"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/services/services.html#//apple_ref/doc/uid/TP30000905-CH219-CHDJHGEF">Queues</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH219-CHDIDIDF"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/services/services.html#//apple_ref/doc/uid/TP30000905-CH219-CHDIDIDF">Installing Shutdown Hooks</a></span></li></ul></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH220-BEBDGFHI" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Extend/Extend.html#//apple_ref/doc/uid/TP30000905-CH220-BEBDGFHI">Kernel Extension Overview</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH220-TPXREF101"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Extend/Extend.html#//apple_ref/doc/uid/TP30000905-CH220-TPXREF101">Implementation of a Kernel Extension (KEXT)</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH220-BEBBFDGA"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Extend/Extend.html#//apple_ref/doc/uid/TP30000905-CH220-BEBBFDGA">Kernel Extension Dependencies</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH220-TPXREF102"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Extend/Extend.html#//apple_ref/doc/uid/TP30000905-CH220-TPXREF102">Building and Testing Your Extension</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH220-BEBGICBH"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Extend/Extend.html#//apple_ref/doc/uid/TP30000905-CH220-BEBGICBH">Debugging Your KEXT</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH220-BEBEGICJ"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Extend/Extend.html#//apple_ref/doc/uid/TP30000905-CH220-BEBEGICJ">Installed KEXTs</a></span></li></ul></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH221-BEHJDFCA" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/build/build.html#//apple_ref/doc/uid/TP30000905-CH221-BEHJDFCA">Building and Debugging Kernels</a></span><ul><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH221-CIHFDDJB" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/build/build.html#//apple_ref/doc/uid/TP30000905-CH221-CIHFDDJB">Adding New Files or Modules</a></span><ul><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH221-TPXREF108" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/build/build.html#//apple_ref/doc/uid/TP30000905-CH221-TPXREF108">Modifying the Configuration Files</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH221-TPXREF109"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/build/build.html#//apple_ref/doc/uid/TP30000905-CH221-TPXREF109">Adding the Files or Modules</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH221-CIHEHBHB"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/build/build.html#//apple_ref/doc/uid/TP30000905-CH221-CIHEHBHB">Enabling Module Options</a></span></li></ul></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH221-BABFDFJE"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/build/build.html#//apple_ref/doc/uid/TP30000905-CH221-BABFDFJE">Modifying the Source Code Files</a></span></li></ul></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH221-CIHFEIFI"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/build/build.html#//apple_ref/doc/uid/TP30000905-CH221-CIHFEIFI">Building Your First Kernel</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH221-TPXREF110"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/build/build.html#//apple_ref/doc/uid/TP30000905-CH221-TPXREF110">Building an Alternate Kernel Configuration</a></span></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH221-CIHBJCGC" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/build/build.html#//apple_ref/doc/uid/TP30000905-CH221-CIHBJCGC">When Things Go Wrong: Debugging the Kernel</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH221-CIHIAFFJ"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/build/build.html#//apple_ref/doc/uid/TP30000905-CH221-CIHIAFFJ">Setting Debug Flags in Open Firmware</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH221-SW2"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/build/build.html#//apple_ref/doc/uid/TP30000905-CH221-SW2">Avoiding Watchdog Timer Problems</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH221-TPXREF111"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/build/build.html#//apple_ref/doc/uid/TP30000905-CH221-TPXREF111">Choosing a Debugger</a></span></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH221-CIHEIAID" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/build/build.html#//apple_ref/doc/uid/TP30000905-CH221-CIHEIAID">Using   gdb for Kernel Debugging</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH221-TPXREF113"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/build/build.html#//apple_ref/doc/uid/TP30000905-CH221-TPXREF113">Special gdb I/O Addressing Issues</a></span></li></ul></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH221-CIHDEDFH" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/build/build.html#//apple_ref/doc/uid/TP30000905-CH221-CIHDEDFH">Using   ddb for Kernel Debugging</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH221-TPXREF112"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/build/build.html#//apple_ref/doc/uid/TP30000905-CH221-TPXREF112">Commands and Syntax of ddb</a></span></li></ul></li></ul></li></ul></li><li class="children " data-aref="//apple_ref/doc/uid/TP30000905-CH223-TPXREF101" role="treeitem"><span class="disclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Bibliography/Bibliography.html#//apple_ref/doc/uid/TP30000905-CH223-TPXREF101">Bibliography</a></span><ul><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH223-TPXREF103"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Bibliography/Bibliography.html#//apple_ref/doc/uid/TP30000905-CH223-TPXREF103">Apple OS X Publications</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH223-TPXREF104"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Bibliography/Bibliography.html#//apple_ref/doc/uid/TP30000905-CH223-TPXREF104">General UNIX and Open Source Resources</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH223-TPXREF1"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Bibliography/Bibliography.html#//apple_ref/doc/uid/TP30000905-CH223-TPXREF1">BSD and UNIX Internals</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH223-TPXREF2"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Bibliography/Bibliography.html#//apple_ref/doc/uid/TP30000905-CH223-TPXREF2">Mach</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH223-TPXREF3"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Bibliography/Bibliography.html#//apple_ref/doc/uid/TP30000905-CH223-TPXREF3">Networking</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH223-TPXREF4"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Bibliography/Bibliography.html#//apple_ref/doc/uid/TP30000905-CH223-TPXREF4">Operating Systems</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH223-TPXREF5"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Bibliography/Bibliography.html#//apple_ref/doc/uid/TP30000905-CH223-TPXREF5">POSIX</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH223-TPXREF6"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Bibliography/Bibliography.html#//apple_ref/doc/uid/TP30000905-CH223-TPXREF6">Programming</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH223-TPXREF7"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Bibliography/Bibliography.html#//apple_ref/doc/uid/TP30000905-CH223-TPXREF7">Websites and Online Resources</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH223-TPXREF113"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Bibliography/Bibliography.html#//apple_ref/doc/uid/TP30000905-CH223-TPXREF113">Security and Cryptography</a></span></li></ul></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH222-BEBDGFHI"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/history/history.html#//apple_ref/doc/uid/TP30000905-CH222-BEBDGFHI">Revision History</a></span></li><li class=" " data-aref="//apple_ref/doc/uid/TP30000905-CH224-TPXREF1"><span class="nodisclosure"></span><span class="sectionName"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Glossary/Glossary.html#//apple_ref/doc/uid/TP30000905-CH224-TPXREF1">Glossary</a></span></li></ul>
+    </nav>
+
+    <article id="contents" tabindex="0" role="main" class="isShowingTOC">
+        <div id="pageNavigationLinks_top" class="pageNavigationLinks">
+            <a class="nextLink" rel="next" href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Bibliography/Bibliography.html" onclick='s_objectID="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Bib_1";return this.s_oc?this.s_oc(e):true'>Next</a><a class="previousLink" rel="prev" href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Extend/Extend.html" onclick='s_objectID="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Ext_1";return this.s_oc?this.s_oc(e):true'>Previous</a>
+        </div>
+        <a id="top" name="top"></a>
+        <a id="INDEX" href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/index.html" style="display:none;" onclick='s_objectID="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/ind_1";return this.s_oc?this.s_oc(e):true'></a>
+        
+        <a name="//apple_ref/doc/uid/TP30000905-CH221-BEHJDFCA" title="Building and Debugging Kernels"></a><h1 id="pageTitle">Building and Debugging Kernels</h1><p>This chapter is not about building kernel extensions (KEXTs). There are a number of good KEXT tutorial<a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_382"></a>s on Apple’s developer documentation site (<span class="content_text"><a href="http://developer.apple.com/documentation" class="browserLink" onclick='s_objectID="http://developer.apple.com/documentation_1";return this.s_oc?this.s_oc(e):true'>http://developer.apple.com/documentation</a></span>).
+ This chapter is about adding new in-kernel modules (optional parts of 
+the kernel), building kernels, and debugging kernel and kernel extension
+ builds.</p>
+<p>The discussion is divided into three sections. The first, <span class="content_text"><a href="#//apple_ref/doc/uid/TP30000905-CH221-CIHFDDJB" data-renderer-version="1" onclick='s_objectID="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/bui_1";return this.s_oc?this.s_oc(e):true'>Adding New Files or Modules</a></span>,
+ describes how to add new functionality into the kernel itself. You 
+should only add files into the kernel when the use of a KEXT is not 
+possible (for example, when adding certain low-level motherboard 
+hardware support).</p>
+<p>The second section, <span class="content_text"><a href="#//apple_ref/doc/uid/TP30000905-CH221-CIHFEIFI" data-renderer-version="1" onclick='s_objectID="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/bui_2";return this.s_oc?this.s_oc(e):true'>Building Your First Kernel</a></span>,
+ describes how to build a kernel, including how to build a kernel with 
+debugger support, how to add new options, and how to obtain sources that
+ are of similar vintage to those in a particular version of OS X or 
+Darwin.</p>
+<p>The third section, <span class="content_text"><a href="#//apple_ref/doc/uid/TP30000905-CH221-CIHBJCGC" data-renderer-version="1" onclick='s_objectID="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/bui_3";return this.s_oc?this.s_oc(e):true'>When Things Go Wrong: Debugging the Kernel</a></span>, tells how to debug a kernel or kernel module using <code>ddb</code> and <code>gdb</code>. This is a must-read for anyone doing kernel development.</p>
+
+<section><a name="//apple_ref/doc/uid/TP30000905-CH221-CIHFDDJB" title="Adding New Files or Modules"></a><h2 class="jump">Adding New Files or Modules</h2>
+<p>In this context, the term <a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_383"></a>module is used loosely to refer to a collection of related files in the kernel that are controlled by a single <code>config</code>
+ option at compile time. It does not refer to loadable modules (KEXTs). 
+This section describes how to add additional files that will be compiled
+ into the kernel, including how to add a new <code>config</code> option for an additional module.</p>
+<section><a name="//apple_ref/doc/uid/TP30000905-CH221-TPXREF108" title="Modifying the Configuration Files"></a><h3 class="jump">Modifying the Configuration Files</h3>
+<p>The details of adding a new file or module into the kernel differ 
+according to what portion of the kernel contains the file. If you are 
+adding a new file or module into the Mach portion of the kernel, you 
+need to list it in various files in <code>xnu/osfmk/conf</code>. For the BSD portion of the kernel, you should list it in various files in <code>xnu/bsd/conf</code>. In either case, the procedure is basically the same, just in a different directory.</p>
+<p>This section is divided into two subsections. The first describes 
+adding the module itself and the second describes enabling the module.</p>
+<section><a name="//apple_ref/doc/uid/TP30000905-CH221-TPXREF109" title="Adding the Files or Modules"></a><h4 class="jump">Adding the Files or Modules</h4>
+<p>In the appropriate <code>conf</code> directory, you need to add your files or modules into various files. The files <code>MASTER</code>, <code>MASTER.ppc</code>, and <code>MASTER.i386</code>
+ contain the list of configuration options that should be built into the
+ kernel for all architectures, PowerPC, and i386, respectively.</p>
+<p>These are supplemented by <code>files</code>, <code>files.ppc</code>, and <code>files.i386</code>, which contain associations between compile options and the files that are related to them for their respective architectures.</p>
+<p>The format for these two files is relatively straightforward. If you 
+are adding a new module, you should first choose a name for that module.
+ For example, if your module is called <code>mach_foo</code>, you should then add a new option line near the top of <code>files</code> that is whitespace (space or tab) delimited and looks like this:</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>OPTIONS/mach_foo    optional mach_foo<span></span></pre></td></tr></tbody></table></div>
+<p>The first part defines the name of the module as it will be used in <code>#if </code>statements in the code. (See <span class="content_text"><a href="#//apple_ref/doc/uid/TP30000905-CH221-BABFDFJE" data-renderer-version="1" onclick='s_objectID="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/bui_4";return this.s_oc?this.s_oc(e):true'>Modifying the Source Code Files</a></span>
+ for more information.) The second part is always the word optional. The
+ third part tells the name of the option as used to turn it on or off in
+ a <code>MASTER</code> file. Any line with <code>mach_foo</code> in the last field will be enabled only if there is an appropriate line in a <code>MASTER</code> file.</p>
+<p>Then, later in the file, you add</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>osfmk/foo/foo_main.c            optional mach_foo<span></span></pre></td></tr><tr><td scope="row"><pre>osfmk/foo/foo_bar.c             optional mach_foo<span></span></pre></td></tr></tbody></table></div>
+<p>and so on, for each new file associated with that module. This also 
+applies if you are adding a file to an existing module. If you are 
+adding a file that is not associated with any module at all, you add a 
+line that looks like the following to specify that this file should 
+always be included:</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>osfmk/crud/mandatory_file.c     standard<span></span></pre></td></tr></tbody></table></div>
+<p>If you are not adding any modules, then you’re done. Otherwise, you also need to enable your option in one of the <code>MASTER</code> files.</p></section>
+<section><a name="//apple_ref/doc/uid/TP30000905-CH221-CIHEHBHB" title="Enabling Module Options"></a><h4 class="jump">Enabling Module Options</h4>
+<p>To enable a module option (as described in the <code>files</code> files), you must add an entry for that option into one of the <code>MASTER</code> files. If your code is not a BSD pseudo-device, you should add something like the following:</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>options MACH_FOO<span></span></pre></td></tr></tbody></table></div>
+<p>Otherwise, you should add something like this:</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>pseudo-device   mach_foo<span></span></pre></td></tr></tbody></table></div>
+<p>In the case of a pseudo-device (for example, <code>/dev/random</code>),
+ you can also add a number. When your code checks to see if it should be
+ included, it can also check that number and allocate resources for more
+ than one pseudo-device. The meaning of multiple pseudo-devices is 
+device-dependent. An example of this is <code>ppp</code>, which allocates resources for two simultaneous PPP connections. Thus, in the <code>MASTER.ppc</code> file, it has the line:</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>pseudo-device   ppp 2<span></span></pre></td></tr></tbody></table></div></section></section>
+<section><a name="//apple_ref/doc/uid/TP30000905-CH221-BABFDFJE" title="Modifying the Source Code Files"></a><h3 class="jump">Modifying the Source Code Files</h3>
+<p>In the OS X kernel, all source code files are automatically compiled.
+ It is the responsibility of the C file itself to determine whether its 
+contents need to be included in the build or not.</p>
+<p>In the example above, you created a module called <code>mach_foo</code>.
+ Assume that you want this file to compile only on PowerPC-based 
+computers. In that case, you should have included the option only in <code>MASTER.ppc</code> and not in <code>MASTER.i386</code>. However, by default, merely specifying the file <code>foo_main.c</code> in <code>files</code> causes it to be compiled, regardless of compile options specified.</p>
+<p>To make the code compile only when the option mach_foo is included in
+ the configuration, you should begin each C source file with the lines</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>#include &lt;mach_foo.h&gt;<span></span></pre></td></tr><tr><td scope="row"><pre>#if (MACH_FOO &gt; 0)<span></span></pre></td></tr></tbody></table></div>
+<p>and end it with</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>#endif /* MACH_FOO */<span></span></pre></td></tr></tbody></table></div>
+<p>If <code>mach_foo</code> is a pseudo-device and you need to check the number of <code>mach_foo</code> pseudo-devices included, you can do further tests of the value of <code>MACH_FOO</code>.</p>
+<p>Note that the file <code>&lt;mach_foo.h&gt;</code> is not something you create. It is created by the makefiles themselves. You must run <code>make exporthdrs</code> before <code>make all</code> to generate these files<a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_384"></a>.</p></section></section>
+<section><a name="//apple_ref/doc/uid/TP30000905-CH221-CIHFEIFI" title="Building Your First Kernel"></a><h2 class="jump">Building Your First Kernel</h2>
+<p>Before you can build a kernel, you must first obtain source<a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_385"></a> code<a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_386"></a>. Source code for the OS X kernel can be found in the Darwin <code>xnu</code> project on <span class="content_text"><a href="http://www.opensource.apple.com/" class="urlLink" rel="external" onclick='s_objectID="http://www.opensource.apple.com/_1";return this.s_oc?this.s_oc(e):true'>http://www.opensource.apple.com</a></span>. To find out your current kernel version<a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_387"></a>, use the command<a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_388"></a><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_389"></a> <code>uname -a</code>.
+ If you run into trouble, search the archives of the darwin-kernel and 
+darwin-development mailing lists for information. If that doesn’t help, 
+ask for assistance on either list. The list archives and subscription 
+information can be found at <span class="content_text"><a href="http://www.lists.apple.com/" class="urlLink" rel="external" onclick='s_objectID="http://www.lists.apple.com/_1";return this.s_oc?this.s_oc(e):true'>http://www.lists.apple.com</a></span>.</p>
+<div class="notebox"><aside><a name="//apple_ref/doc/uid/TP30000905-CH221-SW1" title="Note"></a><p><strong>Note:</strong>&nbsp;Before
+ you begin, make sure you extract the sources in a directory whose path 
+does not contain any “special” characters (non-alphanumeric characters 
+other than dash and underscore), as having such characters in the path 
+leading up to the build directory can cause compiling to fail.</p><p></p><p>Also, make sure that <code>/usr/local/bin</code> is in your <code>PATH</code> environment variable as follows:</p><p>If you are using a csh derivative such as tcsh, you should add <code>set path = (/usr/local/bin $path)</code> to your <code>.tcshrc</code> file</p><p>If you are using a Bourne shell derivative, you should add <code>export PATH=/usr/local/bin:$PATH</code> to your <code>.bashrc</code> file.</p><p></p></aside></div>
+<div class="importantbox clear"><aside><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_5" title="Important"></a><p><strong>Important:</strong>&nbsp;
+
+Once
+ you have obtained and extracted the sources, before you begin compiling
+ kernel support tools, you should configure your system to build using 
+gcc 3.3. The OS X v10.4 kernel will not build using gcc 4.0. To do this,
+ type:</p><p>
+
+</p><div class="codesample clear"><table><tbody><tr><td scope="row"><pre>sudo gcc_select 3.3<span></span></pre></td></tr></tbody></table></div><p></p></aside></div>
+<div class="importantbox clear"><aside><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_6" title="Important"></a><p><strong>Important:</strong>&nbsp;
+Before
+ building anything, you should make sure you are running the latest 
+version of OS X with the latest developer tools. The xnu compile process
+ may reference various external headers from <code>/System/Library/Frameworks</code>. These headers are only installed as part of a developer tools installation, not as part of the normal OS X install process.</p><p></p></aside></div>
+<p>Next, you will need to compile several support tools. Get the <code>bootstrap_cmds</code><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_390"></a>, <code>Libstreams</code><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_391"></a>, <code>kext_tools</code>, <code>IOKitUser</code>, and <code>cctools</code><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_392"></a> packages from <span class="content_text"><a href="http://www.opensource.apple.com/" class="urlLink" rel="external" onclick='s_objectID="http://www.opensource.apple.com/_2";return this.s_oc?this.s_oc(e):true'>http://www.opensource.apple.com</a></span>. Extract the files from these <code>.tar</code> packages, then do the following:</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>sudo mkdir -p /usr/local/bin<span></span></pre></td></tr><tr><td scope="row"><pre>sudo mkdir -p /usr/local/lib<span></span></pre></td></tr><tr><td scope="row"><pre>cd bootstrap_cmds-version/relpath.tproj<span></span></pre></td></tr><tr><td scope="row"><pre>make<span></span></pre></td></tr><tr><td scope="row"><pre>sudo make install<span></span></pre></td></tr><tr><td scope="row"><pre>cd ../../Libstreams-version<span></span></pre></td></tr><tr><td scope="row"><pre>make<span></span></pre></td></tr><tr><td scope="row"><pre>sudo make install<span></span></pre></td></tr><tr><td scope="row"><pre>cd ../cctools-version<span></span></pre></td></tr><tr><td scope="row"><pre>sudo cp /usr/include/ar.h \<span></span></pre></td></tr><tr><td scope="row"><pre>        /System/Library/Frameworks/Kernel.framework/Headers<span></span></pre></td></tr></tbody></table></div>
+<p>In the <code>cctools</code> package, modify the <code>Makefile</code>, and change the <code>COMMON_SUBDIRS</code> line (including the continuation line after it) to read:</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>COMMON_SUBDIRS = libstuff libmacho misc<span></span></pre></td></tr></tbody></table></div>
+<p>Finally, issue the following commands<a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_393"></a><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_394"></a>:</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>make RC_OS=macos<span></span></pre></td></tr><tr><td scope="row"><pre>sudo cp misc/seg_hack.NEW /usr/local/bin/seg_hack<span></span></pre></td></tr><tr><td scope="row"><pre>cd ld<span></span></pre></td></tr><tr><td scope="row"><pre>make RC_OS=macos kld_build<span></span></pre></td></tr><tr><td scope="row"><pre>sudo cp static_kld/libkld.a /usr/local/lib<span></span></pre></td></tr><tr><td scope="row"><pre>sudo ranlib /usr/local/lib/libkld.a<span></span></pre></td></tr></tbody></table></div>
+<p>Now you’re done with the cctools project. One final step remains: compiling <code>kextsymboltool</code>. To do this, extract the <code>kext_tools</code> tarball, then do the following:</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>sudo mkdir -p /System/Library/Frameworks/IOKit.framework/Versions/A/PrivateHeaders/kext<span></span></pre></td></tr><tr><td scope="row"><pre>cd /System/Library/Frameworks/IOKit.framework/<span></span></pre></td></tr><tr><td scope="row"><pre>sudo ln -s Versions/A/PrivateHeaders PrivateHeaders<span></span></pre></td></tr><tr><td scope="row"><pre>sudo cp PATH_TO_IOKITUSER/IOKitUser-version/kext.subproj/*.h PrivateHeaders/kext<span></span></pre></td></tr><tr><td scope="row"><pre>cd PATH_TO_KEXT_TOOLS/kext_tools-version<span></span></pre></td></tr><tr><td scope="row"><pre>gcc kextsymboltool.c -o kextsymboltool<span></span></pre></td></tr><tr><td scope="row"><pre>sudo cp kextsymboltool /usr/local/bin<span></span></pre></td></tr></tbody></table></div>
+<div class="warningbox clear"><aside><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_7" title="Warning"></a><p><strong>Warning:</strong>&nbsp;
+If you do not use a version of <code>kextsymboltool</code> that is at 
+least as current as your kernel, you will get serious compile failures. 
+If you see the error message “exported name not in import list”, there’s
+ a good chance you aren’t using a current <code>kextsymboltool</code>.</p><p></p><div class="clear"></div></aside></div>
+<p>Congratulations. You now have all the necessary tools, libraries, and header files to build a kernel.</p>
+<p>The next step is to compile the kernel itself. First, change directories into the <code>xnu</code>
+ directory. Next, you need to set a few environment variables 
+appropriately. For your convenience, the kernel sources contain shell 
+scripts to do this for you. If you are using sh, bash, zsh, or some 
+other Bourne-compatible shell, issue the following command:</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>source SETUP/setup.sh<span></span></pre></td></tr></tbody></table></div>
+<p>If you are using csh, tcsh, or a similar shell, use the following command:</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>source SETUP/setup.csh<span></span></pre></td></tr></tbody></table></div>
+<p>Then, you should be able to type</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>make exporthdrs<span></span></pre></td></tr><tr><td scope="row"><pre>make all<span></span></pre></td></tr></tbody></table></div>
+<p>and get a working kernel in <code>BUILD/obj/RELEASE_PPC/mach_kernel</code> (assuming you are building a <code>RELEASE</code> kernel for PowerPC, of course).</p><p>If things don’t work, the <span class="content_text"><a href="http://lists.apple.com/mailman/listinfo/darwin-kernel" class="urlLink" rel="external" onclick='s_objectID="http://lists.apple.com/mailman/listinfo/darwin-kernel_1";return this.s_oc?this.s_oc(e):true'>darwin-kernel</a></span> mailing list a good place to get help.</p></section>
+<section><a name="//apple_ref/doc/uid/TP30000905-CH221-TPXREF110" title="Building an Alternate Kernel Configuration "></a><h2 class="jump">Building an Alternate Kernel Configuration </h2><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_395"></a><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_396"></a>
+<p>When building a kernel, you may want to build a configuration other than the <code>RELEASE</code> configuration (the default shipping configuration). Additional configurations are <code>RELEASE_TRACE</code>, <code>DEBUG</code>, <code>DEBUG_TRACE</code>, and <code>PROFILE</code>. These configurations add various additional options (except <code>PROFILE</code>, which is reserved for future expansion, and currently maps onto <code>RELEASE</code>).</p>
+<p>The most useful and interesting configurations are <code>RELEASE</code> and <code>DEBUG</code>.
+ The release configuration should be the same as a stock Apple-released 
+kernel, so this is interesting only if you are building source that 
+differs from that which was used to build the kernel you are already 
+running. Compiling a kernel without specifying a configuration results 
+in the <code>RELEASE</code> configuration being built.</p>
+<p>The <code>DEBUG</code> configuration enables <code>ddb</code>, the in-kernel serial debugger<a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_397"></a>. The <code>ddb</code><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_398"></a>
+ debugger is helpful to debug panics that occur early in boot or within 
+certain parts of the Ethernet driver. It is also useful for debugging 
+low-level interrupt handler routines that cannot be debugged by using 
+the more traditional <code>gdb</code>.</p>
+<p>To compile an alternate kernel configuration, you should follow the 
+same basic procedure as outlined previously, changing the final <code>make</code> statement slightly. For example, to build the <code>DEBUG</code> configuration, instead of typing</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>make all<span></span></pre></td></tr></tbody></table></div>
+<p>you type</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>make KERNEL_CONFIGS=DEBUG all<span></span></pre></td></tr></tbody></table></div>
+<p>and wait.</p>
+<p>To turn on additional compile options, you must modify one of the <code>MASTER</code> files. For information on modifying these files, see the section <span class="content_text"><a href="#//apple_ref/doc/uid/TP30000905-CH221-CIHEHBHB" data-renderer-version="1" onclick='s_objectID="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/bui_5";return this.s_oc?this.s_oc(e):true'>Enabling Module Options</a></span>.</p></section>
+<section><a name="//apple_ref/doc/uid/TP30000905-CH221-CIHBJCGC" title="When Things Go Wrong: Debugging the Kernel"></a><h2 class="jump">When Things Go Wrong: Debugging the Kernel</h2><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_399"></a>
+<p>No matter how careful your programming habits, sometimes things don’t
+ work right the first time. Kernel panics are simply a fact of life 
+during development of kernel extensions or other in-kernel code.</p>
+<p>There are a number of ways to track down problems in kernel code. In 
+many cases, you can find the problem through careful use of <code><a href="https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/printf.3.html#//apple_ref/doc/man/3/printf" data-renderer-version="1" target="_self" onclick='s_objectID="https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man_1";return this.s_oc?this.s_oc(e):true'>printf</a></code> or <code><a href="https://developer.apple.com/documentation/kernel/1575337-iolog" class="urlLink" target="_self" onclick='s_objectID="https://developer.apple.com/documentation/kernel/1575337-iolog_1";return this.s_oc?this.s_oc(e):true'>IOLog</a></code>
+ statements. Some people swear by this method, and indeed, given 
+sufficient time and effort, any bug can be found and fixed without using
+ a debugger.</p>
+<p>Of course, the key words in that statement are “given sufficient time and effort.” For the rest of us, there are debuggers: <code>gdb</code><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_400"></a> and <code>ddb</code><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_401"></a>.</p>
+<section><a name="//apple_ref/doc/uid/TP30000905-CH221-CIHIAFFJ" title="Setting Debug Flags in Open Firmware"></a><h3 class="jump">Setting Debug Flags in Open Firmware</h3>
+<p>With the exception of kernel panics or calls to <code>PE_enter_debugger</code><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_402"></a><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_403"></a>,
+ it is not possible to do remote kernel debugging without setting debug 
+flags in Open Firmware. These flags are relevant to both <code>gdb</code> and <code>ddb</code> debugging and are important enough to warrant their own section.</p>
+<p>To set these flags, you can either use the <code>nvram</code> program (from the OS X command line) or access your computer’s Open Firmware<a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_404"></a>.
+ You can access Open Firmware this by holding down Command-Option-O-F at
+ boot time. For most computers, the default is for Open Firmware to 
+present a command–line prompt on your monitor and accept input from your
+ keyboard. For some older computers you must use a serial line at 38400,
+ 8N1. (Technically, such computers are not supported by OS X, but some 
+are usable under Darwin, and thus they are mentioned here for 
+completeness.)</p>
+<p>From an Open Firmware<a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_405"></a> prompt, you can set the flags with the <code>setenv</code> command. From the OS X command line, you would use the <code>nvram</code> command<a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_406"></a><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_407"></a>.
+ Note that when modifying these flags you should always look at the old 
+value for the appropriate Open Firmware variables and add the <code>debug</code> flags.</p>
+<p>For example, if you want to set the debug flags to <code>0x4</code>, you use one of the following commands. For computers with recent versions of Open Firmware, you would type</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>printenv boot-args<span></span></pre></td></tr><tr><td scope="row"><pre>setenv boot-args original_contents debug=0x4<span></span></pre></td></tr></tbody></table></div>
+<p>             from Open Firmware or</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>nvram boot-args<span></span></pre></td></tr><tr><td scope="row"><pre>nvram boot-args="original_contents debug=0x4"<span></span></pre></td></tr></tbody></table></div>
+<p>from the command line (as root).</p>
+<p>For older firmware versions, the interesting variable is <code>boot-command</code>. Thus, you might do something like</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>printenv boot-command<span></span></pre></td></tr><tr><td scope="row"><pre>setenv boot-command 0 bootr debug=0x4<span></span></pre></td></tr></tbody></table></div>
+<p>from Open Firmware or</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>nvram boot-command<span></span></pre></td></tr><tr><td scope="row"><pre>nvram boot-command="0 bootr debug=0x4"<span></span></pre></td></tr></tbody></table></div>
+<p>from the command line (as root).</p>
+<p>Of course, the more important issue is what value to choose for the debug flags. <span class="content_text"><a href="#//apple_ref/doc/uid/TP30000905-CH221-BABDGEGF" data-renderer-version="1" onclick='s_objectID="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/bui_6";return this.s_oc?this.s_oc(e):true'>Table 20-1</a></span> lists the debugging flags that are supported in OS X.</p><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_408"></a><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_409"></a><a name="//apple_ref/doc/uid/TP30000905-CH221-BABDGEGF" title="Table 20-1Debugging flags"></a><div class="tableholder"><table class="graybox" cellspacing="0" cellpadding="5" border="0">
+<caption class="tablecaption"><strong class="caption_number">Table 20-1</strong>&nbsp;&nbsp;Debugging flags</caption>
+
+<tbody><tr>
+<th scope="col" class="TableHeading_TableRow_TableCell"><p>Symbolic name</p></th>
+<th scope="col" class="TableHeading_TableRow_TableCell"><p>Flag</p></th>
+<th scope="col" class="TableHeading_TableRow_TableCell"><p>Meaning</p></th>
+</tr>
+
+
+<tr>
+<td scope="row"><p><code>DB_HALT</code></p></td>
+<td><p>0x01</p></td>
+<td><p>Halt at boot-time and wait for debugger attach (<code>gdb</code>).</p></td>
+</tr>
+<tr>
+<td scope="row"><p><code>DB_PRT</code></p></td>
+<td><p>0x02</p></td>
+<td><p>Send kernel debugging <code><a href="https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/printf.3.html#//apple_ref/doc/man/3/printf" data-renderer-version="1" target="_self" onclick='s_objectID="https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man_2";return this.s_oc?this.s_oc(e):true'>printf</a></code> output to console.</p></td>
+</tr>
+<tr>
+<td scope="row"><p><code>DB_NMI</code></p></td>
+<td><p>0x04</p></td>
+<td><p>Drop into debugger on NMI (Command–Power, Command-Option-Control-Shift-Escape, or interrupt switch).</p></td>
+</tr>
+<tr>
+<td scope="row"><p><code>DB_KPRT</code></p></td>
+<td><p>0x08</p></td>
+<td><p>Send kernel debugging <code><!--a-->kprintf<!--/a--></code> output to serial port.</p></td>
+</tr>
+<tr>
+<td scope="row"><p><code>DB_KDB</code></p></td>
+<td><p>0x10</p></td>
+<td><p>Make <code>ddb</code> (<code>kdb</code>) the default debugger (requires a custom kernel).</p></td>
+</tr>
+<tr>
+<td scope="row"><p><code>DB_SLOG</code></p></td>
+<td><p>0x20</p></td>
+<td><p>Output certain diagnostic info to the system log.</p></td>
+</tr>
+<tr>
+<td scope="row"><p><code>DB_ARP</code></p></td>
+<td><p>0x40</p></td>
+<td><p>Allow debugger to ARP and route (allows debugging across routers 
+and removes the need for a permanent ARP entry, but is a potential 
+security<a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_410"></a> hole)—not available in all kernels.</p></td>
+</tr>
+<tr>
+<td scope="row"><p><code>DB_KDP_BP_DIS</code></p></td>
+<td><p>0x80</p></td>
+<td><p>Support old versions of <code>gdb</code> on newer systems.</p></td>
+</tr>
+<tr>
+<td scope="row"><p><code>DB_LOG_PI_SCRN</code></p></td>
+<td><p>0x100</p></td>
+<td><p>Disable graphical panic dialog.</p></td>
+</tr>
+
+</tbody></table></div>
+<p>The option <code>DB_KDP_BP_DIS</code> is not available on all 
+systems, and should not be important if your target and host systems are
+ running the same or similar versions of OS X with matching developer 
+tools. The last option is only available in Mac OS 10.2 and later.</p></section><section><a name="//apple_ref/doc/uid/TP30000905-CH221-SW2" title="Avoiding Watchdog Timer Problems"></a><h3 class="jump">Avoiding Watchdog Timer Problems</h3><p>Macintosh
+ computers have various watchdog timers designed to protect the system 
+from certain types of failures. There are two primary watchdog timers in
+ common use: the power management watchdog timer (not present on all 
+systems) and the system crash watchdog timer. Both watchdogs are part of
+ the power management hardware.</p><p>The first of these, the power 
+management watchdog timer, is designed to restore the system to a known 
+safe state in the event of unexpected communication loss between the 
+power management hardware and the CPU. This timer is <em>only</em> 
+present in G4 and earlier desktops and laptops and in early G5 desktops.
+ More specifically, it is present only in machines containing a PMU 
+(Power Management Unit) chip.</p><p>Under normal circumstances, when 
+communication with the PMU chip is lost, the PMU driver will attempt to 
+get back in sync with the PMU chip. With the possible exception of a 
+momentary loss of keyboard and mouse control, you probably won't notice 
+that anything has happened (and you should never even experience such a 
+stall unless you are writing a device driver that disables interrupts 
+for an extended period of time).</p><p>The problem occurs when the 
+disruption in communication is caused by entering the debugger while the
+ PMU chip is in one of these "unsafe" states. If the chip is left in one
+ of these "unsafe" states for too long, it will shut the computer down 
+to prevent overheating or other problems.</p><p>This problem can be 
+significantly reduced by operating the PMU chip in polled mode. This 
+prevents the watchdog timer from activating. You should only use this 
+option when debugging, however, as it diminishes performance and a 
+crashed system could overheat.</p><p>To disable this watchdog timer, add the argument <code>pmuflags=1</code> to the kernel's boot arguments. See <span class="content_text"><a href="#//apple_ref/doc/uid/TP30000905-CH221-CIHIAFFJ" data-renderer-version="1" onclick='s_objectID="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/bui_7";return this.s_oc?this.s_oc(e):true'>Setting Debug Flags in Open Firmware</a></span> for information about how to add a boot argument.</p><p>The
+ second type of watchdog timer is the system crash watchdog timer. This 
+is normally only enabled in OS X Server. If your target machine is 
+running OS X Server, your system will automatically reboot within 
+seconds after a crash to maximize server uptime. You can disable this 
+automatic reboot on crash feature in the server administration tool.</p></section>
+<section><a name="//apple_ref/doc/uid/TP30000905-CH221-TPXREF111" title="Choosing a Debugger"></a><h3 class="jump">Choosing a Debugger</h3><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_411"></a>
+<p>There are two basic debugging environments supported by OS X: <code>ddb</code><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_412"></a> and <code>gdb</code>. <code>ddb</code> is a built-in debugger that works over a serial line. By contrast, <code>gdb</code><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_413"></a>
+ is supported using a debugging shim built into the kernel, which allows
+ a remote computer on the same physical network to attach after a panic 
+(or sooner if you pass certain options to the kernel).</p>
+<p>For problems involving network extensions or low-level operating system bringups, <code>ddb</code> is the only way to do debugging. For other bugs, <code>gdb</code> is generally easier to use. For completeness, this chapter describes how to use both <code>ddb</code> and <code>gdb</code> to do basic debugging. Since <code>gdb</code>
+ itself is well documented and is commonly used for application 
+programming, this chapter assumes at least a passing knowledge of the 
+basics of using <code>gdb</code> and focuses on the areas where remote (kernel) <code>gdb</code> differs.</p>
+<div class="notebox"><aside><a name="//apple_ref/doc/uid/TP30000905-CH221-SW3" title="Note"></a><p><strong>Note:</strong>&nbsp;Only systems with serial hardware support <code>ddb</code>. Thus, it is only possible to use <code>ddb</code> on PowerMac G4 and older systems.</p><p></p></aside></div></section>
+<section><a name="//apple_ref/doc/uid/TP30000905-CH221-CIHEIAID" title="Using   gdb for Kernel Debugging"></a><h3 class="jump">Using   <code>gdb</code> for Kernel Debugging</h3><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_414"></a><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_415"></a>
+<p><code>gdb</code>, short for the GNU Debugger, is a piece of software 
+commonly used for debugging software on UNIX and Linux systems. This 
+section assumes that you have used <code>gdb</code> before, and does not attempt to explain basic usage.</p>
+<p>In standard OS X builds (and in your builds unless you compile with <code>ddb</code> support), <code>gdb</code> support is built into the system but is turned off except in the case of a kernel panic.</p>
+<p>Of course, many software failures in the kernel do not result in a 
+kernel panic but still cause aberrant behavior. For these reasons, you 
+can pass additional flags to the kernel to allow you to attach to a 
+remote computer early in boot or after a nonmaskable interrupt (NMI<a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_416"></a><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_417"></a>), or you can programmatically drop into the debugger in your code.</p>
+<p>You can cause the test computer (the debug target) to drop into the debugger in the following ways:</p>
+<ul class="ul"><li class="li"><p>debug on panic</p></li>
+<li class="li"><p>debug on NMI</p></li>
+<li class="li"><p>debug on boot</p></li>
+<li class="li"><p>programmatically drop into the default debugger</p><p>The function <code><!--a-->PE_enter_debugger<!--/a--></code><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_418"></a><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_419"></a> can be called from anywhere in the kernel, although if <code>gdb</code> is your default debugger, a crash will result if the network hardware is not initialized or if <code>gdb</code> cannot be used in that particular context. This call is described in the header <code>pexpert/pexpert.h</code>.</p></li></ul>
+<p>After you have decided what method to use for dropping into the 
+debugger on the target, you must configure your debug host (the computer
+ that will actually be running <code>gdb</code>). Your debug host should
+ be running a version of OS X that is comparable to the version running 
+on your target host. However, it should not be running a customized 
+kernel, since a debug host crash would be problematic, to say the least.</p><div class="notebox"><aside><a name="//apple_ref/doc/uid/TP30000905-CH221-SW4" title="Note"></a><p><strong>Note:</strong>&nbsp;It
+ is possible to use a non-OS X system as your debug host. This is not a 
+trivial exercise, however, and a description of building a cross-<code>gdb</code> is beyond the scope of this document.</p><p></p></aside></div>
+<p>When using <code>gdb</code>, the best results can be obtained when 
+the source code for the customized kernel is present on your debug host.
+ This not only makes debugging easier by allowing you to see the lines 
+of code when you stop execution, it also makes it easier to modify those
+ lines of code. Thus, the ideal situation is for your debug host to also
+ be your build computer. This is not required, but it makes things 
+easier. If you are debugging a kernel extension, it generally suffices 
+to have the source for the kernel extension itself on your debug host. 
+However, if you need to see kernel-specific structures, having the 
+kernel sources on your debug host may also be helpful.</p>
+<p>Once you have built a kernel using your debug host, you must then 
+copy it to your target computer and reboot the target computer. At this 
+point, if you are doing panic-only debugging, you should trigger the 
+panic. Otherwise, you should tell your target computer to drop into the 
+debugger by issuing an NMI<a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_420"></a><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_421"></a> (or by merely booting, in the case of <code>debug=0x1</code>).</p>
+<p>Next, unless your kernel supports ARP<a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_422"></a><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_423"></a>
+ while debugging (and unless you enabled it with the appropriate debug 
+flag), you need to add a permanent ARP entry for the target. It will be 
+unable to answer ARP requests while waiting for the debugger. This 
+ensures that your connection won’t suddenly disappear. The following 
+example assumes that your target is <code>target.foo.com</code> with an IP number of <code>10.0.0.69</code>:</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>$ ping -c 1 target_host_name<span></span></pre></td></tr><tr><td scope="row"><pre>ping results: ....<span></span></pre></td></tr><tr><td scope="row"><pre>$ arp -an<span></span></pre></td></tr><tr><td scope="row"><pre>target.foo.com (10.0.0.69): 00:a0:13:12:65:31<span></span></pre></td></tr><tr><td scope="row"><pre>$ sudo arp -s target.foo.com 00:a0:13:12:65:31<span></span></pre></td></tr><tr><td scope="row"><pre>$ arp -an<span></span></pre></td></tr><tr><td scope="row"><pre>target.foo.com (10.0.0.69) at00:a0:13:12:65:31 permanent<span></span></pre></td></tr></tbody></table></div>
+<p>Now, you can begin debugging by doing the following:</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>gdb /path/to/mach_kernel<span></span></pre></td></tr><tr><td scope="row"><pre>source /path/to/xnu/osfmk/.gdbinit<span></span></pre></td></tr><tr><td scope="row"><pre>p proc0<span></span></pre></td></tr><tr><td scope="row"><pre>source /path/to/xnu/osfmk/.gdbinit<span></span></pre></td></tr><tr><td scope="row"><pre>target remote-kdp<span></span></pre></td></tr><tr><td scope="row"><pre>attach 10.0.0.69<span></span></pre></td></tr></tbody></table></div>
+<p>Note that the mach kernel passed as an argument to <code>gdb</code> should be the symbol–laden kernel file located in <code>BUILD/obj/DEBUG_PPC/mach_kernel.sys</code> (for debug kernel builds, <code>RELEASE_PPC</code> for non-debug builds), not the bootable kernel that you copied onto the debug target. Otherwise most of the <code>gdb</code> macros will fail. The correct kernel should be several times as large as a normal kernel.</p>
+<p>You must do the <code>p proc0</code> command and source the <code>.gdbinit</code> file (from the appropriate kernel sources) twice to work around a bug in <code>gdb</code>. Of course, if you do not need any of the macros in <code>.gdbinit</code>,
+ you can skip those two instructions. The macros are mostly of interest 
+to people debugging aspects of Mach, though they also provide ways of 
+obtaining information about currently loaded KEXTs.</p>
+<div class="warningbox clear"><aside><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_8" title="Warning"></a><p><strong>Warning:</strong>&nbsp;
+It
+ may not be possible to detach in a way that the target computer’s 
+kernel continues to run. If you detach, the target hangs until you 
+reattach. It is not always possible to reattach, though the situation is
+ improving in this area. Do not detach from the remote kernel!</p><p></p><div class="clear"></div></aside></div>
+<p>If you are debugging a kernel module, you need to do some additional 
+work to get debugging symbol information about the module. First, you 
+need to know the load address for the module. You can get this 
+information by running <code>kextstat</code><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_424"></a><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_425"></a> (<code>kmodstat</code><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_426"></a><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_427"></a> on systems running OS X v10.1 or earlier) as root on the target.</p>
+<p>If you are already in the debugger, then assuming the target did not panic, you should be able to use the <code>continue</code> function in <code>gdb</code> to revive the target, get this information, then trigger another NMI to drop back into the debugger.</p>
+<p>If the target is no longer functional, and if you have a fully 
+symbol–laden kernel file on your debug host that matches the kernel on 
+your debug target, you can use the <code>showallkmods</code> macro to obtain this information. Obtaining a fully symbol–laden kernel generally requires compiling the kernel yourself.</p>
+<p>Once you have the load address of the module in question, you need to
+ create a symbol file for the module. You do this in different ways on 
+different versions of OS X.</p>
+<p>For versions 10.1 and earlier, you use the <code>kmodsyms</code><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_428"></a><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_429"></a> program to create a symbol file for the module. If your KEXT is called <code>mykext</code> and it is loaded at address 0xf7a4000, for example, you change directories to <code>mykext.kext/Contents/MacOS</code> and type:</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>kmodsyms -k path/to/mach_kernel -o mykext.sym mykext@0xf7a4000<span></span></pre></td></tr></tbody></table></div>
+<p>Be sure to specify the correct path for the mach kernel that is 
+running on your target (assuming it is not the same as the kernel 
+running on your debug host).</p>
+<p>For versions after 10.1, you have two options. If your KEXT does not crash the computer when it loads, you can ask <code>kextload</code><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_430"></a><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_431"></a> to generate the symbols at load time by passing it the following options:</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>kextload -s symboldir mykext.kext<span></span></pre></td></tr></tbody></table></div>
+<p>It will then write the symbols for your kernel extension and its 
+dependencies into files within the directory you specified. Of course, 
+this only works if your target doesn’t crash at or shortly after load 
+time.</p>
+<p>Alternately, if you are debugging an existing panic, or if your KEXT 
+can’t be loaded without causing a panic, you can generate the debugging 
+symbols on your debug host. You do this by typing:</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>kextload -n -s symboldir mykext.kext<span></span></pre></td></tr></tbody></table></div>
+<p>If will then prompt you for the load address of the kernel extension 
+and the addresses of all its dependencies. As mentioned previously, you 
+can find the addresses with <code>kextstat</code><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_432"></a><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_433"></a> (or <code>kmodstat</code><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_434"></a><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_435"></a><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_436"></a><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_437"></a>) or by typing <code>showallkmods</code> inside <code>gdb</code>.</p>
+<p>You should now have a file or files containing symbolic information that <code>gdb</code> can use to determine address–to–name mappings within the KEXT. To add the symbols from that KEXT, within <code>gdb</code> on your debug host, type the command</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>add-symbol-file mykext.sym<span></span></pre></td></tr></tbody></table></div>
+<p>for each symbol file. You should now be able to see a human-readable 
+representation of the addresses of functions, variables, and so on.<a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_438"></a><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_439"></a></p>
+<section><a name="//apple_ref/doc/uid/TP30000905-CH221-TPXREF113" title="Special gdb I/O Addressing Issues"></a><h4 class="jump">Special <code>gdb</code> I/O Addressing Issues</h4>
+<p>As described in <span class="content_text"><a href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/vm/vm.html#//apple_ref/doc/uid/TP30000905-CH210-CHDBCBCB" data-renderer-version="1" onclick='s_objectID="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/vm/_1";return this.s_oc?this.s_oc(e):true'>Address Spaces</a></span>,
+ some Macintosh hardware has a third addressing mode called I/O 
+addressing which differs from both physical and virtual addressing 
+modes. Most developers will not need to know about these modes in any 
+detail.</p>
+<p>Where some developers may run into problems is debugging PCI device drivers and attempting to access device memory/registers.</p>
+<p>To allow I/O-mapped memory dumping, do the following:</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>set kdp_read_io=1<span></span></pre></td></tr></tbody></table></div>
+<p>To dump in physical mode, do the following:</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>set kdp_trans_off=1<span></span></pre></td></tr></tbody></table></div>
+<p>For example:</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>(gdb) x/x 0xf8022034<span></span></pre></td></tr><tr><td scope="row"><pre>0xf8022034: Cannot access memory at address 0xf8022034<span></span></pre></td></tr><tr><td scope="row"><pre>(gdb) set kdp_trans_off=1<span></span></pre></td></tr><tr><td scope="row"><pre>(gdb) x/x 0xf8022034<span></span></pre></td></tr><tr><td scope="row"><pre>0xf8022034: Cannot access memory at address 0xf8022034<span></span></pre></td></tr><tr><td scope="row"><pre>(gdb) set kdp_read_io=1<span></span></pre></td></tr><tr><td scope="row"><pre>(gdb) x/x 0xf8022034<span></span></pre></td></tr><tr><td scope="row"><pre>0xf8022034: 0x00000020<span></span></pre></td></tr><tr><td scope="row"><pre>(gdb)<span></span></pre></td></tr></tbody></table></div>
+<p>If you experience problems accessing I/O addresses that are not 
+corrected by this procedure, please contact Apple Developer Technical 
+Support for additional assistance.</p></section></section>
+<section><a name="//apple_ref/doc/uid/TP30000905-CH221-CIHDEDFH" title="Using   ddb for Kernel Debugging"></a><h3 class="jump">Using   <code>ddb</code> for Kernel Debugging</h3><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_440"></a><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_441"></a>
+<p>When doing typical debugging, <code>gdb</code> is probably the best solution. However, there are times when <code>gdb</code> cannot be used or where <code>gdb</code> can easily run into problems. Some of these include</p>
+<ul class="ul"><li class="li"><p>drivers for built-in Ethernet hardware</p></li>
+<li class="li"><p>interrupt handlers (the hardware variety, not handler threads)</p></li>
+<li class="li"><p>early bootstrap before the network hardware is initialized</p></li></ul>
+<p>When <code>gdb</code> is not practical (or if you’re curious), there 
+is a second debug mechanism that can be compiled into OS X. This 
+mechanism is called <code>ddb</code>, and is similar to the <code>kdb</code> debugger in most BSD UNIX systems. It is not quite as easy to use as <code>gdb</code>, mainly because of the hardware needed to use it.</p>
+<p>Unlike <code>gdb</code> (which uses Ethernet for communication with a kernel stub), <code>ddb</code> is built into the kernel itself, and interacts directly with the user over a serial line. Also unlike <code>gdb</code>, using <code>ddb</code> requires building a custom kernel using the <code></code><code>DEBUG</code> configuration. For more information on building this kernel, see <span class="content_text"><a href="#//apple_ref/doc/uid/TP30000905-CH221-CIHFEIFI" data-renderer-version="1" onclick='s_objectID="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/bui_8";return this.s_oc?this.s_oc(e):true'>Building Your First Kernel</a></span>.</p>
+<div class="notebox"><aside><a name="//apple_ref/doc/uid/TP30000905-CH221-SW5" title="Note"></a><p><strong>Note:</strong>&nbsp;<code>ddb</code> requires an actual <em>built-in hardware</em>
+ serial line on the debug target. Neither PCI nor USB serial adapters 
+will work. In order to work reliably for interrupt-level debugging, <code>ddb</code> controls the serial ports directly with a polled-mode driver without the use of the I/O Kit.</p><p>If
+ your debug target does not have a factory serial port, third-party 
+adapter boards may be available that replace your internal modem with a 
+serial port. Since these devices use the built-in serial controller, 
+they should work for <code>ddb</code>. It is not necessary to install OS X drivers for these devices if you are using them only to support <code>ddb</code> debugging.</p><p>The
+ use of these serial port adapter cards is not an officially supported 
+configuration, and not all computers support the third-party adapter 
+boards needed for <code>ddb</code> support. Consult the appropriate adapter board vendor for compatibility information.</p><p></p></aside></div>
+<p>If your target computer has two serial ports, <code>ddb</code> uses the modem port<a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_442"></a><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_443"></a>
+ (SCC port 0). However, if your target has only one serial port, that 
+port is probably attached to port 1 of the SCC cell, which means that 
+you have to change the default port if you want to use <code>ddb</code>. To use this port (SCC port 1), change the line:</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>const int console_unit=0;<span></span></pre></td></tr></tbody></table></div>
+<p>in <code>osfmk/ppc/serial_console.c</code> to read:</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>const int console_unit=1;<span></span></pre></td></tr></tbody></table></div>
+<p>and recompile the kernel.</p>
+<p>Once you have a kernel with <code>ddb</code> support, it is 
+relatively easy to use. First, you need to set up a terminal emulator 
+program on your debug host. If your debug host is running Mac OS 9, you 
+might use <code>ZTerm</code>, for example. For OS X computers, or for computers running Linux or UNIX, <code>minicom</code> provides a good environment. Setting up these programs is beyond the scope of this document.</p>
+<div class="importantbox clear"><aside><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_9" title="Important"></a><p><strong>Important:</strong>&nbsp;
+Serial port settings<a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_444"></a><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_445"></a><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_446"></a> for communicating with <code>ddb</code> must be 57600 8N1. Hardware handshaking may be on, but is not necessary.</p><p></p></aside></div>
+<div class="notebox"><aside><a name="//apple_ref/doc/uid/TP30000905-CH221-SW6" title="Note"></a><p><strong>Note:</strong>&nbsp;For
+ targets whose Open Firmware uses the serial ports, remember that the 
+baud rate for communicating with Open Firmware is 38400 and that 
+hardware handshaking must be <em>off</em>.</p><p></p></aside></div>
+<p>Once you boot a kernel with <code>ddb</code> support, a panic will allow you to drop into the debugger, as will a call to <code><!--a-->PE_enter_debugger<!--/a--></code><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_447"></a><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_448"></a>. If the <code>DB_KDB</code> flag is not set, you will have to press the D key on the keyboard to use <code>ddb</code>. Alternately, if both <code>DB_KDB</code> and <code>DB_NMI</code> are set, you should be able to drop into <code>ddb</code> by generating a nonmaskable interrupt<a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_449"></a><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_450"></a> (NMI). See <span class="content_text"><a href="#//apple_ref/doc/uid/TP30000905-CH221-CIHIAFFJ" data-renderer-version="1" onclick='s_objectID="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/bui_9";return this.s_oc?this.s_oc(e):true'>Setting Debug Flags in Open Firmware</a></span> for more information on debug flags.</p>
+<p>To generate a nonmaskable interrupt, hold down the command, option, 
+control, and shift keys and hit escape (OS X v10.4 and newer), hold down
+ the command key while pressing the power key on your keyboard (on 
+hardware with a power key), or press the interrupt button on your target
+ computer. At this point, the system should hang, and you should see <code>ddb</code>
+ output on the serial terminal. If you do not, check your configuration 
+and verify that you have specified the correct serial port on both 
+computers.</p>
+<section><a name="//apple_ref/doc/uid/TP30000905-CH221-TPXREF112" title="Commands and Syntax of ddb"></a><h4 class="jump">Commands and Syntax of <code>ddb</code></h4><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_451"></a>
+<p>The <code>ddb</code> debugger is much more <code>gdb</code>-like than previous versions, but it still has a syntax that is very much its own (shared only with other <code>ddb</code> and <code>kdb</code> debuggers). Because <code>ddb</code> is substantially different from what most developers are used to using, this section outlines the basic commands and syntax.</p>
+<p>The commands in <code>ddb</code> are generally in this form:</p>
+
+<div class="codesample clear"><table><tbody><tr><td scope="row"><pre>command[/switch] address[,count]<span></span></pre></td></tr></tbody></table></div>
+<p>The switches can be one of those shown in <span class="content_text"><a href="#//apple_ref/doc/uid/TP30000905-CH221-BABCCIDH" data-renderer-version="1" onclick='s_objectID="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/bui_10";return this.s_oc?this.s_oc(e):true'>Table 20-2</a></span>.</p>
+<a name="//apple_ref/doc/uid/TP30000905-CH221-BABCCIDH" title="Table 20-2Switch options in ddb"></a><div class="tableholder"><table class="graybox" cellspacing="0" cellpadding="5" border="0">
+<caption class="tablecaption"><strong class="caption_number">Table 20-2</strong>&nbsp;&nbsp;Switch options in <code>ddb</code></caption>
+
+<tbody><tr>
+<th scope="col" class="TableHeading_TableRow_TableCell"><p>Switch</p></th>
+<th scope="col" class="TableHeading_TableRow_TableCell"><p>Description</p></th>
+</tr>
+
+
+<tr>
+<td scope="row"><p><code>/A</code></p></td>
+<td><p>Print the location with line number if possible</p></td>
+</tr>
+<tr>
+<td scope="row"><p><code>/I</code></p></td>
+<td><p>Display as instruction with possible alternate machine-dependent format</p></td>
+</tr>
+<tr>
+<td scope="row"><p><code>/a</code></p></td>
+<td><p>Print the location being displayed</p></td>
+</tr>
+<tr>
+<td scope="row"><p><code>/b</code></p></td>
+<td><p>Display or process by bytes</p></td>
+</tr>
+<tr>
+<td scope="row"><p><code>/c</code></p></td>
+<td><p>Display low 8 bits as a character (nonprinting characters as octal) <em>or</em> count instructions while executing (depends on instruction)</p></td>
+</tr>
+<tr>
+<td scope="row"><p><code>/d</code></p></td>
+<td><p>Display as signed decimal</p></td>
+</tr>
+<tr>
+<td scope="row"><p><code>/h</code></p></td>
+<td><p>Display or process by half word (16 bits)</p></td>
+</tr>
+<tr>
+<td scope="row"><p><code>/i</code></p></td>
+<td><p>Display as an instruction</p></td>
+</tr>
+<tr>
+<td scope="row"><p><code>/l</code></p></td>
+<td><p>Display or process by long word (32 bits)</p></td>
+</tr>
+<tr>
+<td scope="row"><p><code>/m</code></p></td>
+<td><p>Display as unsigned hex with character dump for each line</p></td>
+</tr>
+<tr>
+<td scope="row"><p><code>/o</code></p></td>
+<td><p>Display in unsigned octal</p></td>
+</tr>
+<tr>
+<td scope="row"><p><code>/p</code></p></td>
+<td><p>Print cumulative instruction count and call tree depth at each call or return statement</p></td>
+</tr>
+<tr>
+<td scope="row"><p><code>/r</code></p></td>
+<td><p>Display in current radix, signed</p></td>
+</tr>
+<tr>
+<td scope="row"><p><code>/s</code></p></td>
+<td><p>Display the null-terminated string at address (nonprinting as octal).</p></td>
+</tr>
+<tr>
+<td scope="row"><p><code>/u</code></p></td>
+<td><p>Display in unsigned decimal <em>or</em> set breakpoint at a user space address (depending on command).</p></td>
+</tr>
+<tr>
+<td scope="row"><p><code>/x</code></p></td>
+<td><p>Display in unsigned hex</p></td>
+</tr>
+<tr>
+<td scope="row"><p><code>/z</code></p></td>
+<td><p>Display in signed hex</p></td>
+</tr>
+
+</tbody></table></div>
+<p>The <code>ddb</code> debugger has a rich command set that has grown over its lifetime. Its command set is similar to that of <code>ddb</code> and <code>kdb</code> on other BSD systems, and their manual pages provide a fairly good reference for the various commands. The command set for <code>ddb</code> includes the following commands:</p>
+<dl class="termdef">	<dt><code>break[/u] </code><code>addr</code></dt>
+<dd><p>Set a breakpoint at the address specified by <code>addr</code>. Execution will stop when the breakpoint is reached. The <code>/u</code> switch means to set a breakpoint in user space.</p></dd>
+<dt><code>c</code> <em>or</em> <code>continue[/c]</code></dt>
+<dd><p>Continue execution after reaching a breakpoint. The <code>/c</code> switch means to count instructions while executing.</p></dd>
+<dt><code>call</code></dt>
+<dd><p>Call a function.</p></dd>
+<dt><code>cond</code></dt>
+<dd><p>Set condition breakpoints. This command is not supported on PowerPC.</p></dd>
+<dt><code>cpu</code> <code>cpunum</code></dt>
+<dd><p>Causes <code>ddb</code> to switch to run on a different CPU.</p></dd>
+<dt><code>d</code> <em>or</em> <code>delete [addr|#]</code></dt>
+<dd><p>Delete a breakpoint. This takes a single argument that can be either an address or a breakpoint number.</p></dd>
+<dt><code>dk</code></dt>
+<dd><p>Equivalent to running <code>kextstat</code> while the target computer is running. This lists loaded KEXTs, their load addresses, and various related information.</p></dd>
+<dt><code>dl vaddr</code></dt>
+<dd><p>Dumps a range of memory starting from the address given. The parameter <code>vaddr</code> is a kernel virtual address. If <code>vaddr</code> is not specified, the last accessed address is used. See also <code>dr</code>, <code>dv</code>.</p></dd>
+<dt><code>dm</code></dt>
+<dd><p>Displays mapping information for the last address accessed.</p></dd>
+<dt><code>dmacro</code> <code>name</code></dt>
+<dd><p>Delete the macro called <code>name</code>. See <code>macro</code>.</p></dd>
+<dt><code>dp</code></dt>
+<dd><p>Displays the currently active page table.</p></dd>
+<dt><code>dr addr</code></dt>
+<dd><p>Dumps a range of memory starting from the address given. The parameter <code>address</code> is a physical address. If <code>addr</code> is not specified, the last accessed address is used. See also <code>dl</code>, <code>dv</code>.</p></dd>
+<dt><code>ds</code></dt>
+<dd><p>Dumps save areas of all Mach tasks.</p></dd>
+<dt><code>dv [addr [vsid]]</code></dt>
+<dd><p>Dumps a range of memory starting from the address given. The parameter <code>addr</code> is a virtual address in the address space indicated by <code>vsid</code>. If <code>addr</code> is not specified, the last accessed address is used. Similarly, if <code>vsid</code> is not specified, the last <code>vsid</code> is used. See also <code>dl</code>, <code>dr</code>.</p></dd>
+<dt><code>dwatch addr</code></dt>
+<dd><p>Delete a watchpoint. See <code>watch</code>.</p></dd>
+<dt><code>dx</code></dt>
+<dd><p>Displays CPU registers.</p></dd>
+<dt><code>examine</code></dt>
+<dd><p>See <code>print</code>.</p></dd>
+<dt><code>gdb</code></dt>
+<dd><p>Switches to <code>gdb</code> mode, allowing <code>gdb</code> to attach to the computer.</p></dd>
+<dt><code>lt</code></dt>
+<dd><p>On PowerPC only: Dumps the PowerPC exception trace table.</p></dd>
+<dt><code>macro name command [ ; command .. ]</code></dt>
+<dd><p>Create a macro called <code>name</code> that executes the listed commands. You can show a macro with the command <code>show macro name</code> or delete it with <code>dmacro name</code>.</p></dd>
+<dt><code>match[/p]</code></dt>
+<dd><p>Stop at the matching return instruction. If the <code>/p</code> switch is not specified, summary information is printed only at the final return.</p></dd>
+<dt><code>print[/AIabcdhilmorsuxz] addr1 [addr2 ...]</code></dt>
+<dd><p>Print the values at the addresses given in the format specified 
+by the switch. If no switch is given, the last used switch is assumed. 
+Synonymous with <code>examine</code> and <code>x</code>. Note that some of the listed switches may work for <code>examine</code> and not for <code>print</code>.</p></dd>
+<dt><code>reboot</code></dt>
+<dd><p>Reboots the computer. Immediately. Without doing any file-system unmounts or other cleanup. Do not do this except after a panic.</p></dd>
+<dt><code>s</code> <em>or</em> <code>step</code></dt>
+<dd><p>Single step through instructions.</p></dd>
+<dt><code>search[/bhl] addr value [mask[,count]]</code></dt>
+<dd><p>Search memory for <code>value</code> starting at <code>addr</code>.
+ If the value is not found, this command can wreak havoc. This command 
+may take other formatting values in addition to those listed.</p></dd>
+<dt><code>set $name [=] expr</code></dt>
+<dd><p>Sets the value of the variable or register named by <code>name</code> to the value indicated by <code>expr</code>.</p></dd>
+<dt><code>show</code></dt>
+<dd><p>Display system data. For a list of information that can be shown, type the <code>show</code> command by itself. Some additional options are available for certain options, particularly <code>show all</code>. For those suboptions, type <code>show all</code> by itself.</p></dd>
+<dt><code>trace[/u]</code></dt>
+<dd><p>Prints a stack backtrace. If the <code>/u</code> flag is specified, the stack trace extends to user space if supported by architecture-dependent code.</p></dd>
+<dt><code>until[/p]</code></dt>
+<dd><p>Stop at the next call or return.</p></dd>
+<dt><code>w</code> <em>or</em> <code>write[/bhl] addr expr1 [expr2 ... ]</code></dt>
+<dd><p>Writes the value of <code>expr1</code> to the memory location stored at <code>addr</code>
+ in increments of a byte, half word, or long word. If additional 
+expressions are specified, they are written to consecutive bytes, half 
+words, or long words.</p></dd>
+<dt><code>watch addr[,size]</code></dt>
+<dd><p>Sets a watchpoint on a particular address. Execution stops when 
+the value stored at that address is modified. Watch points are not 
+supported on PowerPC. </p><div class="warningboxdef"><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_10" title="Warning"></a><p><strong>Warning</strong>&nbsp;
+Watching addresses in wired kernel memory may cause unrecoverable errors on i386.</p><p></p><div class="clear"></div></div></dd>
+<dt><code>x</code></dt>
+<dd><p>Short for <code>examine</code>. See <code>print</code>.</p></dd>
+<dt><code>xb</code></dt>
+<dd><p>Examine backward. Execute the last examine command, but use the 
+address previous to the last one used (jumping backward by increments of
+ the last width displayed).</p></dd>
+<dt><code>xf</code></dt>
+<dd><p>Examine forward. Execute the last <code>examine</code> command, but use the address following the last one used (jumping by increments of the last width displayed).</p></dd></dl>
+<p>The <code>ddb</code> debugger should seem relatively familiar to users of <code>gdb</code>, and its syntax was changed radically from its predecessor, <code>kdb</code>, to be more <code>gdb</code>-like.
+ However, it is still sufficiently different that you should take some 
+time to familiarize yourself with its use before attempting to debug 
+something with it. It is far easier to use <code>ddb</code> on a system whose memory hasn’t been scribbled upon by an errant DMA request, for example.<a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_452"></a><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_453"></a><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_454"></a><a name="//apple_ref/doc/uid/TP30000905-CH221-DontLinkElementID_455"></a></p></section></section></section>
+        <div id="pageNavigationLinks_bottom" class="pageNavigationLinks">
+            <a class="nextLink" rel="next" href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Bibliography/Bibliography.html" onclick='s_objectID="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Bib_2";return this.s_oc?this.s_oc(e):true'>Next</a><a class="previousLink" rel="prev" href="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Extend/Extend.html" onclick='s_objectID="https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/Ext_2";return this.s_oc?this.s_oc(e):true'>Previous</a>
+        </div><br>
+        <div class="copyright"><br><hr><div align="center"><p class="content_text" dir="ltr" lang="en"> Copyright © 2002, 2013 Apple Inc. All Rights Reserved.  <a href="http://www.apple.com/legal/internet-services/terms/site.html" target="_blank" onclick='s_objectID="http://www.apple.com/legal/internet-services/terms/site.html_1";return this.s_oc?this.s_oc(e):true'>Terms of Use</a>   |  <a href="http://www.apple.com/privacy/" target="_blank" onclick='s_objectID="http://www.apple.com/privacy/_1";return this.s_oc?this.s_oc(e):true'>Privacy Policy</a>  |  Updated: 2013-08-08</p></div></div>
+
+        <div id="pediaWindow">
+            <div id="pediaHeader"></div>
+            <div id="pediaBody"></div>
+        </div>
+    </article>
+
+    <div id="blackout">
+    <div id="preload"></div>
+</div>
+<div id="modal" aria-hidden="true">
+    <div id="closebox" tabindex="0" aria-label="Close feedback form" role="button"></div>
+    <div id="sending" class="hidden">
+        <h2 tabindex="0">Sending feedback…</h2>
+        <div id="sending_img"></div>
+    </div>
+    <div id="error" class="hidden">
+        <h2 tabindex="0">We’re sorry, an error has occurred.</h2>
+        <p>Please try submitting your feedback later.</p>
+        <div id="error_icon"></div>
+    </div>
+    <div id="success" class="hidden">
+        <h2 tabindex="0">Thank you for providing feedback!</h2>
+        <p>Your input helps improve our developer documentation.</p>
+        <div id="thank_you_icon"></div>
+    </div>
+    
+    <form id="feedback" action="#" method="post">
+        <div class="left-leaf">
+            <h2 id="helpful_title" data-asterisk="a1" tabindex="0">How helpful is this document?</h2>     
+            <sup id="a1" class="asterisk" aria-hidden="true">*</sup>
+
+            <div id="star_group" role="radiogroup" aria-required="true">
+                <label> 
+                    <input class="radio" type="radio" name="helped" value="1"> 
+                    Very helpful
+                </label>
+                <label> 
+                    <input class="radio" type="radio" name="helped" value="2"> 
+                    Somewhat helpful
+                </label>
+                <label>
+                    <input class="radio" type="radio" name="helped" value="3"> 
+                    Not helpful
+                </label>
+            </div>
+        </div>
+        <div class="right-leaf">
+            <h2>How can we improve this document?</h2>
+            <div id="improve" class="checkboxes">
+                <label>
+                    <input type="checkbox" name="typo"> 
+                    Fix typos or links
+                </label>
+                <label>
+                    <input type="checkbox" name="infoIncorrect"> 
+                    Fix incorrect information
+                </label>
+                <label>
+                    <input type="checkbox" name="needs_examples"> 
+                    Add or update code samples
+                </label>
+                <label>
+                    <input type="checkbox" name="needs_art"> 
+                    Add or update illustrations
+                </label>
+                <label>
+                    <input type="checkbox" name="missingInfo"> 
+                    Add information about...
+                </label>
+            </div>
+        </div>
+
+        <textarea id="comment" name="problem" cols="70" rows="8" placeholder="Please tell us more about your experience with this document" data-asterisk="a2" required=""></textarea>
+        <sup id="a2" class="asterisk" aria-hidden="true">*</sup>
+
+        <p class="fineprint">
+            <em aria-hidden="true"><span>*</span> Required information</em>
+        </p> 
+
+        <input id="submit" type="button" value="Send">
+
+        <section id="legal">
+            <p>
+                To submit a product bug or enhancement request, please visit the 
+                <a href="https://developer.apple.com/bugreporter/" target="_blank" onclick='s_objectID="https://developer.apple.com/bugreporter/_1";return this.s_oc?this.s_oc(e):true'>Bug Reporter</a> 
+                page.
+            </p>
+            <p>
+                Please read <a href="http://www.apple.com/legal/policies/ideas.html" target="_blank" onclick='s_objectID="http://www.apple.com/legal/policies/ideas.html_1";return this.s_oc?this.s_oc(e):true'>Apple's Unsolicited Idea Submission Policy</a> 
+                before you send us your feedback.
+            </p> 
+        </section>
+    </form>
+</div>
+
+    
+    <script charset="utf-8" src="Building%20and%20Debugging%20Kernels_files/prototype.js"></script>
+    <script src="Building%20and%20Debugging%20Kernels_files/library.js"></script>
+
+
+</body></html>

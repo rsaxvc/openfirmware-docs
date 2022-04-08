@@ -1,0 +1,269 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html><!--Template 06-20-02--><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="ROBOTS" content="NOINDEX, NOFOLLOW">
+            <meta id="book-resource-type" name="book-resource-type" content="Technical Q&amp;A">
+            <meta id="book-title" name="book-title" content="Open Firmware Memory bus speed">
+            <meta id="book-root" name="book-root" content="./">
+            <meta id="devcenter" name="devcenter" content="Mac Dev Center">
+            <meta id="devcenter-url" name="devcenter-url" content="http://developer.apple.com/devcenter/mac">
+            <meta id="reflib" name="reflib" content="Documentation Archive">
+            <meta id="book-assignments" name="book-assignments" content="{Type/Technical Q&amp;A}">
+            <meta scheme="apple_ref" id="identifier" name="identifier" content="//apple_ref/doc/uid/DTS10001369">
+            <meta id="document-version" name="document-version" content="1.0.1">
+            <meta id="build" name="build" content="c1e4c7a89af8f899a21cfa81fc33ba42">
+            <meta id="description" name="description" content="HW97: Describes a method to display memory bus speed for G3 or G4 Macintosh in Open Firmware.">
+            <meta id="resources-uri" name="resources-uri" content="../../Resources/1282/">
+            <meta id="Generator" name="Generator" content="Gutenberg Static e43202ea08">
+            <meta id="Copyright" name="Copyright" content="Copyright 2018 Apple Inc. All Rights Reserved.">
+			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+            <meta id="platforms" name="platforms" content="OS X">
+<link rel="stylesheet" type="text/css" href="Technical%20Q&amp;A%20HW97%20Open%20Firmware%20Memory%20bus%20speed_files/screen.css">
+<link rel="stylesheet" type="text/css" href="Technical%20Q&amp;A%20HW97%20Open%20Firmware%20Memory%20bus%20speed_files/feedback.css">
+
+
+<link rel="stylesheet" href="Technical%20Q&amp;A%20HW97%20Open%20Firmware%20Memory%20bus%20speed_files/adcstyle_002.html" type="text/css" id="custom">
+<link rel="stylesheet" href="Technical%20Q&amp;A%20HW97%20Open%20Firmware%20Memory%20bus%20speed_files/style.html" type="text/css" id="custom">
+
+
+<title>Technical Q&amp;A HW97: Open Firmware Memory bus speed</title>
+
+
+<meta name="keywords" content="have creator list relevant keywords here">
+<meta name="Description" content="Technical Q&amp;A HW97: This Q&amp;A describes a method for determining
+the memory bus a G3 or G4 Macintosh using Open Firmware.">
+
+
+<meta name="categories" content="Hardware">
+
+
+<meta name="week-posted" content="Sep 18, 2000 - Sep 22, 2000">
+
+<link rel="stylesheet" href="Technical%20Q&amp;A%20HW97%20Open%20Firmware%20Memory%20bus%20speed_files/adcstyle.html" type="text/css" id="custom"><script language="JavaScript" type="text/javascript" src="Technical%20Q&amp;A%20HW97%20Open%20Firmware%20Memory%20bus%20speed_files/adc.html"></script>
+</head>
+
+
+<body id="StaticPage" class="" bgcolor="#FFFFFF"><a name="//apple_ref/doc/uid/DTS10001369" title="Open Firmware Memory bus speed"></a>
+
+            <div id="adcHeader" class="hideOnPrint hideInXcodeSC">
+                <div id="ssi_Header" class="hideInXcodeSC unified">
+                    <a id="ssi_LibraryTitle" href="https://developer.apple.com/library/archive/navigation/">Documentation Archive</a>
+                    <a id="ssi_AppleDeveloperConnection" href="https://developer.apple.com/">Developer</a>
+                    <div id="ssi_SearchButton" role="button" title="Search">Search</div>
+                </div>
+                <form id="ssi_SearchMenu" method="get" action="../../search/" accept-charset="utf-8">
+                    <label for="adcsearch">Search Documentation Archive</label>
+                    <input type="search" id="ssi_SearchField" name="q" accesskey="s" results="5">
+                </form>
+            </div>
+            <header id="header">
+                <div id="title" role="banner">
+                    <h1>Open Firmware Memory bus speed</h1>
+                    <span id="file_links">
+                        <a id="PDF_link" role="button" tabindex="4" rel="alternate" title="Download PDF"><span id="pdf_icon"></span>PDF</a>
+                        <a id="Companion_link" role="button" tabindex="3" title="Download Companion File"><span id="companion_icon"></span>Companion File</a>
+                    </span>
+                </div>
+                <ul id="headerButtons" class="hideOnPrint" role="toolbar">
+                    <li id="toc_button" style="display:none">
+                        <button tabindex="5" id="table_of_contents" class="" role="checkbox" aria-label="Show Table of Contents">
+                        <span class="disclosure"></span>Table of Contents</button>
+                    </li>
+                    <li id="jumpto_button" style="display:none" role="navigation">
+                        <select tabindex="6" id="jumpTo">
+                            <option value="top" selected="selected">&lt;&gt;</option>
+                        </select>
+                    </li>
+                    <li id="downloadSample_button" style="display:none">
+                        <a id="Sample_link"><button id="Sample_button">Download Sample Code</button></a>
+                    </li>
+                </ul>
+            </header>
+            <nav id="tocContainer" class="" tabindex="7">
+                <ul id="toc" role="tree"></ul>
+            </nav>
+            <article id="contents" class="">
+              <div id="technicalQA">
+
+<!-- top_of_header_marker_comment -->
+<!-- begin_header_information --><p><a href="http://developer.apple.com/">ADC Home</a> &gt; <a href="https://developer.apple.com/library/archive/referencelibrary/index.html">Reference Library</a> &gt; <a href="https://developer.apple.com/library/archive/technicalqas/index.html">Technical Q&amp;As</a> &gt; <a href="https://developer.apple.com/library/archive/technicalqas/HardwareDrivers/index.html">Hardware &amp; Drivers</a> &gt; <a href="https://developer.apple.com/library/archive/technicalqas/HardwareDrivers/idxAppleHardware-date.html">Apple Hardware</a> &gt; </p><!-- end_header_information -->
+<!-- bottom_of_header_marker_comment -->
+
+<!-- top_of_titles_marker_comment --><center><table width="600" cellspacing="0" cellpadding="0" border="0">
+<tbody><tr><td scope="row" align="left">
+<h1>
+<div id="pagehead">Technical Q&amp;A HW97</div>
+<div id="pageheadsub">Open Firmware Memory bus speed</div>
+</h1>
+</td></tr></tbody></table></center><!-- bottom_of_titles_marker_comment -->
+
+<!-- begin_content --> 
+<center>
+<table width="600" cellpadding="0" border="0">
+<tbody><tr> <td align="left">
+<hr width="500" align="center"> 
+
+<p id="p2">
+Q: Using Open Firmware, how can I tell the memory bus speed on a G3 or 
+G4 Macintosh?
+</p>
+<p id="p4">A: On any Macintosh, navigate to the memory bus and dump its properties.
+Display the clock-frequency property in decimal since the default display is
+hexadecimal. Here is the code to do this:</p>
+
+<center><table width="550" cellpadding="5" border="0">
+<tbody><tr>
+	<td bgcolor="#E6E6E6" align="left">
+<pre>Apple PowerMac1,1 1.1f4 BootROM built on 04/09/99 at 13:57:32
+Copyright 1994-1999 Apple Computer, Inc.
+All Rights Reserved.
+OpenFirmware 3.1.1
+To continue booting, type "mac-boot" and press return.
+To shut down, type "shut-down" and press return.
+ ok
+0 &gt; dev /            \ navigate to the memory node  ok
+0 &gt; .properties         \ display the properties
+model                       PowerMac1,1
+compatible              PowerMac1,1
+                                  MacRISC
+                                  Power Macintosh
+name                       device-tree
+copyright                 Copyright 1983-1998 Apple Computer, Inc. All
+Rights Reserved
+device_type            bootrom
+system-id                0000000000000
+#address-cells       00000001
+#size-cells               00000001
+clock-frequency      05f5e100
+AAPL,add-fcode-file     ff8199b0
+ ok
+0 &gt; 5f5e100            \ enter the clock-frequency property onto the stack
+ok
+1 &gt; .s                 \ check just to make sure 5f5e100
+ ok
+1 &gt; cr ." the speed in Hertz is " .d
+the speed in Hertz is 100000000  ok
+0 &gt;
+The 100000000 Hz is 100 MHz.
+</pre>
+	</td>
+</tr>
+</tbody></table></center>
+
+	</td>
+</tr>
+</tbody></table></center>
+<!-- end_content -->
+<!-- begin_date -->
+<h4 align="center">[Sep 22 2000]</h4>
+<!-- end_date -->
+
+<!-- begin_footer_information -->
+
+<div id="globalfooter" class="hideInXcode hideOnPrint">
+	<div class="gf-sosumi">
+	    <p>Copyright © 2016 Apple Inc. All rights reserved.</p>
+	    <ul class="piped">
+		    <li><a href="http://www.apple.com/legal/internet-services/terms/site.html" class="first" target="_blank">Terms of Use</a></li>
+		    <li><a href="http://www.apple.com/privacy/" target="_blank">Privacy Policy</a></li>
+	    </ul>
+	</div>
+</div><!--/globalfooter-->
+<!-- end_footer_information -->
+
+<hr width="500" align="center"> 
+</div>
+            </article>
+
+<script type="text/javascript" src="Technical%20Q&amp;A%20HW97%20Open%20Firmware%20Memory%20bus%20speed_files/prototype.js"></script>
+<script type="text/javascript" src="Technical%20Q&amp;A%20HW97%20Open%20Firmware%20Memory%20bus%20speed_files/library.js"></script>
+<script type="text/javascript" src="Technical%20Q&amp;A%20HW97%20Open%20Firmware%20Memory%20bus%20speed_files/feedback.js"></script>
+
+
+<div id="blackout">
+    <div id="preload"></div>
+</div><div id="modal" aria-hidden="true">
+    <div id="closebox" tabindex="0" aria-label="Close feedback form" role="button"></div>
+    <div id="sending" class="hidden">
+        <h2 tabindex="0">Sending feedback…</h2>
+        <div id="sending_img"></div>
+    </div>
+    <div id="error" class="hidden">
+        <h2 tabindex="0">We’re sorry, an error has occurred.</h2>
+        <p>Please try submitting your feedback later.</p>
+        <div id="error_icon"></div>
+    </div>
+    <div id="success" class="hidden">
+        <h2 tabindex="0">Thank you for providing feedback!</h2>
+        <p>Your input helps improve our developer documentation.</p>
+        <div id="thank_you_icon"></div>
+    </div>
+    
+    <form id="feedback" action="#" method="post">
+        <div class="left-leaf">
+            <h2 id="helpful_title" data-asterisk="a1" tabindex="0">How helpful is this document?</h2>     
+            <sup id="a1" class="asterisk" aria-hidden="true">*</sup>
+
+            <div id="star_group" role="radiogroup" aria-required="true">
+                <label> 
+                    <input class="radio" type="radio" name="helped" value="1"> 
+                    Very helpful
+                </label>
+                <label> 
+                    <input class="radio" type="radio" name="helped" value="2"> 
+                    Somewhat helpful
+                </label>
+                <label>
+                    <input class="radio" type="radio" name="helped" value="3"> 
+                    Not helpful
+                </label>
+            </div>
+        </div>
+        <div class="right-leaf">
+            <h2>How can we improve this document?</h2>
+            <div id="improve" class="checkboxes">
+                <label>
+                    <input type="checkbox" name="typo"> 
+                    Fix typos or links
+                </label>
+                <label>
+                    <input type="checkbox" name="infoIncorrect"> 
+                    Fix incorrect information
+                </label>
+                <label>
+                    <input type="checkbox" name="needs_examples"> 
+                    Add or update code samples
+                </label>
+                <label>
+                    <input type="checkbox" name="needs_art"> 
+                    Add or update illustrations
+                </label>
+                <label>
+                    <input type="checkbox" name="missingInfo"> 
+                    Add information about...
+                </label>
+            </div>
+        </div>
+
+        <textarea id="comment" name="problem" cols="70" rows="8" placeholder="Please tell us more about your experience with this document" data-asterisk="a2" required=""></textarea>
+        <sup id="a2" class="asterisk" aria-hidden="true">*</sup>
+
+        <p class="fineprint">
+            <em aria-hidden="true"><span>*</span> Required information</em>
+        </p> 
+
+        <input id="submit" type="button" value="Send">
+
+        <section id="legal">
+            <p>
+                To submit a product bug or enhancement request, please visit the 
+                <a href="https://developer.apple.com/bugreporter/" target="_blank">Bug Reporter</a> 
+                page.
+            </p>
+            <p>
+                Please read <a href="http://www.apple.com/legal/policies/ideas.html" target="_blank">Apple's Unsolicited Idea Submission Policy</a> 
+                before you send us your feedback.
+            </p> 
+        </section>
+    </form>
+</div></body></html>
