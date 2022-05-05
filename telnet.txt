@@ -1,0 +1,12 @@
+From: https://forums.macrumors.com/threads/how-does-one-telnet-into-open-firmware.2300359/
+
+#Find IP from OSX/Linux
+
+#Start OF:
+Restart, hold down Option-Command-O-F while booting to boot into Open Firmware.
+
+#check if available:
+> dev /packages/telnet
+
+#Move IO to telnet
+>" enet:telnet,192.168.0.105" io
