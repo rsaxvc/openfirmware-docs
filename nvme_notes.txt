@@ -1,0 +1,64 @@
+0 > dev / ls
+...
+ff989a70:   /pci@6
+ffa05a30:     /pci1e0f,1@0
+...
+
+dev /ht
+dev pci@6
+dev pci1e0f,1@0
+0 > ls ok
+0 > pwd /ht@0,f2000000/pci@6/pci1e0f,1@0 ok
+0 > 
+0 > .properties 
+TCZeroLimited           
+vendor-id               00001e0f 
+device-id               00000001 
+revision-id             00000000 
+class-code              00010802 
+interrupts              00000001 
+min-grant               00000000 
+max-latency             00000000 
+subsystem-vendor-id     00001e0f 
+subsystem-id            00000001 
+devsel-speed            00000000 
+name                    pci1e0f,1
+compatible              pci1e0f,1
+                        pci1e0f,1
+                        pciclass,010802
+                        
+reg                     00090000 00000000 00000000  00000000 00000000 
+                        03090010 00000000 00000000  00000000 00004000 
+pci-e-capability        00090040 
+msi-capability          00090090 
+assigned-addresses      83090010 00000000 80100000  00000000 00004000 
+ ok
+0 > 
+#Note: reg[0]=00090000
+
+#define .cregs
+0 > : .cregs base @ swap 10 base !  ok
+0 ] h# 40 bounds do cr i 5 u.r " : " type  ok
+2 ] i do-config-l@ 8 u.r 4 +loop base !  ok
+0 ] ;  ok
+
+#dump PCI configuration registers using .cregs
+0 > 00090000 .cregs 
+90000: 00011e0f
+90004: 00100004
+90008: 01080200
+9000c: 00000010
+90010: 80100004
+90014: 00000000
+90018: 00000000
+9001c: 00000000
+90020: 00000000
+90024: 00000000
+90028: 00000000
+9002c: 00011e0f
+90030: 00000000
+90034: 00000040
+90038: 00000000
+9003c: 00000100 ok
+0 > 
+
