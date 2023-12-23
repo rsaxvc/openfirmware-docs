@@ -1,15 +1,31 @@
 0 > dev / ls
-...
+#From G5 PCIe
 ff989a70:   /pci@6
 ffa05a30:     /pci1e0f,1@0
-...
+#From G5 PCI + PCIe2PCI
+ff983310:   /pci@2
+ff9d8e00:     /pci-bridge@3
+ff9da018:       /pci1e0f,1@0
 
+#G5 PCIe
 dev /ht
 dev pci@6
 dev pci1e0f,1@0
 0 > ls ok
 0 > pwd /ht@0,f2000000/pci@6/pci1e0f,1@0 ok
 0 > 
+
+#G5 PCI
+dev /ht
+dev pci@2
+dev pci-bridge@3
+dev pci1e0f,1@0
+
+#Or in short:
+devalias nvme0 /ht@0,f2000000/pci@2/pci-bridge@3/pci1e0f,1@0
+devalias nvme0 /ht@0,f2000000/pci@6/pci1e0f,1@0
+
+#Once at device node:
 0 > .properties 
 TCZeroLimited           
 vendor-id               00001e0f 
@@ -34,7 +50,7 @@ msi-capability          00090090
 assigned-addresses      83090010 00000000 80100000  00000000 00004000 
  ok
 0 > 
-#Note: reg[0]=00090000
+#Note: reg[0]=00090000 on G5-PCIe, but 00060000 on G5-PCI
 
 #define .cregs
 0 > : .cregs base @ swap 10 base !  ok
